@@ -16,7 +16,7 @@
 `sudo gedit ~/.bashrc`
 
 添加
-```c
+```js
 export MONGODB_HOME=/usr/local/mongodb/mongodb-linux-x86_64-ubuntu1804-4.0.4
 export PATH=$MONGODB_HOME/bin:$PATH
 ```
@@ -89,7 +89,46 @@ unix  2      [ ACC ]     流        LISTENING     699135   /tmp/mongodb-27017.so
 
 详情可见目录下`hello_mongodb.py`
 
-pymongo的快速指南在[这里](https://api.mongodb.com/python/current/tutorial.html)。
+pymongo的快速指南在[这里](https://api.mongodb.com/python/current/tutorial.html)，本章实例代码就是从获取。
+pymongo的CURD命令与SQL相对应的部分在[这里](https://docs.mongodb.com/manual/tutorial/query-documents/)
+
+在`hello_mongodb.py`中，我新建了`xgm-database`数据库，并且插入了许多数据。
+
+我们可以在终端查看使用Python操作的结果。打开终端，输入`mongo`，进入shell。使用`show dbs`查看所有的数据库，得到如下输出：  
+```json
+> show dbs
+admin          0.000GB
+config         0.000GB
+local          0.000GB
+test_database  0.000GB
+xgm-database   0.000GB
+```
+
+输入`use xgm-database`进入数据库，输入`show collections`查看数据库下都有什么collections（根据官网，collections相当于关系数据库中的“表”）
+> A collection is a group of documents stored in MongoDB, and can be thought of as roughly the equivalent of a table in a relational database. 
+
+得到  
+```
+> show collections
+posts
+profiles
+```
+最后使用`db.posts.find()`，即可查询到py文件插入的数据。   
+```json
+> db.posts.find()
+{ "_id" : ObjectId("5c0e75bdfc10f1727a8d2e9e"), "author" : "Mike", "text" : "My first blog post!", "tags" : [ "mongodb", "python", "pymongo" ], "date" : ISODate("2018-12-10T14:18:37.697Z") }
+{ "_id" : ObjectId("5c0e75bdfc10f1727a8d2e9f"), "author" : "Mike", "text" : "Another post!", "tags" : [ "bulk", "insert" ], "date" : ISODate("2018-11-12T11:14:00Z") }
+{ "_id" : ObjectId("5c0e75bdfc10f1727a8d2ea0"), "author" : "Eliot", "title" : "MongoDB is fun", "text" : "and pretty easy too!", "date" : ISODate("2018-11-10T10:45:00Z") }
+{ "_id" : ObjectId("5c0e7694fc10f172e9b5cedd"), "author" : "Mike", "text" : "My first blog post!", "tags" : [ "mongodb", "python", "pymongo" ], "date" : ISODate("2018-12-10T14:22:12.147Z") }
+{ "_id" : ObjectId("5c0e7694fc10f172e9b5cede"), "author" : "Mike", "text" : "Another post!", "tags" : [ "bulk", "insert" ], "date" : ISODate("2018-11-12T11:14:00Z") }
+{ "_id" : ObjectId("5c0e7694fc10f172e9b5cedf"), "author" : "Eliot", "title" : "MongoDB is fun", "text" : "and pretty easy too!", "date" : ISODate("2018-11-10T10:45:00Z") }
+```
+
+## MongoDB和Hadoop3连接
+
+https://github.com/mongodb/mongo-hadoop
+
+https://chenhua-1984.iteye.com/blog/2162576
 
 
 

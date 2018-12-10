@@ -1,24 +1,23 @@
-#coding=utf-8
 #!/usr/bin/python3
 
 #本文代码来自https://api.mongodb.com/python/current/tutorial.html
 
 import pymongo
 
-from pymongo import MongoClien
+from pymongo import MongoClient
 client = MongoClient()
 client = MongoClient('localhost', 27017)
 
 #client = MongoClient('mongodb://localhost:27017/')
 
-db = client.test_database
+#db = client.test_database
 
-#db = client['test-database']
+db = client['xgm-database']
 
 #A collection is a group of documents stored in MongoDB ≈ a table in a relational database.
-collection = db.test_collection
+#collection = db.test_collection
 
-#collection = db['test-collection']
+collection = db['xgm-collection']
 
 #以上操作没有创建数据，只有真正插入数据，才会创建。
 #Collections and databases are created when the first document is inserted into them.
@@ -72,7 +71,7 @@ from bson.objectid import ObjectId
 # The web framework gets post_id from the URL and passes it as a string
 def get(post_id):
     # Convert from string to ObjectId:
-    document = client.db.collection.find_one({'_id': ObjectId(post_id)})
+     document = client.db.collection.find_one({'_id': ObjectId(post_id)})
 
 #批量插入
 new_posts = [{"author": "Mike",
@@ -110,20 +109,29 @@ print (posts.count_documents({"author": "Mike"}))
 #将结果按照键值排序
 d = datetime.datetime(2017, 11, 12, 12)
 for post in posts.find({"date": {"$lt": d}}).sort("author"):
-   pprint.pprint(post)
+     pprint.pprint(post)
 
 
 #Indexing
 result = db.profiles.create_index([('user_id', pymongo.ASCENDING)],unique=True)
-sorted(list(db.profiles.index_information()))
+print ("Indexing")
+print (sorted(list(db.profiles.index_information())))
 
 user_profiles = [
      {'user_id': 211, 'name': 'Luke'},
-     {'user_id': 212, 'name': 'Ziltoid'}]
+     {'user_id': 212, 'name': 'Ziltoid'}
+     ]
+
 result = db.profiles.insert_many(user_profiles)
 
 new_profile = {'user_id': 213, 'name': 'Drew'}
 duplicate_profile = {'user_id': 212, 'name': 'Tommy'}
 result = db.profiles.insert_one(new_profile)  # This is fine.
-result = db.profiles.insert_one(duplicate_profile)
 
+
+#这里会报错，因为user_id重复了。
+from pymongo.errors import DuplicateKeyError
+try:
+     result = db.profiles.insert_one(duplicate_profile)
+except DuplicateKeyError as err:
+     print ("DuplicateKeyError err!!" , err)
