@@ -5,7 +5,7 @@
 这里简要分为两小节。  
 
 > [云端单机版配置](#1)  
-> [真实分布式配置](#2)
+> [真实分布式配置](#2)  
 > [测试](#3)
 
 
@@ -42,7 +42,7 @@ echo 'export PATH=$MONGODB_HOME/bin:$PATH' >> /etc/bash.bashrc;
 source /etc/bash.bashrc;
 ```
 
-在每一台机器上***输入`mongod`***，测试配置路径是否正确。得到以下输出说明配置正确。  
+在每一台机器上***输入***`mongod`，测试配置路径是否正确。得到以下输出说明配置正确。  
 ```s
 root@master:/# mongod
 mongod: error while loading shared libraries: libcurl.so.4: cannot open shared object file: No such file or directory
@@ -404,7 +404,7 @@ sh.addShard("shard4/slave4.local:26004");
 > - -1 to indicate reverse traversal for the field.  
 > - "hashed" to specify a hashed shard key.  
 
-这里说的是使用什么方式，以及对什么字段（Mongodb中称为Field）建立索引。考虑到负载均衡，这里尝试使用"hashed"方式对name字段建立索引。[点击这里(https://docs.mongodb.com/manual/core/hashed-sharding/)]查看什么是Hashed Sharding。  
+这里说的是使用什么方式，以及对什么字段（Mongodb中称为Field）建立索引。考虑到负载均衡，这里尝试使用"hashed"方式对name字段建立索引。[点击这里](https://docs.mongodb.com/manual/core/hashed-sharding/)查看什么是Hashed Sharding。  
 
 很神奇的是，上面的命令居然失败了，似乎shell不认"hashed"这个value...怀疑是bug。那么我***使用另一个等价命令***试试：    
 
