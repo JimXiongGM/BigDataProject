@@ -10,12 +10,13 @@
 
 ## 目录  
 
-因配置环境只需要一篇文档，这里把配置环境的文件直接放到Docs文件夹下。
+因配置环境只需要一篇文档，这里把配置环境的说明文件直接放到Docs文件夹下。
 
 ### 环境安装
 - [Hadoop3的全分布式安装回忆](./Documentations/Hadoop_distribute.md)  
 - [MongoDB的本地安装](./Documentations/MongoDB_standalone.md)    
 - [MongoDB的全分布式安装](./Documentations/MongoDB_distribute.md)    
+- [Pig的全分布式安装](./Documentations/Pig_distribute.md) 
 - 未完待续
 
 ### 项目
