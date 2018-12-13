@@ -324,13 +324,13 @@ child process started successfully, parent exiting
 
 恭喜你，至此，mongodb的数据（分片+副本），配置服务器（config server），路由服务器（mongos）都已经配置好了。  
 具体为：  
-|master.local|slave1.local|slave2.local|slave3.local|slave4.local|
-|---|---|---|---|---|
-|mongos:26000|mongos:26000|mongos:26000|None|None|
-|None|shard1:26001|shard1:26001|shard1:26001|shard1:26001|
-|None|shard2:26002|shard2:26002|shard2:26002|shard2:26002|
-|None|shard3:26003|shard3:26003|shard3:26003|shard3:26003|
-|None|shard4:26004|shard4:26004|shard4:26004|shard4:26004|
+master.local | slave1.local | slave2.local | slave3.local | slave4.local
+--- | --- | --- | --- | ---
+mongos:26000|mongos:26000|mongos:26000|None | None
+None | shard1:26001 | shard1:26001 | shard1:26001 | shard1:26001
+None | shard2:26002 | shard2:26002 | shard2:26002 | shard2:26002
+None | shard3:26003 | shard3:26003 | shard3:26003 | shard3:26003
+None | shard4:26004 | shard4:26004 | shard4:26004 | shard4:26004
 
 到这里，我们可以回顾安装流程，可以看到，其实mongodb的安装逻辑很简单，但是过程比较繁琐。。  
 

@@ -1,5 +1,4 @@
-# Hadoop3的全分布式安装  
-
+# Hadoop3的全分布式安装 
 这一部分的环境在笔者开始记录之前已经搭建好，站在巨人的肩膀上[@daviddwlee84](https://github.com/daviddwlee84)，我才能较快地搭建好全分布式Hadoop。这位同学的主要贡献是利用Python中的fabric包，实现了一键自动安装Hadoop3.1.1，不过他的环境是4块树莓派3b+，并基于本地局域网。[链接](https://github.com/daviddwlee84/RaspPi-Cluster)在此。  
 
 他山之石，虽可攻玉，但是环境不同，总是有各种各样的bug。这里记录一下。
