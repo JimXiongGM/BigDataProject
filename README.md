@@ -20,6 +20,7 @@
 - 未完待续
 
 ### 项目
+- [使用全分布式Pig分析数据](./PigOnMap-Reduce/README.md)
 - [Python+MongoDB爬取并存储数据](./Documentations/Python_Crawler_News.md)　　挖坑待填  
 - [全分布下Hadoop和MongoDB的使用](./Documentations/Hadoop+MongoDB_Crawler.md)　　挖坑待填  
 - 未完待续
