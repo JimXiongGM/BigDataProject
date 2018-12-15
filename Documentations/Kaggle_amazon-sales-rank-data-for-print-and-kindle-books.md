@@ -1,6 +1,6 @@
 # Amazon sales rank data for print and kindle books
 
-这是一份来自Kaggle的数据集，[点击这里](https://www.kaggle.com/ucffool/amazon-sales-rank-data-for-print-and-kindle-books)，这份数据集记录的是Amazon上的书以及相应随时间变化的sale rank。考虑到国内下载网速较慢，笔者在百度网盘提供了备份，[点击这里](https://pan.baidu.com/s/1S5GkFcthv5pT_ZPyRz1ceA)可以获取，提取码: `8w26`。
+这是一份来自Kaggle的数据集，[点击这里](https://www.kaggle.com/ucffool/amazon-sales-rank-data-for-print-and-kindle-books)，这份数据集记录的是Amazon上的书,以及相应书目随时间变化的sale rank。考虑到国内下载网速较慢，笔者在百度网盘提供了备份，[点击这里](https://pan.baidu.com/s/1S5GkFcthv5pT_ZPyRz1ceA)可以获取，提取码: `8w26`。
 
 > [数据介绍](#1)  
 > [数据集sample](#2)  
