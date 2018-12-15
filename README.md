@@ -13,14 +13,14 @@
 因配置环境只需要一篇文档，这里把配置环境的说明文件直接放到Docs文件夹下。
 
 ### 环境安装
-- [Hadoop3的全分布式安装回忆](./Documentations/Hadoop_distribute.md)  
-- [MongoDB的本地安装](./Documentations/MongoDB_standalone.md)    
-- [MongoDB的全分布式安装](./Documentations/MongoDB_distribute.md)    
-- [Pig的全分布式安装](./Documentations/Pig_distribute.md) 
+- [Hadoop3的全分布式安装回忆](./DocsOfInstallations/Hadoop_distribute.md)  
+- [MongoDB的本地安装](./DocsOfInstallations/MongoDB_standalone.md)    
+- [MongoDB的全分布式安装](./DocsOfInstallations/MongoDB_distribute.md)    
+- [Pig的全分布式安装](./DocsOfInstallations/Pig_distribute.md) 
 - 未完待续
 
 ### 项目
 - [使用全分布式Pig分析数据](./PigOnMap-Reduce/README.md)　　挖坑待填 
-- [Python+MongoDB爬取并存储数据](./Documentations/Python_Crawler_News.md)　　挖坑待填  
-- [全分布下Hadoop和MongoDB的使用](./Documentations/Hadoop+MongoDB_Crawler.md)　　挖坑待填  
+- [Python+MongoDB爬取并存储数据](./DocsOfInstallations/Python_Crawler_News.md)　　挖坑待填  
+- [全分布下Hadoop和MongoDB的使用](./DocsOfInstallations/Hadoop+MongoDB_Crawler.md)　　挖坑待填  
 - 未完待续
