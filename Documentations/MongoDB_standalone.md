@@ -1,6 +1,11 @@
 # MongoDB的本地安装
 
-## 本地部署
+
+> [本地部署](#1)  
+> [PyMongo的基本操作](#2)
+
+
+## <p id=1>本地部署</p>
 
 本文参考自官网安装教程，[点击这里](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu-tarball/).  
 
@@ -82,7 +87,7 @@ unix  2      [ ACC ]     流        LISTENING     699135   /tmp/mongodb-27017.so
 
 本文直接使用Python3操作MongoDB。  
 
-### PyMongo的基本操作  
+## <p id=2>PyMongo的基本操作</p>  
 
 本文使用Python3进行编写，首先我们要安装pip3，并且安装相应pymongo  
 `sudo apt-get install python3-pip`
