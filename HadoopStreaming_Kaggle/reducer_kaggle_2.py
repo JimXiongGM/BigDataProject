@@ -1,4 +1,5 @@
-#!/usr/bin/env python3
+#!/usr/bin/python
+
 import sys
 
 current_key = None
