@@ -50,5 +50,5 @@ amazon_com_extras.csv |  csv格式说明文件，包含上面两个文件的所�
 ## <p id=2>数据集sample</p>
 
 
-为了简化分析，笔者抽取了`ranks_norm`文件夹下的前5000条数据进行处理测试，在本项目的`Data_Sample`文件夹下可以找到`Sample_amazon-sales-rank-data-for-print-and-kindle-books.7z`。
+为了简化分析，笔者抽取了`ranks_norm`文件夹下的前1000条数据进行处理测试，在本项目的`Data_Sample`文件夹下可以找到`Sample_1000_amazon-sales-rank-data-for-print-and-kindle-books.tar`。
 
