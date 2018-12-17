@@ -6,13 +6,14 @@
 
 ## 思路
 
-本项目采用结构化+非结构化数据，初步采用Pig分析结构化数据，使用MongoDB存储并分析非结构化数据。
-
+本项目采用结构化+非结构化数据，初步采用Hadoop streaming进行数据处理，Pig分析结构化数据，使用MongoDB存储并分析非结构化数据。
+ 
 ## 目录  
 
 因配置环境只需要一篇文档，这里把配置环境的说明文件直接放到Docs文件夹下。
 
 ### 环境安装
+
 - [Hadoop3全分布式+Hadoop streaming环境搭建](./Documentations/Hadoop_distribute.md)  
 - [MongoDB的本地安装](./Documentations/MongoDB_standalone.md)    
 - [MongoDB的全分布式安装](./Documentations/MongoDB_distribute.md)    
@@ -27,6 +28,6 @@
 ### 项目
 - [使用Hadoop Streaming分析数据](./HadoopStreaming_Kaggle/README.md)
 - [使用全分布式Pig分析数据](./PigOnMap-Reduce/README.md)　　挖坑待填 
-- [Python+MongoDB爬取并存储数据](./Documentations/Python_Crawler_News.md)　　挖坑待填  
-- [全分布下Hadoop和MongoDB的使用](./Documentations/Hadoop+MongoDB_Crawler.md)　　挖坑待填  
+- [Python+MongoDB爬取并存储数据](./DocsOfInstallations/Python_Crawler_News.md)　　挖坑待填  
+- [全分布下Hadoop和MongoDB的使用](./DocsOfInstallations/Hadoop+MongoDB_Crawler.md)　　挖坑待填  
 - 未完待续

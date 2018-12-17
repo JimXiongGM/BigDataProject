@@ -1,7 +1,7 @@
 # Hadoop3全分布式+Hadoop Streaming环境搭建 
 
 可以说是站在巨人的肩膀上[@daviddwlee84](https://github.com/daviddwlee84)，我才能较快地搭建好全分布式Hadoop。这位同学的主要贡献是利用Python中的fabric包，实现了一键自动安装Hadoop3.1.1，不过他的环境是4块树莓派3b+，并基于本地局域网。[链接](https://github.com/daviddwlee84/RaspPi-Cluster)在此。  
-
+ 
 上述工具可以为我们实现批量测试、批量执行等基本操作，但是为了熟悉Hadoop的安装流程，为了能够在出问题的时候找到出错的原因，这里对Hadoop的安装细节进行梳理。我们可以从网络上找到大把的Hadoop3安装步骤，这里推荐读者先自行搜索、熟悉安装流程和Hadoop文件结构，再阅读本章节。  
 
 ## 目录
