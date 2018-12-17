@@ -8,15 +8,15 @@
 
 ### 将文件放到HDFS中
 
-首先我们把抽取出来的5000个json文件打包并上传到服务器。使用`tar -zcvf Sample_amazon-sales-rank-data-for-print-and-kindle-books.tar.gz Sample_amazon-sales-rank-data-for-print-and-kindle-books`命令创建压缩文件，使用`scp Sample_amazon-sales-rank-data-for-print-and-kindle-books.tar.gz root@hadoop_xgm:/`命令上传到服务器。  
+首先我们把抽取出来的1000个json文件打包并上传到服务器。使用`tar -zcvf Sample_1000_amazon-sales-rank-data-for-print-and-kindle-books.tar.gz Sample_amazon-sales-rank-data-for-print-and-kindle-books`命令创建压缩文件，使用`scp Sample_1000_amazon-sales-rank-data-for-print-and-kindle-books.tar.gz root@hadoop_xgm:/`命令上传到服务器。  
 
-使用ssh登陆服务器，使用`tar -zxvf Sample_amazon-sales-rank-data-for-print-and-kindle-books.tar.gz`解压，并且使用`hdfs dfs -mvFromLocal  Sample_amazon-sales-rank-data-for-print-and-kindle-books /data/` 命令将文件夹移动到HDFS目录下。  
+使用ssh登陆服务器，使用`tar -zxvf Sample_1000_amazon-sales-rank-data-for-print-and-kindle-books.tar.gz`解压，并且使用`hdfs dfs -copyFromLocal Sample_1000_amazon-sales-rank-data-for-print-and-kindle-books /data/` 命令将文件夹移动到HDFS目录下。  
 
-成功之后，可以使用`hdfs dfs -ls /data/`查看，或者访问WebUI查看，即`http://你的ip:50070`
+成功之后，可以使用`hdfs dfs -ls /data/`查看，或者访问WebUI查看，即`http://你的ip:50070`。这里的sample文件一共71.8MB。
 
 ## 使用hadoop streaming
 
-xxxxxx  
+关于hadoop streaming的使用以及Wordcount示例，可以在[Hadoop3全分布式+Hadoop streaming环境搭建](../Documentations/Hadoop_distribute.md)这篇文章中找到。  
 
 首先，我们需要构思想要什么，从而构造mapper与reducer函数。那么我们可以从数据的描述性统计开始。
 
@@ -31,9 +31,9 @@ xxxxxx
 
 这里的意思是这样的：Map-Reduce框架的基本流程是，存在许多mapper和许多reducer，每个mapper可能产生多个<key,value>，不同的mapper可以产生相同的key，经过shuffle之后，相同的key到达相同的reducer，进行合并操作。因此本文构建`<'2017-10-31',True/False>`，这样不同的json进入不同的mapper，就能够产生相同的key，即`'2017-10-31'`。  
 
-代码可以在当前目录找到，我们可以在shell中使用标准流进行测试。打开shell，进入这里的目录，输入`echo '{"1509379200":327588,"1509386400":348041,"1509393600":353297,"1509404400":369732}'  | ./mapper_kaggle.py`，输出如下
+代码可以在当前目录找到，我们可以在shell中使用标准流进行测试。打开shell，进入这里的目录，输入`echo '{"1509379200":327588,"1509386400":348041,"1509393600":353297,"1509404400":369732}'  | ./mapper_kaggle_1.py`，输出如下
 ```s
-xgm@xgm-xps:/BigDataProject/HadoopStreaming_Kaggle$ echo '{"1509379200":327588,"1509386400":348041,"1509393600":353297,"1509404400":369732}'  | ./mapper_kaggle.py
+xgm@xgm-xps:/BigDataProject/HadoopStreaming_Kaggle$ echo '{"1509379200":327588,"1509386400":348041,"1509393600":353297,"1509404400":369732}'  | ./mapper_kaggle_1.py
 filename_test_180_len   4
 filename_test_180_first 2017-10-31_00:00:00
 filename_test_180_last  2017-10-31_07:00:00
@@ -63,18 +63,18 @@ reducer稍微复杂一点。首先对每一个传入的流进行key-value切分�
 
 值得注意的是，Hadoop会在mapper的输出结果中对key进行排序，因此传到reducer部分的key值一定是相同key连续的。所以reducer可以判断，只要传入key（`key`）不等于正在统计的key（`current_key`），那么进行下一个key的计算。  
 
-我们可以在本地进行简单测试，使用命令`echo '{"1509379200":327588,"1509386400":348041,"1509393600":353297,"1509404400":369732}'  | ./mapper_kaggle.py | sort -t ' ' -k 1 | ./reducer_kaggle.py`即可，输出如下
+我们可以在本地进行简单测试，使用命令`echo '{"1509379200":327588,"1509386400":348041,"1509393600":353297,"1509404400":369732}'  | ./mapper_kaggle_1.py | sort -t ' ' -k 1 | ./reducer_kaggle_1.py`即可，输出如下
 ```s
-xgm@xgm-xps:/BigDataProject/HadoopStreaming_Kaggle$ echo '{"1509379200":327588,"1509386400":348041,"1509393600":353297,"1509404400":369732}'  | ./mapper_kaggle.py | sort -t '\t' -k 1 | ./reducer_kaggle.py
+xgm@xgm-xps:/BigDataProject/HadoopStreaming_Kaggle$ echo '{"1509379200":327588,"1509386400":348041,"1509393600":353297,"1509404400":369732}'  | ./mapper_kaggle_1.py | sort -t '\t' -k 1 | ./reducer_kaggle_1.py
 2017-10-31      1
 filename_test_894_first 2017-10-31_00:00:00
 filename_test_894_last  2017-10-31_07:00:00
 filename_test_894_len   4
 ```
 
-如果使用目录下的真实文件测试，`cat 000721393X_com_norm.json | ./mapper_kaggle.py | sort -t ' ' -k 1 | ./reducer_kaggle.py`，即可看到有意思的结果，书000721393X的开始结束时间如下，在2017-10-31没有记录，一共记录次数是2730.
+如果使用目录下的真实文件测试，`cat 000721393X_com_norm.json | ./mapper_kaggle_1.py | sort -t ' ' -k 1 | ./reducer_kaggle_1.py`，即可看到有意思的结果，书000721393X的开始结束时间如下，在2017-10-31没有记录，一共记录次数是2730.
 ```
-xgm@xgm-xps:/BigDataProject/HadoopStreaming_Kaggle$ cat 000721393X_com_norm.json |  ./mapper_kaggle.py | sort -t ' ' -k 1 | ./reducer_kaggle.py
+xgm@xgm-xps:/BigDataProject/HadoopStreaming_Kaggle$ cat 000721393X_com_norm.json |  ./mapper_kaggle_1.py | sort -t ' ' -k 1 | ./reducer_kaggle_1.py
 2017-10-31      0
 filename_test_960_first 2017-07-26_02:00:00
 filename_test_960_last  2018-06-30_08:00:00
