@@ -1,5 +1,4 @@
 #!/usr/bin/python
-
 import sys
 
 current_key = None

@@ -8,7 +8,7 @@
 
 ### 将文件放到HDFS中
 
-首先我们把抽取出来的1000个json文件打包并上传到服务器。使用`tar -zcvf Sample_1000_amazon-sales-rank-data-for-print-and-kindle-books.tar.gz Sample_amazon-sales-rank-data-for-print-and-kindle-books`命令创建压缩文件，使用`scp Sample_1000_amazon-sales-rank-data-for-print-and-kindle-books.tar.gz root@hadoop_xgm:/`命令上传到服务器。  
+首先我们把抽取出来的1000个json文件打包并上传到服务器。使用`tar -zcvf Sample_1000_amazon-sales-rank-data-for-print-and-kindle-books.tar.gz Sample_1000_amazon-sales-rank-data-for-print-and-kindle-books`命令创建压缩文件，使用`scp Sample_1000_amazon-sales-rank-data-for-print-and-kindle-books.tar.gz root@hadoop_xgm:/`命令上传到服务器。  
 
 使用ssh登陆服务器，使用`tar -zxvf Sample_1000_amazon-sales-rank-data-for-print-and-kindle-books.tar.gz`解压，并且使用`hdfs dfs -copyFromLocal Sample_1000_amazon-sales-rank-data-for-print-and-kindle-books /data/` 命令将文件夹移动到HDFS目录下。  
 
@@ -73,7 +73,7 @@ filename_test_894_len   4
 ```
 
 如果使用目录下的真实文件测试，`cat 000721393X_com_norm.json | ./mapper_kaggle_1.py | sort -t ' ' -k 1 | ./reducer_kaggle_1.py`，即可看到有意思的结果，书000721393X的开始结束时间如下，在2017-10-31没有记录，一共记录次数是2730.
-```
+```s
 xgm@xgm-xps:/BigDataProject/HadoopStreaming_Kaggle$ cat 000721393X_com_norm.json |  ./mapper_kaggle_1.py | sort -t ' ' -k 1 | ./reducer_kaggle_1.py
 2017-10-31      0
 filename_test_960_first 2017-07-26_02:00:00
@@ -86,85 +86,24 @@ filename_test_960_len   2730
 ## 提交到云端
 
 
-
 进入py文件所在的目录，使用如下命令即可。
-```
+```s
 hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-3.1.1.jar \
   -D mapreduce.job.name='KaggleTest01' \
-  -input /data/Sample_amazon-sales-rank-data-for-print-and-kindle-books/Sample_ranks_norm/*.json \
+  -input /data/Sample_1000_amazon-sales-rank-data-for-print-and-kindle-books/Sample_ranks_norm/*.json \
   -output /xgm/output/kaggle_01 \
   -mapper mapper_kaggle_1.py \
   -reducer reducer_kaggle_1.py \
   -file /root/xgm/mapper_kaggle_1.py \
   -file /root/xgm/reducer_kaggle_1.py
 ```
-等待一段时间后
-
-vim /opt/hadoop-3.1.1/logs/hadoop.log  
+等待一段时间后，可以看到运行成功。
 
 
 
-hadoop jar /opt/hadoop-3.1.1/share/hadoop/tools/lib/hadoop-streaming-3.1.1.jar \
-  -D mapreduce.job.name='WordCount01' \
-  -input /xgm/input/test.txt \
-  -output /xgm/output/WordCount06 \
-  -mapper mapper_WordCount.py \
-  -reducer reducer_WordCount.py \
-  -file /root/xgm/mapper_WordCount.py \
-  -file /root/xgm/reducer_WordCount.py
+## 失败调试
+
+如果失败，分析思路可以参考笔者之前搭建平台的文章：[Hadoop3全分布式+Hadoop streaming环境搭建](../Documentations/Hadoop_distribute.md)
 
 
 
-filename = os.environ["mapreduce_map_input_file"]
-
-hdfs dfs -mkdir -p /xgm/input;
-hdfs dfs -copyFromLocal /root/xgm/test.txt /xgm/input/
-
-
-....Failed
-
-
-
-  hadoop jar /opt/hadoop-3.1.1/share/hadoop/mapreduce/hadoop-mapreduce-examples-3.1.1.jar \
-  wordcount \
-  hdfs://master.local:9000/xgm/input hdfs://master.local:9000/xgm/output/w01
-
-
-echo "foo foo quux labs foo bar quux" | /root/xgm/mapper_WordCount.py | sort -k1,1 | /root/xgm/reducer_WordCount.py
-
-vim /root/xgm/mapper_WordCount.py
-vim /root/xgm/reducer_WordCount.py
-
-echo "set ts=4" >> vim /etc/vim/vimrc
-echo "set expandtab" >> vim /etc/vim/vimrc
-echo "set autoindent" >> vim /etc/vim/vimrc
-
-fab CMD-parallel ' echo "set ts=4" >> /etc/vim/vimrc ' -v
-fab CMD-parallel ' echo "set expandtab" >> /etc/vim/vimrc ' -v
-fab CMD-parallel ' echo "set autoindent" >> /etc/vim/vimrc ' -v
-
-yarn  logs  -applicationId  application_1544980159375_0001 > temp3.log
-
-
----------
-cp -f /00000/* /opt/hadoop-3.1.1/etc/hadoop/
-cp -f /root/00000/* /opt/hadoop-3.1.1/etc/hadoop/
-
-scp -r /00000 root@slave1:;
-scp -r /00000 root@slave2:;
-scp -r /00000 root@slave3:;
-scp -r /00000 root@slave4:;
-ls;
-
-
-39.105.155.26   slave1.local
-47.93.41.60     slave2.local
-39.106.222.117  slave3.local
-47.93.23.212    slave4.local
-
-vim /etc/hosts
-vim /etc/hostname
-
-yarn  logs  -applicationId   application_1544978267369_0001 > temp2.log
-
-chmod -R 777 /hadoop/
