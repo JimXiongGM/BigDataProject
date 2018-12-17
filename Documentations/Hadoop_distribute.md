@@ -243,7 +243,7 @@ sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 150
 ```
 最后的100和150表示优先级。如果要切换到Python2，执行`sudo update-alternatives --config python`，按照提示输入选择数字并回车即可。  
 
-使用命令`python --version`确认当前版本号，使用命令`which python`确认路径为`/usr/bin/python`。
+使用命令`python --version`确认当前版本号为python3，使用命令`which python`确认路径为`/usr/bin/python`。
 
 
 ### 范例 WordCount
