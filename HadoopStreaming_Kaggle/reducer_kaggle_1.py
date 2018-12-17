@@ -18,6 +18,7 @@ for line in sys.stdin:
     if current_key == key and '2017' in key:
         try:
             value = int(value)
+            current_value=int(current_value)
         except ValueError as err:
             continue
         current_value += value
@@ -27,9 +28,9 @@ for line in sys.stdin:
 
     else:
         if current_key:
-            print('%s\t%s' % (current_key, current_value))
+            print('%s\t%s' % (current_key, str(current_value)))
         current_value = value
         current_key = key
 
 if current_key == key:
-    print('%s\t%s' % (current_key, current_value))
+    print('%s\t%s' % (current_key, str(current_value)))
