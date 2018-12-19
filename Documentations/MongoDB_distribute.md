@@ -385,7 +385,7 @@ sh.addShard("shard4/slave4:27004");
 > use xxx  
 > db.dropDatabase();  
 
-进入mong，`mongo --host master --port 27000`，***新建一个测试用数据库***：  
+进入mongo，`mongo --host master --port 27000`，***新建一个测试用数据库***：  
 `sh.enableSharding("jim_data_test")`  
 
 ***建立collection和相关字段：***  
