@@ -109,15 +109,15 @@ mkdir -p /data/data1/mongodb/shard4/log;
 
 分别执行以下命令。这里要注意，`--bind_ip=master --port 27100`参数需要替换成相应的参数，特别是bind_ip，应该根据自己的hosts文件设置进行填写。  
 ```
-mongod --configsvr --replSet cfgRepset --bind_ip=master --port 27100 --directoryperdb --dbpath /data/data1/mongodb/configServer/db --logpath /data/data1/mongodb/configServer/log/mongodb.log --fork
+mongod --configsvr --replSet XGMRepset --bind_ip=master --port 27100 --directoryperdb --dbpath /data/data1/mongodb/configServer/db --logpath /data/data1/mongodb/configServer/log/mongodb.log --fork
 ```
 ```
 ssh root@slave1;
-mongod --configsvr --replSet cfgRepset --bind_ip=slave1 --port 27100 --directoryperdb --dbpath /data/data1/mongodb/configServer/db --logpath /data/data1/mongodb/configServer/log/mongodb.log --fork
+mongod --configsvr --replSet XGMRepset --bind_ip=slave1 --port 27100 --directoryperdb --dbpath /data/data1/mongodb/configServer/db --logpath /data/data1/mongodb/configServer/log/mongodb.log --fork
 ```
 ```
 ssh root@slave2;
-mongod --configsvr --replSet cfgRepset --bind_ip=slave2 --port 27100 --directoryperdb --dbpath /data/data1/mongodb/configServer/db --logpath /data/data1/mongodb/configServer/log/mongodb.log --fork
+mongod --configsvr --replSet XGMRepset --bind_ip=slave2 --port 27100 --directoryperdb --dbpath /data/data1/mongodb/configServer/db --logpath /data/data1/mongodb/configServer/log/mongodb.log --fork
 ```
 
 在三台机器上运行成功上述代码之后，我们可以通过`ps -ef | grep mongod`命令查看相应进程是否存在，以及进程占用的端口。  
@@ -125,7 +125,7 @@ mongod --configsvr --replSet cfgRepset --bind_ip=slave2 --port 27100 --directory
 正确的结果如下：  
 ```
 root@slave1:~# ps -ef | grep mongod
-root      7437     1  0 Dec11 ?        00:05:40 mongod --configsvr --replSet cfgRepset --bind_ip=slave1 --port 27100  --directoryperdb --dbpath /data/data1/mongodb/configServer/db --logpath /data/data1/mongodb/configServer/log/mongodb.log --fork
+root      7437     1  0 Dec11 ?        00:05:40 mongod --configsvr --replSet XGMRepset --bind_ip=slave1 --port 27100  --directoryperdb --dbpath /data/data1/mongodb/configServer/db --logpath /data/data1/mongodb/configServer/log/mongodb.log --fork
 ```
 
 还可以使用`netstat -a | grep 27100`命令查看27100端口的使用情况，结果如下：
@@ -141,13 +141,13 @@ unix  2      [ ACC ]     STREAM     LISTENING     159703   /tmp/mongodb-27100.so
 
 ***为config服务器配置3个副本***，命令如下，非常好懂：  
 ```
-rs.initiate({ _id:"cfgRepset", configsvr:true,members:[
+rs.initiate({ _id:"XGMRepset", configsvr:true,members:[
 {_id:0,host:"master:27100"},
 {_id:1,host:"slave1:27100"},
 {_id:2,host:"slave2:27100"}]
 });
 ```
-注意观察是否有报错，如果一切顺利，最后一行将会变成：`cfgRepset:PRIMARY>`，说明你现在已经处在`PRIMARY`主结点。仔细观察shell的输出，可以看到slave1和slave2的结点状态都是`SECONDARY`。根据mongodb的调度规则，当主节点宕机，次要结点将会变成主节点，且相应的值也会变成`PRIMARY`。  
+注意观察是否有报错，如果一切顺利，最后一行将会变成：`XGMRepset:PRIMARY>`，说明你现在已经处在`PRIMARY`主结点。仔细观察shell的输出，可以看到slave1和slave2的结点状态都是`SECONDARY`。根据mongodb的调度规则，当主节点宕机，次要结点将会变成主节点，且相应的值也会变成`PRIMARY`。  
 
 当然，我们也可以通过`rs.status()`查询状态。这时登陆任意slave结点，使用`netstat -a | grep 27100`查看状态，可以发现slave已经和master连接，有兴趣的读者可以试一试。  
 
@@ -296,25 +296,25 @@ shard4:SECONDARY>
 
 
 终于进入最后一步，***在3台config服务器分别启动mongos**（master&slave1&slave2）  
-`mongos --configdb cfgRepset/master:27100,slave1:27100,slave2:27100 --bind_ip master --port 27000  --logpath  /data/data1/mongodb/mongos/log/mongos.log --fork`  
+`mongos --configdb XGMRepset/master:27100,slave1:27100,slave2:27100 --bind_ip master --port 27000  --logpath  /data/data1/mongodb/mongos/log/mongos.log --fork`  
 
 
 ***使用ssh进入slave1和slave2，再次执行上述命令***，即可。
 ```
 ssh root@slave1
-mongos --configdb cfgRepset/master:27100,slave1:27100,slave2:27100 --bind_ip slave1 --port 27000  --logpath  /data/data1/mongodb/mongos/log/mongos.log --fork
+mongos --configdb XGMRepset/master:27100,slave1:27100,slave2:27100 --bind_ip slave1 --port 27000  --logpath  /data/data1/mongodb/mongos/log/mongos.log --fork
 
 ```
 ```
 ssh root@slave2
-mongos --configdb cfgRepset/master:27100,slave1:27100,slave2:27100 --bind_ip slave2 --port 27000  --logpath  /data/data1/mongodb/mongos/log/mongos.log --fork
+mongos --configdb XGMRepset/master:27100,slave1:27100,slave2:27100 --bind_ip slave2 --port 27000  --logpath  /data/data1/mongodb/mongos/log/mongos.log --fork
 
 ```
 
 
 成功的话，输出如下：  
 ```
-root@slave2:~# mongos --configdb cfgRepset/master:27100,slave1:27100,slave2:27100 --bind_ip slave2 --port 27000  --logpath  /data/data1/mongodb/mongos/log/mongos.log --fork
+root@slave2:~# mongos --configdb XGMRepset/master:27100,slave1:27100,slave2:27100 --bind_ip slave2 --port 27000  --logpath  /data/data1/mongodb/mongos/log/mongos.log --fork
 2018-12-12T19:14:07.193+0800 I CONTROL  [main] Automatically disabling TLS 1.0, to force-enable TLS 1.0 specify --sslDisabledProtocols 'none'
 about to fork child process, waiting until server is ready for connections.
 forked process: 31196
