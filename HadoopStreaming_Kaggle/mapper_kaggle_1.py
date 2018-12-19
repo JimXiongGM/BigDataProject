@@ -1,4 +1,7 @@
 #!/usr/bin/python
+'''
+@Author：gm_xiong@pku.edu.cn
+'''
 import sys,json,time,traceback,os
 import random
 

@@ -1,4 +1,7 @@
 #!/usr/bin/python
+'''
+@Author：gm_xiong@pku.edu.cn
+'''
 import sys
 
 current_key = None
