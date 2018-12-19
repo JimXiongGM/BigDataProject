@@ -43,7 +43,7 @@ source /etc/bash.bashrc;
 ```
 
 在每一台机器上***输入***`mongod`，测试配置路径是否正确。得到以下输出说明配置正确。  
-```py
+```
 root@master:/# mongod
 mongod: error while loading shared libraries: libcurl.so.4: cannot open shared object file: No such file or directory
 ```
@@ -56,7 +56,7 @@ sudo mkdir -p /opt/mongodb_data/logs;
 mongod --dbpath /opt/mongodb_data/data --logpath /opt/mongodb_data/logs/mongod.log --fork
 ```
 我这里启动遇到了问题  
-```py
+```
 root@master:/usr/lib/x86_64-linux-gnu# mongod --dbpath /opt/mongodb_data/data --logpath /opt/mongodb_data/logs/mongod.log
 mongod: error while loading shared libraries: libcurl.so.4: cannot open shared object file: No such file or directory
 ```
@@ -83,7 +83,7 @@ mongod: error while loading shared libraries: libcurl.so.4: cannot open shared o
 笔者的配置思路：3台config，4个shard。config port:26100,shard[1~4] port:[26001~26004],mongs port:26000
 
 ***在3个节点上建立mongos日志存储目录***（master;slave[1~2]）  
-```py
+```
 sudo mkdir -p /data/data1/mongodb/mongos/log  
 sudo chown -R root:root /data  
 sudo mkdir -p /data/data1/mongodb/configServer/db  
@@ -94,7 +94,7 @@ sudo chown -R root:root /data
 
 
 ***在4个节点上建立数据文件和日志文件存放目录***（slave[1~4]）
-```py
+```
 mkdir -p /data/data1/mongodb/shard1/db;
 mkdir -p /data/data1/mongodb/shard1/log;
 mkdir -p /data/data1/mongodb/shard2/db;
@@ -123,13 +123,13 @@ mongod --configsvr --replSet cfgRepset --bind_ip=slave2 --port 26100 --directory
 在三台机器上运行成功上述代码之后，我们可以通过`ps -ef | grep mongod`命令查看相应进程是否存在，以及进程占用的端口。  
 
 正确的结果如下：  
-```py
+```
 root@slave1:~# ps -ef | grep mongod
 root      7437     1  0 Dec11 ?        00:05:40 mongod --configsvr --replSet cfgRepset --bind_ip=slave1 --port 26100  --directoryperdb --dbpath /data/data1/mongodb/configServer/db --logpath /data/data1/mongodb/configServer/log/mongodb.log --fork
 ```
 
 还可以使用`netstat -a | grep 26100`命令查看26100端口的使用情况，结果如下：
-```py
+```
 root@slave1:~# netstat -a | grep 26100
 tcp        0      0 slave1:26100      *:*                     LISTEN     
 unix  2      [ ACC ]     STREAM     LISTENING     159703   /tmp/mongodb-26100.sock
@@ -140,7 +140,7 @@ unix  2      [ ACC ]     STREAM     LISTENING     159703   /tmp/mongodb-26100.so
 `mongo --host master --port 26100`  
 
 ***为config服务器配置3个副本***，命令如下，非常好懂：  
-```py
+```
 rs.initiate({ _id:"cfgRepset", configsvr:true,members:[
 {_id:0,host:"master:26100"},
 {_id:1,host:"slave1:26100"},
@@ -156,7 +156,7 @@ rs.initiate({ _id:"cfgRepset", configsvr:true,members:[
 
 分片服务器（shard）  
 ***结点1启动4个shard***  
-```py
+```
 ssh root@slave1
 mongod --shardsvr --replSet shard1 --bind_ip=slave1 --port 26001 --dbpath /data/data1/mongodb/shard1/db --logpath /data/data1/mongodb/shard1/log/shard1.log --directoryperdb  --fork;
 
@@ -168,7 +168,7 @@ mongod --shardsvr --replSet shard4 --bind_ip=slave1 --port 26004 --dbpath /data/
 ```
 
 ***结点2启动4个shard***  
-```py
+```
 ssh root@slave2
 mongod --shardsvr --replSet shard1 --bind_ip=slave2 --port 26001 --dbpath /data/data1/mongodb/shard1/db --logpath /data/data1/mongodb/shard1/log/shard1.log --directoryperdb  --fork;
 
@@ -180,7 +180,7 @@ mongod --shardsvr --replSet shard4 --bind_ip=slave2 --port 26004 --dbpath /data/
 ```
 
 ***结点3启动4个shard***    
-```py
+```
 ssh root@slave3
 mongod --shardsvr --replSet shard1 --bind_ip=slave3 --port 26001 --dbpath /data/data1/mongodb/shard1/db --logpath /data/data1/mongodb/shard1/log/shard1.log --directoryperdb  --fork;
 
@@ -191,7 +191,7 @@ mongod --shardsvr --replSet shard3 --bind_ip=slave3 --port 26003 --dbpath /data/
 mongod --shardsvr --replSet shard4 --bind_ip=slave3 --port 26004 --dbpath /data/data1/mongodb/shard4/db --logpath /data/data1/mongodb/shard4/log/shard4.log --directoryperdb  --fork;
 ```
 ***结点4启动4个shard***  
-```py
+```
 ssh root@slave4
 mongod --shardsvr --replSet shard1 --bind_ip=slave4 --port 26001 --dbpath /data/data1/mongodb/shard1/db --logpath /data/data1/mongodb/shard1/log/shard1.log --directoryperdb  --fork;
 
@@ -207,7 +207,7 @@ mongod --shardsvr --replSet shard4 --bind_ip=slave4 --port 26004 --dbpath /data/
 
 
 ***在slave1的26001端口启动mongo***，并初始化。
-```py
+```
 mongo --host slave1 --port 26001
 use admin;
 rs.initiate(
@@ -222,7 +222,7 @@ rs.initiate(
 ```
 
 ***同样在slave1，从26002端口启动mongo***，并初始化。
-```py
+```
 mongo --host slave1 --port 26002
 use admin;
 rs.initiate(
@@ -237,7 +237,7 @@ rs.initiate(
 ```
 
 ***同样在slave1，从26003端口启动mongo***，并初始化。
-```py
+```
 mongo --host slave1 --port 26003
 use admin;
 rs.initiate(
@@ -252,7 +252,7 @@ rs.initiate(
 ```
 
 ***同样在slave1，从26004端口启动mongo***，并初始化。  
-```py
+```
 mongo --host slave1 --port 26004
 use admin;
 rs.initiate(
@@ -268,7 +268,7 @@ rs.initiate(
 
 
 初始化成功之后的输出应该如下：  
-```py
+```
 > use admin;
 switched to db admin
 > rs.initiate(
@@ -313,7 +313,7 @@ mongos --configdb cfgRepset/master:26100,slave1:26100,slave2:26100 --bind_ip sla
 
 
 成功的话，输出如下：  
-```py
+```
 root@slave2:~# mongos --configdb cfgRepset/master:26100,slave1:26100,slave2:26100 --bind_ip slave2 --port 26000  --logpath  /data/data1/mongodb/mongos/log/mongos.log --fork
 2018-12-12T19:14:07.193+0800 I CONTROL  [main] Automatically disabling TLS 1.0, to force-enable TLS 1.0 specify --sslDisabledProtocols 'none'
 about to fork child process, waiting until server is ready for connections.
@@ -343,7 +343,7 @@ None | shard4:26004 | shard4:26004 | shard4:26004 | shard4:26004
 执行`mongo --host master --port 26000`，此时，shell显示为`mongos>`  
 
 ***输入如下：***  
-```py
+```
 sh.addShard("shard1/slave1:26001");
 sh.addShard("shard2/slave2:26002");
 sh.addShard("shard3/slave3:26003");
