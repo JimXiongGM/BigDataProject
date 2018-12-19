@@ -80,7 +80,7 @@ mongod: error while loading shared libraries: libcurl.so.4: cannot open shared o
 
 接下来先按照本文进行配置，之后就能大概明白mongodb的启动逻辑。  
 
-笔者的配置思路：3台config，4个shard。config port:26100,shard[1~4] port:[26001~26004],mongs port:26000
+笔者的配置思路：3台config，4个shard。config port:27100,shard[1-4] port:[27001-27004],mongs port:27000
 
 ***在3个节点上建立mongos日志存储目录***（master;slave[1~2]）  
 ```
@@ -107,17 +107,17 @@ mkdir -p /data/data1/mongodb/shard4/log;
 
 ***在3台config服务器启动configsvr***（master;slave[1~2]）  
 
-分别执行以下命令。这里要注意，`--bind_ip=master --port 26100`参数需要替换成相应的参数，特别是bind_ip，应该根据自己的hosts文件设置进行填写。  
+分别执行以下命令。这里要注意，`--bind_ip=master --port 27100`参数需要替换成相应的参数，特别是bind_ip，应该根据自己的hosts文件设置进行填写。  
 ```
-mongod --configsvr --replSet cfgRepset --bind_ip=master --port 26100 --directoryperdb --dbpath /data/data1/mongodb/configServer/db --logpath /data/data1/mongodb/configServer/log/mongodb.log --fork
+mongod --configsvr --replSet cfgRepset --bind_ip=master --port 27100 --directoryperdb --dbpath /data/data1/mongodb/configServer/db --logpath /data/data1/mongodb/configServer/log/mongodb.log --fork
 ```
 ```
 ssh root@slave1;
-mongod --configsvr --replSet cfgRepset --bind_ip=slave1 --port 26100 --directoryperdb --dbpath /data/data1/mongodb/configServer/db --logpath /data/data1/mongodb/configServer/log/mongodb.log --fork
+mongod --configsvr --replSet cfgRepset --bind_ip=slave1 --port 27100 --directoryperdb --dbpath /data/data1/mongodb/configServer/db --logpath /data/data1/mongodb/configServer/log/mongodb.log --fork
 ```
 ```
 ssh root@slave2;
-mongod --configsvr --replSet cfgRepset --bind_ip=slave2 --port 26100 --directoryperdb --dbpath /data/data1/mongodb/configServer/db --logpath /data/data1/mongodb/configServer/log/mongodb.log --fork
+mongod --configsvr --replSet cfgRepset --bind_ip=slave2 --port 27100 --directoryperdb --dbpath /data/data1/mongodb/configServer/db --logpath /data/data1/mongodb/configServer/log/mongodb.log --fork
 ```
 
 在三台机器上运行成功上述代码之后，我们可以通过`ps -ef | grep mongod`命令查看相应进程是否存在，以及进程占用的端口。  
@@ -125,31 +125,31 @@ mongod --configsvr --replSet cfgRepset --bind_ip=slave2 --port 26100 --directory
 正确的结果如下：  
 ```
 root@slave1:~# ps -ef | grep mongod
-root      7437     1  0 Dec11 ?        00:05:40 mongod --configsvr --replSet cfgRepset --bind_ip=slave1 --port 26100  --directoryperdb --dbpath /data/data1/mongodb/configServer/db --logpath /data/data1/mongodb/configServer/log/mongodb.log --fork
+root      7437     1  0 Dec11 ?        00:05:40 mongod --configsvr --replSet cfgRepset --bind_ip=slave1 --port 27100  --directoryperdb --dbpath /data/data1/mongodb/configServer/db --logpath /data/data1/mongodb/configServer/log/mongodb.log --fork
 ```
 
-还可以使用`netstat -a | grep 26100`命令查看26100端口的使用情况，结果如下：
+还可以使用`netstat -a | grep 27100`命令查看27100端口的使用情况，结果如下：
 ```
-root@slave1:~# netstat -a | grep 26100
-tcp        0      0 slave1:26100      *:*                     LISTEN     
-unix  2      [ ACC ]     STREAM     LISTENING     159703   /tmp/mongodb-26100.sock
+root@slave1:~# netstat -a | grep 27100
+tcp        0      0 slave1:27100      *:*                     LISTEN     
+unix  2      [ ACC ]     STREAM     LISTENING     159703   /tmp/mongodb-27100.sock
 ```
-确认完毕后，回到master结点，进行下一步操作，将3台打开了26100端口的config服务器进行连接、配置。  
+确认完毕后，回到master结点，进行下一步操作，将3台打开了27100端口的config服务器进行连接、配置。  
 
 ***在master主机进入sell***    
-`mongo --host master --port 26100`  
+`mongo --host master --port 27100`  
 
 ***为config服务器配置3个副本***，命令如下，非常好懂：  
 ```
 rs.initiate({ _id:"cfgRepset", configsvr:true,members:[
-{_id:0,host:"master:26100"},
-{_id:1,host:"slave1:26100"},
-{_id:2,host:"slave2:26100"}]
+{_id:0,host:"master:27100"},
+{_id:1,host:"slave1:27100"},
+{_id:2,host:"slave2:27100"}]
 });
 ```
 注意观察是否有报错，如果一切顺利，最后一行将会变成：`cfgRepset:PRIMARY>`，说明你现在已经处在`PRIMARY`主结点。仔细观察shell的输出，可以看到slave1和slave2的结点状态都是`SECONDARY`。根据mongodb的调度规则，当主节点宕机，次要结点将会变成主节点，且相应的值也会变成`PRIMARY`。  
 
-当然，我们也可以通过`rs.status()`查询状态。这时登陆任意slave结点，使用`netstat -a | grep 26100`查看状态，可以发现slave已经和master连接，有兴趣的读者可以试一试。  
+当然，我们也可以通过`rs.status()`查询状态。这时登陆任意slave结点，使用`netstat -a | grep 27100`查看状态，可以发现slave已经和master连接，有兴趣的读者可以试一试。  
 
 使用`exit`退出，进行下一步配置。  
 
@@ -158,109 +158,109 @@ rs.initiate({ _id:"cfgRepset", configsvr:true,members:[
 ***结点1启动4个shard***  
 ```
 ssh root@slave1
-mongod --shardsvr --replSet shard1 --bind_ip=slave1 --port 26001 --dbpath /data/data1/mongodb/shard1/db --logpath /data/data1/mongodb/shard1/log/shard1.log --directoryperdb  --fork;
+mongod --shardsvr --replSet shard1 --bind_ip=slave1 --port 27001 --dbpath /data/data1/mongodb/shard1/db --logpath /data/data1/mongodb/shard1/log/shard1.log --directoryperdb  --fork;
 
-mongod --shardsvr --replSet shard2 --bind_ip=slave1 --port 26002 --dbpath /data/data1/mongodb/shard2/db --logpath /data/data1/mongodb/shard2/log/shard2.log --directoryperdb  --fork;
+mongod --shardsvr --replSet shard2 --bind_ip=slave1 --port 27002 --dbpath /data/data1/mongodb/shard2/db --logpath /data/data1/mongodb/shard2/log/shard2.log --directoryperdb  --fork;
 
-mongod --shardsvr --replSet shard3 --bind_ip=slave1 --port 26003 --dbpath /data/data1/mongodb/shard3/db --logpath /data/data1/mongodb/shard3/log/shard3.log --directoryperdb  --fork;
+mongod --shardsvr --replSet shard3 --bind_ip=slave1 --port 27003 --dbpath /data/data1/mongodb/shard3/db --logpath /data/data1/mongodb/shard3/log/shard3.log --directoryperdb  --fork;
 
-mongod --shardsvr --replSet shard4 --bind_ip=slave1 --port 26004 --dbpath /data/data1/mongodb/shard4/db --logpath /data/data1/mongodb/shard4/log/shard4.log --directoryperdb  --fork;
+mongod --shardsvr --replSet shard4 --bind_ip=slave1 --port 27004 --dbpath /data/data1/mongodb/shard4/db --logpath /data/data1/mongodb/shard4/log/shard4.log --directoryperdb  --fork;
 ```
 
 ***结点2启动4个shard***  
 ```
 ssh root@slave2
-mongod --shardsvr --replSet shard1 --bind_ip=slave2 --port 26001 --dbpath /data/data1/mongodb/shard1/db --logpath /data/data1/mongodb/shard1/log/shard1.log --directoryperdb  --fork;
+mongod --shardsvr --replSet shard1 --bind_ip=slave2 --port 27001 --dbpath /data/data1/mongodb/shard1/db --logpath /data/data1/mongodb/shard1/log/shard1.log --directoryperdb  --fork;
 
-mongod --shardsvr --replSet shard2 --bind_ip=slave2 --port 26002 --dbpath /data/data1/mongodb/shard2/db --logpath /data/data1/mongodb/shard2/log/shard2.log --directoryperdb  --fork;
+mongod --shardsvr --replSet shard2 --bind_ip=slave2 --port 27002 --dbpath /data/data1/mongodb/shard2/db --logpath /data/data1/mongodb/shard2/log/shard2.log --directoryperdb  --fork;
 
-mongod --shardsvr --replSet shard3 --bind_ip=slave2 --port 26003 --dbpath /data/data1/mongodb/shard3/db --logpath /data/data1/mongodb/shard3/log/shard3.log --directoryperdb  --fork;
+mongod --shardsvr --replSet shard3 --bind_ip=slave2 --port 27003 --dbpath /data/data1/mongodb/shard3/db --logpath /data/data1/mongodb/shard3/log/shard3.log --directoryperdb  --fork;
 
-mongod --shardsvr --replSet shard4 --bind_ip=slave2 --port 26004 --dbpath /data/data1/mongodb/shard4/db --logpath /data/data1/mongodb/shard4/log/shard4.log --directoryperdb  --fork;
+mongod --shardsvr --replSet shard4 --bind_ip=slave2 --port 27004 --dbpath /data/data1/mongodb/shard4/db --logpath /data/data1/mongodb/shard4/log/shard4.log --directoryperdb  --fork;
 ```
 
 ***结点3启动4个shard***    
 ```
 ssh root@slave3
-mongod --shardsvr --replSet shard1 --bind_ip=slave3 --port 26001 --dbpath /data/data1/mongodb/shard1/db --logpath /data/data1/mongodb/shard1/log/shard1.log --directoryperdb  --fork;
+mongod --shardsvr --replSet shard1 --bind_ip=slave3 --port 27001 --dbpath /data/data1/mongodb/shard1/db --logpath /data/data1/mongodb/shard1/log/shard1.log --directoryperdb  --fork;
 
-mongod --shardsvr --replSet shard2 --bind_ip=slave3 --port 26002 --dbpath /data/data1/mongodb/shard2/db --logpath /data/data1/mongodb/shard2/log/shard2.log --directoryperdb  --fork;
+mongod --shardsvr --replSet shard2 --bind_ip=slave3 --port 27002 --dbpath /data/data1/mongodb/shard2/db --logpath /data/data1/mongodb/shard2/log/shard2.log --directoryperdb  --fork;
 
-mongod --shardsvr --replSet shard3 --bind_ip=slave3 --port 26003 --dbpath /data/data1/mongodb/shard3/db --logpath /data/data1/mongodb/shard3/log/shard3.log --directoryperdb  --fork;
+mongod --shardsvr --replSet shard3 --bind_ip=slave3 --port 27003 --dbpath /data/data1/mongodb/shard3/db --logpath /data/data1/mongodb/shard3/log/shard3.log --directoryperdb  --fork;
 
-mongod --shardsvr --replSet shard4 --bind_ip=slave3 --port 26004 --dbpath /data/data1/mongodb/shard4/db --logpath /data/data1/mongodb/shard4/log/shard4.log --directoryperdb  --fork;
+mongod --shardsvr --replSet shard4 --bind_ip=slave3 --port 27004 --dbpath /data/data1/mongodb/shard4/db --logpath /data/data1/mongodb/shard4/log/shard4.log --directoryperdb  --fork;
 ```
 ***结点4启动4个shard***  
 ```
 ssh root@slave4
-mongod --shardsvr --replSet shard1 --bind_ip=slave4 --port 26001 --dbpath /data/data1/mongodb/shard1/db --logpath /data/data1/mongodb/shard1/log/shard1.log --directoryperdb  --fork;
+mongod --shardsvr --replSet shard1 --bind_ip=slave4 --port 27001 --dbpath /data/data1/mongodb/shard1/db --logpath /data/data1/mongodb/shard1/log/shard1.log --directoryperdb  --fork;
 
-mongod --shardsvr --replSet shard2 --bind_ip=slave4 --port 26002 --dbpath /data/data1/mongodb/shard2/db --logpath /data/data1/mongodb/shard2/log/shard2.log --directoryperdb  --fork;
+mongod --shardsvr --replSet shard2 --bind_ip=slave4 --port 27002 --dbpath /data/data1/mongodb/shard2/db --logpath /data/data1/mongodb/shard2/log/shard2.log --directoryperdb  --fork;
 
-mongod --shardsvr --replSet shard3 --bind_ip=slave4 --port 26003 --dbpath /data/data1/mongodb/shard3/db --logpath /data/data1/mongodb/shard3/log/shard3.log --directoryperdb  --fork;
+mongod --shardsvr --replSet shard3 --bind_ip=slave4 --port 27003 --dbpath /data/data1/mongodb/shard3/db --logpath /data/data1/mongodb/shard3/log/shard3.log --directoryperdb  --fork;
 
-mongod --shardsvr --replSet shard4 --bind_ip=slave4 --port 26004 --dbpath /data/data1/mongodb/shard4/db --logpath /data/data1/mongodb/shard4/log/shard4.log --directoryperdb  --fork;
+mongod --shardsvr --replSet shard4 --bind_ip=slave4 --port 27004 --dbpath /data/data1/mongodb/shard4/db --logpath /data/data1/mongodb/shard4/log/shard4.log --directoryperdb  --fork;
 ```
 
 
 到这里，我们已经在各个机器上打开了所有的端口，接下来将4个机器（slave1~4）连起来。因为我的配置是4台机器，4个shards，每台机器都有存储一个shard，因此我只需要ssh进入其中的任何一台，初始化4个shard的配置即可。这里进入slave1，并配置。  
 
 
-***在slave1的26001端口启动mongo***，并初始化。
+***在slave1的27001端口启动mongo***，并初始化。
 ```
-mongo --host slave1 --port 26001
+mongo --host slave1 --port 27001
 use admin;
 rs.initiate(
 { _id:"shard1", members:[
-{_id:0,host:"slave1:26001"},
-{_id:1,host:"slave2:26001"},
-{_id:2,host:"slave3:26001"},
-{_id:3,host:"slave4:26001",arbiterOnly:true}
+{_id:0,host:"slave1:27001"},
+{_id:1,host:"slave2:27001"},
+{_id:2,host:"slave3:27001"},
+{_id:3,host:"slave4:27001",arbiterOnly:true}
 ]
 }
 );
 ```
 
-***同样在slave1，从26002端口启动mongo***，并初始化。
+***同样在slave1，从27002端口启动mongo***，并初始化。
 ```
-mongo --host slave1 --port 26002
+mongo --host slave1 --port 27002
 use admin;
 rs.initiate(
 { _id:"shard2", members:[
-{_id:0,host:"slave1:26002"},
-{_id:1,host:"slave2:26002"},
-{_id:2,host:"slave3:26002"},
-{_id:3,host:"slave4:26002",arbiterOnly:true}
+{_id:0,host:"slave1:27002"},
+{_id:1,host:"slave2:27002"},
+{_id:2,host:"slave3:27002"},
+{_id:3,host:"slave4:27002",arbiterOnly:true}
 ]
 }
 );
 ```
 
-***同样在slave1，从26003端口启动mongo***，并初始化。
+***同样在slave1，从27003端口启动mongo***，并初始化。
 ```
-mongo --host slave1 --port 26003
+mongo --host slave1 --port 27003
 use admin;
 rs.initiate(
 { _id:"shard3", members:[
-{_id:0,host:"slave1:26003"},
-{_id:1,host:"slave2:26003"},
-{_id:2,host:"slave3:26003"},
-{_id:3,host:"slave4:26003",arbiterOnly:true}
+{_id:0,host:"slave1:27003"},
+{_id:1,host:"slave2:27003"},
+{_id:2,host:"slave3:27003"},
+{_id:3,host:"slave4:27003",arbiterOnly:true}
 ]
 }
 );
 ```
 
-***同样在slave1，从26004端口启动mongo***，并初始化。  
+***同样在slave1，从27004端口启动mongo***，并初始化。  
 ```
-mongo --host slave1 --port 26004
+mongo --host slave1 --port 27004
 use admin;
 rs.initiate(
 { _id:"shard4", members:[
-{_id:0,host:"slave1:26004"},
-{_id:1,host:"slave2:26004"},
-{_id:2,host:"slave3:26004"},
-{_id:3,host:"slave4:26004",arbiterOnly:true}
+{_id:0,host:"slave1:27004"},
+{_id:1,host:"slave2:27004"},
+{_id:2,host:"slave3:27004"},
+{_id:3,host:"slave4:27004",arbiterOnly:true}
 ]
 }
 );
@@ -273,10 +273,10 @@ rs.initiate(
 switched to db admin
 > rs.initiate(
 ... { _id:"shard4", members:[
-... {_id:0,host:"slave1:26004"},
-... {_id:1,host:"slave2:26004"},
-... {_id:2,host:"slave3:26004"},
-... {_id:3,host:"slave4:26004",arbiterOnly:true}
+... {_id:0,host:"slave1:27004"},
+... {_id:1,host:"slave2:27004"},
+... {_id:2,host:"slave3:27004"},
+... {_id:3,host:"slave4:27004",arbiterOnly:true}
 ... ]
 ... }
 ... );
@@ -296,25 +296,25 @@ shard4:SECONDARY>
 
 
 终于进入最后一步，***在3台config服务器分别启动mongos**（master&slave1&slave2）  
-`mongos --configdb cfgRepset/master:26100,slave1:26100,slave2:26100 --bind_ip master --port 26000  --logpath  /data/data1/mongodb/mongos/log/mongos.log --fork`  
+`mongos --configdb cfgRepset/master:27100,slave1:27100,slave2:27100 --bind_ip master --port 27000  --logpath  /data/data1/mongodb/mongos/log/mongos.log --fork`  
 
 
 ***使用ssh进入slave1和slave2，再次执行上述命令***，即可。
 ```
 ssh root@slave1
-mongos --configdb cfgRepset/master:26100,slave1:26100,slave2:26100 --bind_ip slave1 --port 26000  --logpath  /data/data1/mongodb/mongos/log/mongos.log --fork
+mongos --configdb cfgRepset/master:27100,slave1:27100,slave2:27100 --bind_ip slave1 --port 27000  --logpath  /data/data1/mongodb/mongos/log/mongos.log --fork
 
 ```
 ```
 ssh root@slave2
-mongos --configdb cfgRepset/master:26100,slave1:26100,slave2:26100 --bind_ip slave2 --port 26000  --logpath  /data/data1/mongodb/mongos/log/mongos.log --fork
+mongos --configdb cfgRepset/master:27100,slave1:27100,slave2:27100 --bind_ip slave2 --port 27000  --logpath  /data/data1/mongodb/mongos/log/mongos.log --fork
 
 ```
 
 
 成功的话，输出如下：  
 ```
-root@slave2:~# mongos --configdb cfgRepset/master:26100,slave1:26100,slave2:26100 --bind_ip slave2 --port 26000  --logpath  /data/data1/mongodb/mongos/log/mongos.log --fork
+root@slave2:~# mongos --configdb cfgRepset/master:27100,slave1:27100,slave2:27100 --bind_ip slave2 --port 27000  --logpath  /data/data1/mongodb/mongos/log/mongos.log --fork
 2018-12-12T19:14:07.193+0800 I CONTROL  [main] Automatically disabling TLS 1.0, to force-enable TLS 1.0 specify --sslDisabledProtocols 'none'
 about to fork child process, waiting until server is ready for connections.
 forked process: 31196
@@ -326,39 +326,39 @@ child process started successfully, parent exiting
 具体为：  
 master | slave1 | slave2 | slave3 | slave4
 --- | --- | --- | --- | ---
-mongos:26000|mongos:26000|mongos:26000|None | None
-None | shard1:26001 | shard1:26001 | shard1:26001 | shard1:26001
-None | shard2:26002 | shard2:26002 | shard2:26002 | shard2:26002
-None | shard3:26003 | shard3:26003 | shard3:26003 | shard3:26003
-None | shard4:26004 | shard4:26004 | shard4:26004 | shard4:26004
+mongos:27000|mongos:27000|mongos:27000|None | None
+None | shard1:27001 | shard1:27001 | shard1:27001 | shard1:27001
+None | shard2:27002 | shard2:27002 | shard2:27002 | shard2:27002
+None | shard3:27003 | shard3:27003 | shard3:27003 | shard3:27003
+None | shard4:27004 | shard4:27004 | shard4:27004 | shard4:27004
 
 到这里，我们可以回顾安装流程，可以看到，其实mongodb的安装逻辑很简单，但是过程比较繁琐。。  
 
-首先，我们配置config服务器，自己选定2个或者3个结点，在结点端使用mongod命令，加上--configsvr表示配置config，然后在自己定的26100端口开启服务。之后我们任意进入一台机器，使用shell添加所有config服务器的ip和端口信息，mongodb会自动连接相应结点并且初始化完毕。shard的配置流程完全一样，分别在我们自定的机器上，使用mongod --shardsvr，在不同的端口开启服务，然后相互连接。唯一有一点点区别的是mongos，它需要连接已经开启的26100端口，并且在26000上启动自己。下面，我们就可以直接使用mongo命令，连接26000端口，即直接连接路由端口进行操作。  
+首先，我们配置config服务器，自己选定2个或者3个结点，在结点端使用mongod命令，加上--configsvr表示配置config，然后在自己定的27100端口开启服务。之后我们任意进入一台机器，使用shell添加所有config服务器的ip和端口信息，mongodb会自动连接相应结点并且初始化完毕。shard的配置流程完全一样，分别在我们自定的机器上，使用mongod --shardsvr，在不同的端口开启服务，然后相互连接。唯一有一点点区别的是mongos，它需要连接已经开启的27100端口，并且在27000上启动自己。下面，我们就可以直接使用mongo命令，连接27000端口，即直接连接路由端口进行操作。  
 
 我们现在需要登录路由节点，激活数据库分片（shards），指定将什么数据库进行分布式存储。  
 
 ***回到master，进入mongo***  
 
-执行`mongo --host master --port 26000`，此时，shell显示为`mongos>`  
+执行`mongo --host master --port 27000`，此时，shell显示为`mongos>`  
 
 ***输入如下：***  
 ```
-sh.addShard("shard1/slave1:26001");
-sh.addShard("shard2/slave2:26002");
-sh.addShard("shard3/slave3:26003");
-sh.addShard("shard4/slave4:26004");
+sh.addShard("shard1/slave1:27001");
+sh.addShard("shard2/slave2:27002");
+sh.addShard("shard3/slave3:27003");
+sh.addShard("shard4/slave4:27004");
 ```
 执行成功后，我们能在shell中看到`"ok" : 1`。  
 执行`sh.status()`，我们可以查看shard的状态。其中，我们能看到：  
 ```json
   shards:
-        {  "_id" : "shard1",  "host" : "shard1/slave1:26001,slave2:26001,slave3:26001",  "state" : 1 }
-        {  "_id" : "shard2",  "host" : "shard2/slave1:26002,slave2:26002,slave3:26002",  "state" : 1 }
-        {  "_id" : "shard3",  "host" : "shard3/slave1:26003,slave2:26003,slave3:26003",  "state" : 1 }
-        {  "_id" : "shard4",  "host" : "shard4/slave1:26004,slave2:26004,slave3:26004",  "state" : 1 }
+        {  "_id" : "shard1",  "host" : "shard1/slave1:27001,slave2:27001,slave3:27001",  "state" : 1 }
+        {  "_id" : "shard2",  "host" : "shard2/slave1:27002,slave2:27002,slave3:27002",  "state" : 1 }
+        {  "_id" : "shard3",  "host" : "shard3/slave1:27003,slave2:27003,slave3:27003",  "state" : 1 }
+        {  "_id" : "shard4",  "host" : "shard4/slave1:27004,slave2:27004,slave3:27004",  "state" : 1 }
 ```
-值得注意的是，这里居然只有slave1~3，那么slave4到哪去了？仔细观察之前的配置，我们能发现：`host:"slave4:26004",arbiterOnly:true`，那么，该结点是”仲裁结点“。根据官网以及网络的资料（[这里](https://docs.mongodb.com/manual/reference/replica-configuration/index.html)和[这里](https://blog.csdn.net/canot/article/details/50739359)）该结点不存数据，仅为仲裁使用。  
+值得注意的是，这里居然只有slave1~3，那么slave4到哪去了？仔细观察之前的配置，我们能发现：`host:"slave4:27004",arbiterOnly:true`，那么，该结点是”仲裁结点“。根据官网以及网络的资料（[这里](https://docs.mongodb.com/manual/reference/replica-configuration/index.html)和[这里](https://blog.csdn.net/canot/article/details/50739359)）该结点不存数据，仅为仲裁使用。  
 ![avatar](./mongodb_arbiter.png)
 
 
@@ -385,7 +385,7 @@ sh.addShard("shard4/slave4:26004");
 > use xxx  
 > db.dropDatabase();  
 
-进入mong，`mongo --host master --port 26000`，***新建一个测试用数据库***：  
+进入mong，`mongo --host master --port 27000`，***新建一个测试用数据库***：  
 `sh.enableSharding("jim_data_test")`  
 
 ***建立collection和相关字段：***  
