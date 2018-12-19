@@ -1,6 +1,6 @@
 # MongoDB的全分布式安装
 
-如[[Hadoop3全分布式+Hadoop streaming环境搭建](./Hadoop_distribute.md)所述，阅读本小章的前提条件是已经申请5个云服务器结点，修改好相应的host文件，并开启了所有的端口访问权限。  
+如[[Hadoop3全分布式+Hadoop streaming环境搭建](./Hadoop_distribute.md)所述，阅读本小章的前提条件是已经申请5个云服务器节点，修改好相应的host文件，并开启了所有的端口访问权限。  
 
 这里简要分为三小节。  
 
@@ -17,7 +17,7 @@
 `scp mongodb-linux-x86_64-ubuntu1604-4.0.4.tgz root@hadoop_xgm:/`
 `ssh root@hadoop_xgm`
 
-***复制到每一个结点***  
+***复制到每一个节点***  
 ```
 scp mongodb-linux-x86_64-ubuntu1604-4.0.4.tgz root@slave1: ;
 scp mongodb-linux-x86_64-ubuntu1604-4.0.4.tgz root@slave2: ;   
@@ -76,7 +76,7 @@ mongod: error while loading shared libraries: libcurl.so.4: cannot open shared o
 > mongodb使用config服务器存储分布式文件的索引等内容  
 > mongodb使用mongs作为路由工具  
 > mongodb使用shard进行数据库分片  
-> mongod命令是在本地启动各种服务，mongos是在已经打开端口的结点之间建立路由，mongo是分布式shell的总入口  
+> mongod命令是在本地启动各种服务，mongos是在已经打开端口的节点之间建立路由，mongo是分布式shell的总入口  
 
 接下来先按照本文进行配置，之后就能大概明白mongodb的启动逻辑。  
 
@@ -134,7 +134,7 @@ root@slave1:~# netstat -a | grep 27100
 tcp        0      0 slave1:27100      *:*                     LISTEN     
 unix  2      [ ACC ]     STREAM     LISTENING     159703   /tmp/mongodb-27100.sock
 ```
-确认完毕后，回到master结点，进行下一步操作，将3台打开了27100端口的config服务器进行连接、配置。  
+确认完毕后，回到master节点，进行下一步操作，将3台打开了27100端口的config服务器进行连接、配置。  
 
 ***在master主机进入sell***    
 `mongo --host master --port 27100`  
@@ -147,15 +147,15 @@ rs.initiate({ _id:"XGMRepset", configsvr:true,members:[
 {_id:2,host:"slave2:27100"}]
 });
 ```
-注意观察是否有报错，如果一切顺利，最后一行将会变成：`XGMRepset:PRIMARY>`，说明你现在已经处在`PRIMARY`主结点。仔细观察shell的输出，可以看到slave1和slave2的结点状态都是`SECONDARY`。根据mongodb的调度规则，当主节点宕机，次要结点将会变成主节点，且相应的值也会变成`PRIMARY`。  
+注意观察是否有报错，如果一切顺利，最后一行将会变成：`XGMRepset:PRIMARY>`，说明你现在已经处在`PRIMARY`主节点。仔细观察shell的输出，可以看到slave1和slave2的节点状态都是`SECONDARY`。根据mongodb的调度规则，当主节点宕机，次要节点将会变成主节点，且相应的值也会变成`PRIMARY`。  
 
-当然，我们也可以通过`rs.status()`查询状态。这时登陆任意slave结点，使用`netstat -a | grep 27100`查看状态，可以发现slave已经和master连接，有兴趣的读者可以试一试。  
+当然，我们也可以通过`rs.status()`查询状态。这时登陆任意slave节点，使用`netstat -a | grep 27100`查看状态，可以发现slave已经和master连接，有兴趣的读者可以试一试。  
 
 使用`exit`退出，进行下一步配置。  
 
 
 分片服务器（shard）  
-***结点1启动4个shard***  
+***节点1启动4个shard***  
 ```
 ssh root@slave1
 mongod --shardsvr --replSet shard1 --bind_ip=slave1 --port 27001 --dbpath /data/data1/mongodb/shard1/db --logpath /data/data1/mongodb/shard1/log/shard1.log --directoryperdb  --fork;
@@ -167,7 +167,7 @@ mongod --shardsvr --replSet shard3 --bind_ip=slave1 --port 27003 --dbpath /data/
 mongod --shardsvr --replSet shard4 --bind_ip=slave1 --port 27004 --dbpath /data/data1/mongodb/shard4/db --logpath /data/data1/mongodb/shard4/log/shard4.log --directoryperdb  --fork;
 ```
 
-***结点2启动4个shard***  
+***节点2启动4个shard***  
 ```
 ssh root@slave2
 mongod --shardsvr --replSet shard1 --bind_ip=slave2 --port 27001 --dbpath /data/data1/mongodb/shard1/db --logpath /data/data1/mongodb/shard1/log/shard1.log --directoryperdb  --fork;
@@ -179,7 +179,7 @@ mongod --shardsvr --replSet shard3 --bind_ip=slave2 --port 27003 --dbpath /data/
 mongod --shardsvr --replSet shard4 --bind_ip=slave2 --port 27004 --dbpath /data/data1/mongodb/shard4/db --logpath /data/data1/mongodb/shard4/log/shard4.log --directoryperdb  --fork;
 ```
 
-***结点3启动4个shard***    
+***节点3启动4个shard***    
 ```
 ssh root@slave3
 mongod --shardsvr --replSet shard1 --bind_ip=slave3 --port 27001 --dbpath /data/data1/mongodb/shard1/db --logpath /data/data1/mongodb/shard1/log/shard1.log --directoryperdb  --fork;
@@ -190,7 +190,7 @@ mongod --shardsvr --replSet shard3 --bind_ip=slave3 --port 27003 --dbpath /data/
 
 mongod --shardsvr --replSet shard4 --bind_ip=slave3 --port 27004 --dbpath /data/data1/mongodb/shard4/db --logpath /data/data1/mongodb/shard4/log/shard4.log --directoryperdb  --fork;
 ```
-***结点4启动4个shard***  
+***节点4启动4个shard***  
 ```
 ssh root@slave4
 mongod --shardsvr --replSet shard1 --bind_ip=slave4 --port 27001 --dbpath /data/data1/mongodb/shard1/db --logpath /data/data1/mongodb/shard1/log/shard1.log --directoryperdb  --fork;
@@ -325,8 +325,8 @@ child process started successfully, parent exiting
 恭喜你，至此，mongodb的数据（分片+副本），配置服务器（config server），路由服务器（mongos）都已经配置好了。  
 具体为：  
 master | slave1 | slave2 | slave3 | slave4
------- | ------ | ------ | ------ | ------
-mongos:27000|mongos:27000|mongos:27000|None | None
+------ | ------ | ------ | ------ | ------ 
+mongos:27000 | mongos:27000 | mongos:27000 | None | None
 None | shard1:27001 | shard1:27001 | shard1:27001 | shard1:27001
 None | shard2:27002 | shard2:27002 | shard2:27002 | shard2:27002
 None | shard3:27003 | shard3:27003 | shard3:27003 | shard3:27003
@@ -334,7 +334,7 @@ None | shard4:27004 | shard4:27004 | shard4:27004 | shard4:27004
 
 到这里，我们可以回顾安装流程，可以看到，其实mongodb的安装逻辑很简单，但是过程比较繁琐。。  
 
-首先，我们配置config服务器，自己选定2个或者3个结点，在结点端使用mongod命令，加上--configsvr表示配置config，然后在自己定的27100端口开启服务。之后我们任意进入一台机器，使用shell添加所有config服务器的ip和端口信息，mongodb会自动连接相应结点并且初始化完毕。shard的配置流程完全一样，分别在我们自定的机器上，使用mongod --shardsvr，在不同的端口开启服务，然后相互连接。唯一有一点点区别的是mongos，它需要连接已经开启的27100端口，并且在27000上启动自己。下面，我们就可以直接使用mongo命令，连接27000端口，即直接连接路由端口进行操作。  
+首先，我们配置config服务器，自己选定2个或者3个节点，在节点端使用mongod命令，加上--configsvr表示配置config，然后在自己定的27100端口开启服务。之后我们任意进入一台机器，使用shell添加所有config服务器的ip和端口信息，mongodb会自动连接相应节点并且初始化完毕。shard的配置流程完全一样，分别在我们自定的机器上，使用mongod --shardsvr，在不同的端口开启服务，然后相互连接。唯一有一点点区别的是mongos，它需要连接已经开启的27100端口，并且在27000上启动自己。下面，我们就可以直接使用mongo命令，连接27000端口，即直接连接路由端口进行操作。  
 
 我们现在需要登录路由节点，激活数据库分片（shards），指定将什么数据库进行分布式存储。  
 
@@ -351,14 +351,14 @@ sh.addShard("shard4/slave4:27004");
 ```
 执行成功后，我们能在shell中看到`"ok" : 1`。  
 执行`sh.status()`，我们可以查看shard的状态。其中，我们能看到：  
-```json
+```
   shards:
         {  "_id" : "shard1",  "host" : "shard1/slave1:27001,slave2:27001,slave3:27001",  "state" : 1 }
         {  "_id" : "shard2",  "host" : "shard2/slave1:27002,slave2:27002,slave3:27002",  "state" : 1 }
         {  "_id" : "shard3",  "host" : "shard3/slave1:27003,slave2:27003,slave3:27003",  "state" : 1 }
         {  "_id" : "shard4",  "host" : "shard4/slave1:27004,slave2:27004,slave3:27004",  "state" : 1 }
 ```
-值得注意的是，这里居然只有slave1~3，那么slave4到哪去了？仔细观察之前的配置，我们能发现：`host:"slave4:27004",arbiterOnly:true`，那么，该结点是”仲裁结点“。根据官网以及网络的资料（[这里](https://docs.mongodb.com/manual/reference/replica-configuration/index.html)和[这里](https://blog.csdn.net/canot/article/details/50739359)）该结点不存数据，仅为仲裁使用。  
+值得注意的是，这里居然只有slave1~3，那么slave4到哪去了？仔细观察之前的配置，我们能发现：`host:"slave4:27004",arbiterOnly:true`，那么，该节点是”仲裁节点“。根据官网以及网络的资料（[这里](https://docs.mongodb.com/manual/reference/replica-configuration/index.html)和[这里](https://blog.csdn.net/canot/article/details/50739359)）该节点不存数据，仅为仲裁使用。  
 ![avatar](./mongodb_arbiter.png)
 
 
@@ -419,7 +419,7 @@ sh.addShard("shard4/slave4:27004");
 使用`for (i=1;i<=10000;i++) db.jim_collections_test.insert({name: "Jim No."+i, age: (i%233)})`***插入1W条数据***。等待不到10秒后shell输出`WriteResult({ "nInserted" : 1 })`，表示成功。  
 
 使用`sh.status()`查询数据库状态，我们能看到name部分已经建立好了哈希索引：  
-```json
+```
 ...
 { "name" : { "$minKey" : 1 } } -->> { "name" : NumberLong("-6917529027641081850") } on : shard1 Timestamp(1, 0) 
 { "name" : NumberLong("-6917529027641081850") } -->> { "name" : NumberLong("-4611686018427387900") } on : shard1 Timestamp(1, 1) 
@@ -428,7 +428,7 @@ sh.addShard("shard4/slave4:27004");
 ```
 
 最后一个命令，我们使用`db.jim_collections_test.find({age: {$gt: 230}})`，***查询age大于230的记录***，看到如下输出：  
-```json
+```
 mongos> db.jim_collections_test.find({age: {$gt: 230}})
 { "_id" : ObjectId("5c110bc4ec3f3d9023d801ff"), "name" : "Jim No.232", "age" : 232 }
 { "_id" : ObjectId("5c110bc5ec3f3d9023d802e8"), "name" : "Jim No.465", "age" : 232 }
