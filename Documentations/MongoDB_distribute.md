@@ -291,7 +291,7 @@ switched to db admin
 		}
 	}
 }
-shard4:SECONDARY> 
+shard4：SECONDARY> 
 ```
 
 
@@ -327,10 +327,10 @@ child process started successfully, parent exiting
 master | slave1 | slave2 | slave3 | slave4  
 ------ | ------ | ------ | ------ | ------   
 mongos:27000 | mongos:27000 | mongos:27000 | None | None  
-None | shard1:27001 | shard1:27001 | shard1:27001 | shard1:27001  
-None | shard2:27002 | shard2:27002 | shard2:27002 | shard2:27002  
-None | shard3:27003 | shard3:27003 | shard3:27003 | shard3:27003  
-None | shard4:27004 | shard4:27004 | shard4:27004 | shard4:27004  
+None | shard1：27001 | shard1：27001 | shard1：27001 | shard1：27001  
+None | shard2：27002 | shard2：27002 | shard2：27002 | shard2：27002  
+None | shard3：27003 | shard3：27003 | shard3：27003 | shard3：27003  
+None | shard4：27004 | shard4：27004 | shard4：27004 | shard4：27004  
 
 到这里，我们可以回顾安装流程，可以看到，其实mongodb的安装逻辑很简单，但是过程比较繁琐。。  
 
