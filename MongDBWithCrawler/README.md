@@ -131,3 +131,14 @@ http://gateway.caixin.com/api/newauth/checkAuthByIdJsonp?callback=jQuery17203810
 ## DEMO
 
 本目录下提供了少量的数据作为demo，感兴趣的读者可以看看。
+
+## 上传到分布式MongoDB
+
+
+
+
+
+
+
+
+
