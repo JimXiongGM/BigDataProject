@@ -13,7 +13,7 @@
 
 ***下载tgz文件并上传到阿里云，解压到相应目录*** 
 
-**注意版本匹配**是ubuntu18，master是ubuntu16。
+**注意版本匹配**。本地是ubuntu18，master是ubuntu16。
 `scp mongodb-linux-x86_64-ubuntu1604-4.0.4.tgz root@hadoop_xgm:/`
 `ssh root@hadoop_xgm`
 
