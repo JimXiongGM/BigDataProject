@@ -105,7 +105,7 @@ mkdir -p /data/data1/mongodb/shard4/db;
 mkdir -p /data/data1/mongodb/shard4/log;
 ```
 
-***在3台config服务器启动configsvr***（master;slave[1~2]）  
+**在3台config服务器启动configsvr**（master;slave[1~2]）  
 
 分别执行以下命令。这里要注意，`--bind_ip=master --port 27100`参数需要替换成相应的参数，特别是bind_ip，应该根据自己的hosts文件设置进行填写。  
 ```
@@ -325,7 +325,7 @@ child process started successfully, parent exiting
 恭喜你，至此，mongodb的数据（分片+副本），配置服务器（config server），路由服务器（mongos）都已经配置好了。  
 具体为：  
 master | slave1 | slave2 | slave3 | slave4
---- | --- | --- | --- | ---
+------ | ------ | ------ | ------ | ------
 mongos:27000|mongos:27000|mongos:27000|None | None
 None | shard1:27001 | shard1:27001 | shard1:27001 | shard1:27001
 None | shard2:27002 | shard2:27002 | shard2:27002 | shard2:27002
