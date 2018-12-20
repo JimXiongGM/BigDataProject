@@ -36,8 +36,8 @@
 
 这一部分数据集由笔者自行爬取获得。  
 
-- [LandChina数据集](./Documentations/private_datas.md)
-- [财新网新闻文本数据集](./Documentations/private_datas.md)
+- [LandChina数据集--14.5GB](./Documentations/private_datas.md)
+- [财新网新闻文本数据集--42MB](./Documentations/private_datas.md)
 
 
 ### 项目
