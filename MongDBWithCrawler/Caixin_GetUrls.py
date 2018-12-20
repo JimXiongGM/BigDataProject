@@ -121,7 +121,7 @@ def yieldURL_fromJSON(channel):
 
 
 if __name__=="__main__":
-    url_list = [i for i in yieldURL_fromJSON(125)]
-    print(url_list)
-
+    #url_list = [i for i in yieldURL_fromJSON(125)]
+    #print(url_list)
+    fetchJSON()
 

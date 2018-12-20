@@ -10,7 +10,7 @@
  
 ## 目录  
 
-因配置环境只需要一篇文档，这里把配置环境的说明文件直接放到Docs文件夹下。
+因配置环境只需要一篇文档，这里把配置环境的说明文件直接放到`Documentations`文件夹下。
 
 ### 环境安装
  
@@ -22,7 +22,22 @@
 
 ### 数据集介绍
 
-- [kaggle - Amazon sales rank data for print and kindle books](./Documentations/Kaggle_amazon-sales-rank-data-for-print-and-kindle-books.md)
+#### 公开数据集
+
+这一部分数据集能够在公开渠道下载。  
+
+- [kaggle - Amazon sales rank data for print and kindle books--3.66GB](./Documentations/open_datas.md)
+- [THUCNews数据集--2.04GB](./Documentations/open_datas.md)
+- [全网新闻数据(SogouCA,2012)数据集--2.08GB](./Documentations/open_datas.md)
+- [高频交易数据(tick_csv_daily)--7.16GB](./Documentations/open_datas.md)
+
+
+#### 爬虫数据集
+
+这一部分数据集由笔者自行爬取获得。  
+
+- [LandChina数据集](./Documentations/private_datas.md)
+- [财新网新闻文本数据集](./Documentations/private_datas.md)
 
 
 ### 项目
