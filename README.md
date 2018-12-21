@@ -17,7 +17,8 @@
 - [Hadoop3全分布式+Hadoop streaming环境搭建](./Documentations/Hadoop_distribute.md)  
 - [MongoDB的本地安装+PyMongo的基本操作](./Documentations/MongoDB_standalone.md)    
 - [MongoDB的全分布式安装](./Documentations/MongoDB_distribute.md)    
-- [Pig的全分布式安装](./Documentations/Pig_distribute.md) 
+- [Pig的全分布式安装](./Documentations/Pig_distribute.md)  
+- [Spark全分布式安装](./Documentations/Spark_distribute.md)
 - 未完待续
 
 ### 数据集介绍
@@ -40,7 +41,7 @@
 - [财新网新闻文本数据集--42MB](./Documentations/private_datas.md)
 
 
-### 项目
+### 上手
 - [使用Hadoop Streaming分析kaggle数据](./HadoopStreaming_Kaggle/README.md)
 - [使用全分布式Pig分析数据](./PigOnMap-Reduce/README.md)　　挖坑待填 
 - [Python+MongoDB————爬取与存储数据](./MongDBWithCrawler/README.md)  

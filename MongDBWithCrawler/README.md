@@ -9,8 +9,8 @@
 > - [获取目标url]()
 > - [从url获取数据]()
 > - [清理数据]()
-> - [DEMO]()
-> - [上传到分布式MongoDB]()
+> - [Sample]()
+> - [上传到HDFS]()
 > - []()
 > - []()
 
@@ -105,7 +105,7 @@ http://tag.caixin.com/news/homeInterface.jsp?channel=129&start=0&count=122&picdi
 
 获得了json文件之后，我们只要使用python自带的json包就能极快地遍历需要的链接。  
 
-我们通过分析network中的数据包，可以得到每一篇文章的具体获得URL，即
+我们通过分析network中的数据包，可以得到每一篇文章的URL，即
 ```
 http://gateway.caixin.com/api/newauth/checkAuthByIdJsonp?callback=jQuery172038107031974088157_1545204262982&type=0&id=101354516&page=1
 ```
@@ -128,11 +128,25 @@ http://gateway.caixin.com/api/newauth/checkAuthByIdJsonp?callback=jQuery17203810
 ```
 可以使用Python正则表达式达到目的，相关教程一搜一大把。这里参考网络资料，简单整理成`Remove_html.py`文件。
 
-## DEMO
+## Sample
 
-本目录下提供了少量的数据作为demo，感兴趣的读者可以看看。
+本目录下提供了少量的数据作为Sample，感兴趣的读者可以看看。
 
-## 上传到分布式MongoDB
+## 上传到HDFS
+
+使用scp命令，把本目录的`Data_Sample`文件夹直接上传到阿里云master。使用命令`scp -r Data_Sample root@hadoop_xgm:`即可。
+
+在master端，先使用`apt-get install -y unzip`安装解压命令，使用`rm ./*.zip`删掉zip文件，使用`hdfs dfs -copyFromLocal -p /root/Data_Sample /data/`将整个文件夹传到HDFS下的/data文件夹。可以通过HDFS WEBUI查看文件是否已经被上传到HDFS。
+
+## 使用pymongo读取HDFS
+
+
+
+
+
+
+
+
 
 
 
