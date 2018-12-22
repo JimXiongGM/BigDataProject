@@ -138,3 +138,66 @@ slave1: starting org.apache.spark.deploy.worker.Worker, logging to /opt/spark-2.
 ```
 此时我们能够在浏览器中直接访问`http://master:8080`能够看到spark的WEBUI：
 ![avatar](./Spark-WebUI.png)
+
+## <p id='4'>运行SparkDEMO--SparkPi
+
+尝试向集群提交[官网](https://spark.apache.org/docs/latest/running-on-yarn.html)提供的DEMO，这是一个计算π值的小程序，spark自带。
+
+```
+cd /opt/spark-2.4.0;
+./bin/spark-submit --class org.apache.spark.examples.SparkPi \
+    --master yarn \
+    --deploy-mode cluster \
+    --driver-memory 512mb \
+    --executor-memory 512mb \
+    --executor-cores 1 \
+    --queue thequeue \
+    examples/jars/spark-examples*.jar \
+    10
+```
+**注意**！这里的`--driver-memory 512mb`和`--executor-memory 512mb`需要根据YARN的配置情况设置。之前的文章中，将每个节点的可用内存设置为了1024mb。根据shell的报错信息，spark需要额外的384mb开销，所以对内存需求为512+384mb=896mb<1024mb。把两者都设置为512mb，就不会报错。
+
+## Spark错误分析
+
+停止集群命令：
+```
+cd /opt/spark-2.4.0/sbin;
+./stop-all.sh;
+```
+
+## WARN--NativeCodeLoader:62
+
+控制台输出如下
+```
+WARN  NativeCodeLoader:62 - Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+```
+
+
+
+
+
+
+
+### WARN--Client:66
+
+控制台输出如下
+```
+WARN  Client:66 - Neither spark.yarn.jars nor spark.yarn.archive is set, falling back to uploading libraries under SPARK_HOME.
+```
+
+这里会卡住很久
+
+hdfs dfs -mkdir -p /conf_files/spark_jars;
+
+hdfs dfs -put /opt/spark-2.4.0/examples/jars/* /conf_files/spark_jars/;
+
+
+cp /opt/spark-2.4.0/conf/spark-defaults.conf.template /opt/spark-2.4.0/conf/spark-defaults.conf;
+
+echo 'spark.yarn.jars=hdfs://master:9000/conf_files/spark_jars/*' >> /opt/spark-2.4.0/conf/spark-defaults.conf;
+
+echo 'export LD_LIBRARY_PATH=$HADOOP_HOME/lib/native' >> /etc/bash.bashrc;
+source /etc/bash.bashrc
+
+cd /opt/spark-2.4.0/sbin/;
+./start-all.sh;

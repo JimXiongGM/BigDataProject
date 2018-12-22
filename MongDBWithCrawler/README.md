@@ -140,7 +140,7 @@ http://gateway.caixin.com/api/newauth/checkAuthByIdJsonp?callback=jQuery17203810
 
 ## 使用pymongo读取HDFS
 
-
+未完待续
 
 
 

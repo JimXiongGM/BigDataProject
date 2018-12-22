@@ -216,14 +216,16 @@ export CLASSPATH=$JAVA_HOME/lib:$JRE_HOME/lib:$CLASSPATH
 ```
 我们会在本地文件目录下找到`/hadoop/namenode`文件，同样，在datanode节点，我们能找到`/hadoop/datanode`文件夹。这里我们对所有节点的该文件夹进行授权操作。在每一节点上执行`chmod -R 777 /hadoop`命令，即可对该文件夹以及子文件夹授予777权限。我们可以通过`ls -ld /hadoop`命令查看指定文件夹的权限设置情况，显示为`drwxrwxrwx`说明该文件夹对所有用户都有写入权限。  
 
-在master节点，使用`start-all.sh`启动Hadoop。当然也可以使用`start-dfs.sh`以及`start-yarn.sh`启动。启动成功之后，输入`jps`，可以看到如下。
+在master节点，使用`start-all.sh`启动Hadoop，使用`mapred --daemon start historyserver`启动historyserver。当然也可以使用`start-dfs.sh`以及`start-yarn.sh`启动。启动成功之后，输入`jps`，可以看到如下。
 ```s
 root@master:~# jps
-30000 Jps
-24849 ResourceManager
+10274 JobHistoryServer
+9668 SecondaryNameNode
+10519 Jps
 889 Application
-24620 SecondaryNameNode
-24365 NameNode
+9899 ResourceManager
+7645 Master
+9406 NameNode
 ```
 此时通过浏览器访问`http://master:8088`可以看到Hadoop节点界面，访问`http://master:50070`可以看到HDFS使用情况。
 
@@ -294,7 +296,7 @@ hdfs dfs -copyFromLocal /root/xgm/test.txt /xgm/input/
 hadoop jar /opt/hadoop-3.1.1/share/hadoop/tools/lib/hadoop-streaming-3.1.1.jar \
   -D mapreduce.job.name='WordCount01' \
   -input /xgm/input/test.txt \
-  -output /xgm/output/WordCount01 \
+  -output /xgm/output/WordCount12 \
   -mapper mapper_WordCount.py \
   -reducer reducer_WordCount.py \
   -file /root/xgm/mapper_WordCount.py \
