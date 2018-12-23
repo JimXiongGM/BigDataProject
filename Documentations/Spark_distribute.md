@@ -1,12 +1,14 @@
 # Spark全分布式安装
 
+这里基于hadoop分布式环境，继续搭建spark。
 
 ## 目录
 
 > - [安装Scala](#1)
 > - [安装Spark](#2)
 > - [启动Spark](#3)
-> - []()
+> - [运行SparkDEMO--SparkPi](#4)
+> - [Spark错误分析](#5)
 
 ## <p id='1'>安装Scala
 
@@ -14,7 +16,13 @@ spark依赖scala，这里首先安装scala。
 
 ### 下载并解压
 
-从[官网](https://www.scala-lang.org/download/)下载`scala-2.12.8.tgz`，并使用`scp  scala-2.12.8.tgz root@hadoop_xgm:`上传到阿里云。在master端，使用`tar -zvxf /root/scala-2.12.8.tgz -C /opt/`命令解压tgz文件到相应目录。
+从[官网](https://www.scala-lang.org/download/)下载`scala-2.12.8.tgz`并解压tgz文件到相应目录。
+```
+cd /root/xiazai;
+wget https://downloads.lightbend.com/scala/2.12.8/scala-2.12.8.tgz;
+tar -zvxf /root/xiazai/scala-2.12.8.tgz -C /opt/;
+```
+
 
 ### 配置环境变量
 
@@ -23,6 +31,7 @@ spark依赖scala，这里首先安装scala。
 echo 'export SCALA_HOME=/opt/scala-2.12.8' >> /etc/bash.bashrc ;
 echo 'export PATH=$SCALA_HOME/bin:$PATH' >> /etc/bash.bashrc ;
 source /etc/bash.bashrc;
+scala -version
 ```
 直接输入`scala`，如果成功则输出如下。安装过程非常简单
 ```
@@ -36,12 +45,21 @@ res0: Int = 2
 
 ### 给每个slave安装
 
-同理，在master端，使用`scp /root/scala-2.12.8.tgz root@slave1:`拷贝文件，然后分别进入每一台slave执行以下命令
+同理，在master端，使用如下命令拷贝文件
+```
+scp /root/xiazai/scala-2.12.8.tgz root@slave1:;
+scp /root/xiazai/scala-2.12.8.tgz root@slave2:;
+scp /root/xiazai/scala-2.12.8.tgz root@slave3:;
+```
+
+然后分别进入每一台slave执行以下命令
 ```
 tar -zvxf /root/scala-2.12.8.tgz -C /opt/ ;
 echo 'export SCALA_HOME=/opt/scala-2.12.8 ' >> /etc/bash.bashrc ;
 echo 'export PATH=$SCALA_HOME/bin:$PATH ' >> /etc/bash.bashrc ;
 source /etc/bash.bashrc;
+scala -version;
+exit
 ```
 即可完成安装。  
 
@@ -53,7 +71,17 @@ source /etc/bash.bashrc;
 
 ### 下载并解压
 
-从[官网](http://spark.apache.org/downloads.html)下载`spark-2.4.0-bin-hadoop2.7.tgz`，并使用`scp  spark-2.4.0-bin-hadoop2.7.tgz root@hadoop_xgm:`上传到阿里云。在master端，使用`tar -zvxf /root/spark-2.4.0-bin-hadoop2.7.tgz -C /opt/`命令解压tgz文件到相应目录。这里重命名一下，`mv /opt/spark-2.4.0-bin-hadoop2.7/ /opt/spark-2.4.0`  
+从[官网](http://spark.apache.org/downloads.html)下载、解压、分发。  
+```
+cd /root/xiazai;
+wget http://mirrors.hust.edu.cn/apache/spark/spark-2.4.0/spark-2.4.0-bin-hadoop2.7.tgz;
+tar -zvxf spark-2.4.0-bin-hadoop2.7.tgz;
+mv spark-2.4.0-bin-hadoop2.7/ /opt/spark-2.4.0;
+scp /root/xiazai/spark-2.4.0-bin-hadoop2.7.tgz root@slave1:;
+scp /root/xiazai/spark-2.4.0-bin-hadoop2.7.tgz root@slave2:;
+scp /root/xiazai/spark-2.4.0-bin-hadoop2.7.tgz root@slave3:;
+
+```
 
 ### 配置环境变量
 
@@ -64,40 +92,43 @@ echo 'export PATH=PATH=$SPARK_HOME/bin:$SPARK_HOME/sbin:$PATH' >> /etc/bash.bash
 source /etc/bash.bashrc;
 ```
 
-### 配置spark-env.sh文件
+### 配置spark-env.sh、spark-config.sh
 
 同样直接整段copy执行即可。
 ```
+rm /opt/spark-2.4.0/conf/spark-env.sh;
+touch /opt/spark-2.4.0/conf/spark-env.sh;
+
 echo 'export JAVA_HOME=$JAVA_HOME ' >> /opt/spark-2.4.0/conf/spark-env.sh;
 echo 'export HADOOP_HOOME=$HADOOP_HOOME' >> /opt/spark-2.4.0/conf/spark-env.sh;
 echo 'export HADOOP_CONF_DIR=$HADOOP_CONF_DIR' >> /opt/spark-2.4.0/conf/spark-env.sh;
 echo 'export SCALA_HOME=$SCALA_HOME' >> /opt/spark-2.4.0/conf/spark-env.sh;
 
-rm /opt/spark-2.4.0/conf/spark-env.sh;
-touch /opt/spark-2.4.0/conf/spark-env.sh;
 echo 'export SPARK_MASTER_HOST=master' >> /opt/spark-2.4.0/conf/spark-env.sh;
 echo 'export SPARK_MASTER_PORT=7077' >> /opt/spark-2.4.0/conf/spark-env.sh;
 echo 'export SPARK_WORKER_CORES=1' >> /opt/spark-2.4.0/conf/spark-env.sh;
 echo 'export SPARK_WORKER_MEMORY=1G' >> /opt/spark-2.4.0/conf/spark-env.sh;
 
+echo "export JAVA_HOME=$JAVA_HOME" >> /opt/spark-2.4.0/sbin/spark-config.sh;
 ```
+
 
 ### 配置slaves文件
 
 整段copy执行
 ```
+rm /opt/spark-2.4.0/conf/slaves;
 touch /opt/spark-2.4.0/conf/slaves;
 echo 'slave1' >> /opt/spark-2.4.0/conf/slaves;
 echo 'slave2' >> /opt/spark-2.4.0/conf/slaves;
 echo 'slave3' >> /opt/spark-2.4.0/conf/slaves;
-echo 'slave4' >> /opt/spark-2.4.0/conf/slaves;
 ```
 
 
 
 ### 给每个slave安装
 
-在master端，使用`scp /root/spark-2.4.0-bin-hadoop2.7.tgz root@slave1:`拷贝文件，然后分别进入每一台slave，将上面的命令重复一遍，即解压、配置环境变量、`spark-env.sh`和`slaves`。直接整段copy：
+分别进入每一台slave，将上面的命令重复一遍，即解压、配置环境变量、`spark-env.sh`和`slaves`。直接整段copy：
 ```
 tar -zvxf /root/spark-2.4.0-bin-hadoop2.7.tgz -C /opt/;
 mv /opt/spark-2.4.0-bin-hadoop2.7/ /opt/spark-2.4.0;
@@ -106,17 +137,27 @@ echo 'export SPARK_HOME=/opt/spark-2.4.0' >> /etc/bash.bashrc ;
 echo 'export PATH=PATH=$SPARK_HOME/bin:$SPARK_HOME/sbin:$PATH' >> /etc/bash.bashrc ;
 source /etc/bash.bashrc;
 
+rm /opt/spark-2.4.0/conf/spark-env.sh;
 touch /opt/spark-2.4.0/conf/spark-env.sh;
+
+echo 'export JAVA_HOME=$JAVA_HOME ' >> /opt/spark-2.4.0/conf/spark-env.sh;
+echo 'export HADOOP_HOOME=$HADOOP_HOOME' >> /opt/spark-2.4.0/conf/spark-env.sh;
+echo 'export HADOOP_CONF_DIR=$HADOOP_CONF_DIR' >> /opt/spark-2.4.0/conf/spark-env.sh;
+echo 'export SCALA_HOME=$SCALA_HOME' >> /opt/spark-2.4.0/conf/spark-env.sh;
+
 echo 'export SPARK_MASTER_HOST=master' >> /opt/spark-2.4.0/conf/spark-env.sh;
 echo 'export SPARK_MASTER_PORT=7077' >> /opt/spark-2.4.0/conf/spark-env.sh;
 echo 'export SPARK_WORKER_CORES=1' >> /opt/spark-2.4.0/conf/spark-env.sh;
 echo 'export SPARK_WORKER_MEMORY=1G' >> /opt/spark-2.4.0/conf/spark-env.sh;
 
+echo "export JAVA_HOME=$JAVA_HOME" >> /opt/spark-2.4.0/sbin/spark-config.sh;
+
+rm /opt/spark-2.4.0/conf/slaves;
 touch /opt/spark-2.4.0/conf/slaves;
 echo 'slave1' >> /opt/spark-2.4.0/conf/slaves;
 echo 'slave2' >> /opt/spark-2.4.0/conf/slaves;
 echo 'slave3' >> /opt/spark-2.4.0/conf/slaves;
-echo 'slave4' >> /opt/spark-2.4.0/conf/slaves;
+exit
 ```
 
 ## <p id='3'>启动Spark
@@ -130,7 +171,6 @@ cd /opt/spark-2.4.0/sbin/;
 ```
 root@master:/opt/spark-2.4.0/sbin# sh ./start-all.sh
 starting org.apache.spark.deploy.master.Master, logging to /opt/spark-2.4.0/logs/spark-root-org.apache.spark.deploy.master.Master-1-master.out
-slave4: starting org.apache.spark.deploy.worker.Worker, logging to /opt/spark-2.4.0/logs/spark-root-org.apache.spark.deploy.worker.Worker-1-slave4.out
 slave3: starting org.apache.spark.deploy.worker.Worker, logging to /opt/spark-2.4.0/logs/spark-root-org.apache.spark.deploy.worker.Worker-1-slave3.out
 slave2: starting org.apache.spark.deploy.worker.Worker, logging to /opt/spark-2.4.0/logs/spark-root-org.apache.spark.deploy.worker.Worker-1-slave2.out
 slave1: starting org.apache.spark.deploy.worker.Worker, logging to /opt/spark-2.4.0/logs/spark-root-org.apache.spark.deploy.worker.Worker-1-slave1.out
@@ -154,9 +194,11 @@ cd /opt/spark-2.4.0;
     examples/jars/spark-examples*.jar \
     10
 ```
-**注意**！这里的`--driver-memory 512mb`和`--executor-memory 512mb`需要根据YARN的配置情况设置。之前的文章中，将每个节点的可用内存设置为了1024mb。根据shell的报错信息，spark需要额外的384mb开销，所以对内存需求为512+384mb=896mb<1024mb。把两者都设置为512mb，就不会报错。
+**注意**！这里的`--driver-memory 512mb`和`--executor-memory 512mb`需要根据YARN的配置情况设置。之前的文章中，将每个节点的可用内存设置为了1024mb。根据shell的报错信息，spark需要额外的384mb开销，所以对内存需求为512+384mb=896mb < 1024mb。把两者都设置为512mb，就不会报错。  
 
-## Spark错误分析
+打开hadoop的界面能够看到application，因为这里是提交到YARN运行，所以在spark自己的界面是看不到的。
+
+## <p id='5'>Spark错误分析
 
 停止集群命令：
 ```
@@ -164,17 +206,16 @@ cd /opt/spark-2.4.0/sbin;
 ./stop-all.sh;
 ```
 
-## WARN--NativeCodeLoader:62
+### WARN--NativeCodeLoader:62
 
 控制台输出如下
 ```
 WARN  NativeCodeLoader:62 - Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
 ```
-
-
-
-
-
+在spark的conf目录下，在spark-env.sh文件中加入LD_LIBRARY_PATH环境变量LD_LIBRARY_PATH=$HADOOP_HOME/lib/native
+```
+echo 'export LD_LIBRARY_PATH=$HADOOP_HOME/lib/native' >> /opt/spark-2.4.0/sbin/spark-config.sh;
+```
 
 
 ### WARN--Client:66
@@ -183,20 +224,4 @@ WARN  NativeCodeLoader:62 - Unable to load native-hadoop library for your platfo
 ```
 WARN  Client:66 - Neither spark.yarn.jars nor spark.yarn.archive is set, falling back to uploading libraries under SPARK_HOME.
 ```
-
-这里会卡住很久
-
-hdfs dfs -mkdir -p /conf_files/spark_jars;
-
-hdfs dfs -put /opt/spark-2.4.0/examples/jars/* /conf_files/spark_jars/;
-
-
-cp /opt/spark-2.4.0/conf/spark-defaults.conf.template /opt/spark-2.4.0/conf/spark-defaults.conf;
-
-echo 'spark.yarn.jars=hdfs://master:9000/conf_files/spark_jars/*' >> /opt/spark-2.4.0/conf/spark-defaults.conf;
-
-echo 'export LD_LIBRARY_PATH=$HADOOP_HOME/lib/native' >> /etc/bash.bashrc;
-source /etc/bash.bashrc
-
-cd /opt/spark-2.4.0/sbin/;
-./start-all.sh;
+如果卡住很久没动，并且hadoop的webUI主界面能够显示接受到任务，直接failed，那么很有可能的情况是spark和yarn连接出现了问题。
