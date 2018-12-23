@@ -68,13 +68,12 @@ source /etc/bash.bashrc;
 
 同样直接整段copy执行即可。
 ```
-cp /opt/spark-2.4.0/conf/spark-env.sh.template /opt/spark-2.4.0/conf/spark-env.sh;
+echo 'export JAVA_HOME=$JAVA_HOME ' >> /opt/spark-2.4.0/conf/spark-env.sh;
+echo 'export HADOOP_HOOME=$HADOOP_HOOME' >> /opt/spark-2.4.0/conf/spark-env.sh;
+echo 'export HADOOP_CONF_DIR=$HADOOP_CONF_DIR' >> /opt/spark-2.4.0/conf/spark-env.sh;
+echo 'export SCALA_HOME=$SCALA_HOME' >> /opt/spark-2.4.0/conf/spark-env.sh;
 
-##echo 'export JAVA_HOME=/usr/local/src/jdk1.8.0_162 ' >> /opt/spark-2.4.0/conf/spark-env.sh;
-##echo 'export HADOOP_HOOME=/usr/local/src/hadoop-2.7.3 ' >> /opt/spark-2.4.0/conf/spark-env.sh;
-##echo 'export HADOOP_CONF_DIR=/usr/local/src/hadoop-2.7.3/etc/hadoop ' >> /opt/spark-2.4.0/conf/spark-env.sh;
-##echo 'export SCALA_HOME=/usr/local/src/scala-2.11.8 ' >> /opt/spark-2.4.0/conf/spark-env.sh;
-
+rm /opt/spark-2.4.0/conf/spark-env.sh;
 touch /opt/spark-2.4.0/conf/spark-env.sh;
 echo 'export SPARK_MASTER_HOST=master' >> /opt/spark-2.4.0/conf/spark-env.sh;
 echo 'export SPARK_MASTER_PORT=7077' >> /opt/spark-2.4.0/conf/spark-env.sh;
@@ -151,7 +150,7 @@ cd /opt/spark-2.4.0;
     --driver-memory 512mb \
     --executor-memory 512mb \
     --executor-cores 1 \
-    --queue thequeue \
+    --queue default \
     examples/jars/spark-examples*.jar \
     10
 ```

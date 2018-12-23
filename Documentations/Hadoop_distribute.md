@@ -1,8 +1,209 @@
 # Hadoop3全分布式+Hadoop Streaming环境搭建 
 
+本文完全从0开始搭建基于阿里云ESC的全分布式集群。
+
+
+
+## 购买并配置阿里云
+
+
+### 按需购买服务器
+
+
+### 添加到同一安全组
+
+
+### 购买并绑定公网ip
+
+
+### 设置密码
+
+别忘了在控制台中重启所有的服务器。
+
+### 使用ssh连接
+
+```
+PS C:\Users\XGM> ssh root@39.104.27.119
+The authenticity of host '39.104.27.119 (39.104.27.119)' can't be established.
+ECDSA key fingerprint is SHA256:I9TItgv8yKGcxxtyiDB6gB3brd2xmphyl7Gc/1lBrus.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '39.104.27.119' (ECDSA) to the list of known hosts.
+root@39.104.27.119's password:
+Welcome to Ubuntu 16.04.4 LTS (GNU/Linux 4.4.0-117-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+Welcome to Alibaba Cloud Elastic Compute Service !
+
+root@iZhp3bm132kqe3mj9urjcyZ:~#
+```
+
+到这里，我们能够使用ssh访问节点，现在可以关掉浏览器，进入下一环节。
+
+
+## 配置host相关
+
+先给本地电脑配置hosts。如果是windows，编辑`C:\Windows\System32\drivers\etc\hosts`，如果是ubuntu，编辑`/etc/hosts`，加上一行`你的公网ip aliyun_xgm`即可。这么做无非是为了不用记公网ip。  
+
+登陆服务器，在云端进行以下操作。
+
+`vim /etc/hosts`，注释掉127.0.0.1这一行
+```
+172.24.205.50	master
+172.24.205.51	slave1
+172.24.205.52	slave2
+172.24.205.53	slave3
+```
+`vim /etc/hostname`
+```
+master
+```
+`reboot`重启主机，让hostname生效  
+
+ssh root@slave1;
+`vim /etc/hosts`内容同上，注释掉127.0.0.1这一行。  
+`vim /etc/hostname`修改为
+```
+slave1
+```
+salve2和slave3同上配置
+
+## 配置节点之间免密SSH
+
+在master上使用如下命令，注意`ssh-keygen`命令要求输入3次回车，因此这里不能整段copy，需要分别执行
+```
+cd /root/.ssh/;
+ssh-keygen -t rsa;
+cat id_rsa.pub >> authorized_keys;
+```
+在slave1、slave2、slave3上使用如下命令
+```
+cd /root/.ssh/;
+ssh-keygen -t rsa;
+ssh-copy-id -i master;
+```
+回到master上使用如下命令
+```
+cd /root/.ssh/;
+chmod 600 authorized_keys;
+scp /root/.ssh/authorized_keys slave1:/root/.ssh/ ;
+scp /root/.ssh/authorized_keys slave2:/root/.ssh/ ;
+scp /root/.ssh/authorized_keys slave3:/root/.ssh/ ;
+```
+到这里就可以直接使用ssh免密访问各个节点了。
+
+## 配置JAVA
+
+在master上使用如下命令直接配置好JAVA
+```
+mkdir -p /root/xiazai/;
+mkdir -p /opt/;
+wget -P /root/xiazai/ https://download.oracle.com/otn-pub/java/jdk/8u191-b12/2787e4a523244c269598db4e85c51e0c/jdk-8u191-linux-x64.tar.gz?AuthParam=1545535635_23120014928fd76a2d41deff73c46cd6;
+mv jdk-8u191-linux-x64.tar.gz\?AuthParam\=1545535635_23120014928fd76a2d41deff73c46cd6 jdk-8u191-linux-x64.tar.gz;
+tar -zxvf jdk-8u191-linux-x64.tar.gz;
+mv jdk1.8.0_191/ /opt/;
+
+echo 'export JAVA_HOME=/opt/jdk1.8.0_191' >> /etc/bash.bashrc;
+echo 'export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar' >> /etc/bash.bashrc;
+echo 'export PATH=$JAVA_HOME/bin:$PATH' >> /etc/bash.bashrc;
+source /etc/bash.bashrc;
+
+
+scp jdk-8u191-linux-x64.tar.gz root@slave1:;
+scp jdk-8u191-linux-x64.tar.gz root@slave2:;
+scp jdk-8u191-linux-x64.tar.gz root@slave3:;
+
+java -version
+```
+在每一个slave上直接copy整段即可。
+```
+cd /root/
+mkdir -p /opt/;
+tar -zxvf jdk-8u191-linux-x64.tar.gz;
+mv jdk1.8.0_191/ /opt/;
+rm jdk-8u191-linux-x64.tar.gz;
+echo 'export JAVA_HOME=/opt/jdk1.8.0_191' >> /etc/bash.bashrc;
+echo 'export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar' >> /etc/bash.bashrc;
+echo 'export PATH=$JAVA_HOME/bin:$PATH' >> /etc/bash.bashrc;
+source /etc/bash.bashrc;
+java -version;
+exit
+```
+
+
+## 下载解压Hadoop3.1.1
+
+在master上，直接copy如下命令，完成下载、解压、分发。
+```
+
+wget -P /root/xiazai/ http://mirrors.hust.edu.cn/apache/hadoop/common/hadoop-3.1.1/hadoop-3.1.1-src.tar.gz;
+cd /root/xiazai/;
+tar -zxvf hadoop-3.1.1-src.tar.gz;
+mv hadoop-3.1.1-src /opt/hadoop-3.1.1;
+scp hadoop-3.1.1-src.tar.gz root@slave1:;
+scp hadoop-3.1.1-src.tar.gz root@slave2:;
+scp hadoop-3.1.1-src.tar.gz root@slave3:;
+```
+使用`ssh root@slave1`进入slave1，直接copy以下命令
+```
+mkdir -p /opt/;
+cd /root/;
+tar -zxvf hadoop-3.1.1-src.tar.gz;
+mv hadoop-3.1.1-src /opt/hadoop-3.1.1;
+rm /root/hadoop-3.1.1-src.tar.gz;
+exit
+```
+进入slave2和slav3，再来一遍即可
+
+## 配置Hadoop环境变量
+
+直接在每一个节点下运行如下命令即可
+```
+
+echo '# Hadoop Settings' >> /etc/bash.bashrc;
+echo 'export HADOOP_HOME=/opt/hadoop-3.1.1' >> /etc/bash.bashrc;
+echo 'export HADOOP_INSTALL=$HADOOP_HOME' >> /etc/bash.bashrc;
+echo 'export YARN_HOME=$HADOOP_HOME' >> /etc/bash.bashrc;
+echo 'export HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop' >> /etc/bash.bashrc;
+echo 'export HADOOP_MAPRED_HOME=$HADOOP_HOME' >> /etc/bash.bashrc;
+echo 'export HADOOP_COMMON_HOME=$HADOOP_HOME' >> /etc/bash.bashrc;
+echo 'export HADOOP_HDFS_HOME=$HADOOP_HOME' >> /etc/bash.bashrc;
+echo 'export HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_HOME/lib/native' >> /etc/bash.bashrc;
+echo 'export HADOOP_LIBEXEC_DIR=$HADOOP_HOME/libexec' >> /etc/bash.bashrc;
+echo 'export JAVA_LIBRARY_PATH=$HADOOP_HOME/lib/native:$JAVA_LIBRARY_PATH' >> /etc/bash.bashrc;
+echo 'export PATH=.:$JAVA_HOME/bin:$HADOOP_HOME/bin:$HADOOP_HOME/sbin:$PATH' >> /etc/bash.bashrc;
+echo 'export HADOOP_ROOT_LOGGER=DEBUG,console' >> /etc/bash.bashrc;
+echo ' ' >> /etc/bash.bashrc;
+source /etc/bash.bashrc;
+```
+
+
+## 配置hadoop3.1.1/etc/hadoop下文件
+
+这里也可以快速配置，下载本项目目录下的`Hadoop3_config_files`文件夹到本地，使用`scp -r /Hadoop3_config_files root@aliyun_xgm:`拷贝到云端，直接copy整段即可完成配置。
+```
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
 可以说是站在巨人的肩膀上[@daviddwlee84](https://github.com/daviddwlee84)，我才能较快地搭建好全分布式Hadoop。这位同学的主要贡献是利用Python中的fabric包，实现了一键自动安装Hadoop3.1.1，不过他的环境是4块树莓派3b+，并基于本地局域网。[链接](https://github.com/daviddwlee84/RaspPi-Cluster)在此。  
  
 上述工具可以为我们实现批量测试、批量执行等基本操作，但是为了熟悉Hadoop的安装流程，为了能够在出问题的时候找到出错的原因，这里对Hadoop的安装细节进行梳理。我们可以从网络上找到大把的Hadoop3安装步骤，这里推荐读者先自行搜索、熟悉安装流程和Hadoop文件结构，再阅读本章节。  
+
+
 
 ## 目录
 
@@ -16,52 +217,10 @@
 > - [鸣谢](#8)
 
 
-## <p id="1">配置服务器的host/hostname
-
-将master节点的hosts设置为如下，使用`vim /etc/hosts`编辑。并且**一定**要注释localhost这一行。
-```
-内网ip master  
-对应公网ip slave1  
-对应公网ip slave2  
-对应公网ip slave3  
-对应公网ip slave4
-```
-同时使用`vim /etc/hostname`将本机的hostname设置为
-```
-master
-```
-接下来逐一进入slave节点，使用`vim /etc/hosts`编辑。同样**一定**要注释localhost这一行，这里的master改成公网ip。
-```
-对应公网ip master  
-对应公网ip slave1  
-对应公网ip slave2  
-对应公网ip slave3  
-对应公网ip slave4
-```
-同时使用`vim /etc/hostname`设置对应的hostname，即slave1~4
-```
-slave1
-```
-重启所有的节点即可。
-
-## <p id="2">开放阿里云的端口
-
-**非常重要**的一点，阿里云默认只开放22，8080等几个端口，这显然是不行的。我们需要登陆所有机器的阿里云控制台，手动修改端口访问权限。我这里非常不安全地开放了所有的端口。具体操作非常简单，登陆网页版后台，点击左侧防火墙，设置端口为1/65535，如下图所示。  
-
-![avatar](./aliyun_port.png)
-
-
-## <p id="3">配置服务器之间免密钥登陆
-
-这一块非常重要，Hadoop之间需要进行免密通讯，且云服务器之间也频繁需要ssh操作。具体操作网络上很多，这里不展开。在master节点使用`ssh root@slave1`进行测试，如果能够免密登陆成功，即配置完成。  
-
-## <p id="4">下载解压Hadoop3.1.1
-
-下载`hadoop-3.1.1-src.tar.gz`到每一个节点，并且所有节点都解压到同一路径：`/opt/hadoop3.1.1`
 
 ## <p id="5">配置Hadoop
 
-ubuntu系统的源码运行模式就像windows的绿色文件运行模式，只要解压即可用，非常方便。这里对Hadoop配置文件进行设置。这一块的内容需要非常小心，网络上存在大量的教程，但是环境不同，需要配置的文件也不一样，我们需要确切知道每一个配置文件的内容以及参数含义，出错的时候才能找到解法。  
+ubuntu系统的源码运行模式就像windows的绿色文件运行模式，解压即可用，非常方便。这里对Hadoop配置文件进行设置。这一块的内容需要非常小心，网络上存在大量的教程，但是环境不同，需要配置的文件也不一样，我们需要确切知道每一个配置文件的内容以及参数含义，出错的时候才能找到解法。  
 
 本文中所有文件都可以在当前目录下的`Hadoop3_config_files`文件夹找到，这里对配置文件进行总结。
 
