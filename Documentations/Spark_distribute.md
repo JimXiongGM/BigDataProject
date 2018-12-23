@@ -200,6 +200,8 @@ cd /opt/spark-2.4.0;
 
 ## <p id='5'>Spark错误分析
 
+笔者遇到的问题极少，只有两个warn。  
+
 停止集群命令：
 ```
 cd /opt/spark-2.4.0/sbin;
