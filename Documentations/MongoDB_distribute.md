@@ -359,7 +359,7 @@ sh.addShard("shard4/slave4:27004");
         {  "_id" : "shard4",  "host" : "shard4/slave1:27004,slave2:27004,slave3:27004",  "state" : 1 }
 ```
 值得注意的是，这里居然只有slave1~3，那么slave4到哪去了？仔细观察之前的配置，我们能发现：`host:"slave4:27004",arbiterOnly:true`，那么，该节点是”仲裁节点“。根据官网以及网络的资料（[这里](https://docs.mongodb.com/manual/reference/replica-configuration/index.html)和[这里](https://blog.csdn.net/canot/article/details/50739359)）该节点不存数据，仅为仲裁使用。  
-![avatar](./mongodb_arbiter.png)
+![avatar](./imgs/mongodb_arbiter.png)
 
 
 ## <a id="3">测试</a>

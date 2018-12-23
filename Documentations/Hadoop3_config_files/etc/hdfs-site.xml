@@ -19,7 +19,7 @@
 <configuration>
     <property>
         <name>dfs.replication</name>
-        <value>3</value>
+        <value>1</value>
         <description>Indicates how many times data is replicated in the cluster.</description>
         <!-- Don't enter a value higher than the actual number of slave nodes -->
     </property>
