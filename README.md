@@ -42,8 +42,9 @@
 
 
 ### 上手
-- [使用Hadoop Streaming分析kaggle数据](./HadoopStreaming_Kaggle/README.md)
-- [使用全分布式Pig分析数据](./PigOnMap-Reduce/README.md)　　挖坑待填 
+- [使用Hadoop Streaming分析kaggle - Amazon sales数据](./HadoopStreaming_Kaggle/README.md)  
 - [Python+MongoDB————爬取与存储数据](./MongDBWithCrawler/README.md)  
+- [使用Spark分析LandChina数据](./Spark_LandChina/README.md)
+- [使用全分布式Pig分析数据](./PigOnMap-Reduce/README.md)　　挖坑待填   
 - [全分布下Hadoop和MongoDB的使用](./Documentations/Hadoop+MongoDB_Crawler.md)　　挖坑待填  
 - 未完待续

@@ -8,6 +8,7 @@
 > - [THUCNews数据集](#2)  
 > - [全网新闻数据(SogouCA,2012)数据集](#3)  
 > - [高频交易数据](#4)  
+> - [上传数据到HDFS](#5)  
 
 
 ## <p id=1>Amazon sales rank data for print and kindle books
@@ -15,7 +16,7 @@
 这是一份来自Kaggle的数据集，[点击这里](https://www.kaggle.com/ucffool/amazon-sales-rank-data-for-print-and-kindle-books)，这份数据集记录的是Amazon上的书,以及相应书目随时间变化的sale rank。考虑到国内下载网速较慢，笔者在百度网盘提供了备份，[点击这里](https://pan.baidu.com/s/1S5GkFcthv5pT_ZPyRz1ceA)可以获取，提取码: `8w26`。
 
 
-### <p id=1-1>数据介绍</p>
+### <p id=1-1>数据介绍
 
 这一份数据集包含两个文件夹以及三个说明文件，简要介绍如下。 
 
@@ -37,7 +38,7 @@ amazon_com_extras.csv |  csv格式说明文件，包含上面两个文件的所�
     .....
 }
 ```
-我们可以从[时间戳转换网站](https://tool.lu/timestamp/)将上面的数据转换为：
+我们可以从[时间戳转换网站](https://tool.lu/timestamp/)将上面的数据手动转换为：
 ```
 {
     "2017-07-26 02:00:00":956170,
@@ -49,7 +50,7 @@ amazon_com_extras.csv |  csv格式说明文件，包含上面两个文件的所�
 ```
 可以看到这里的时间都是整点的，如果打开`ranks`文件夹中的文件，那么情况将变得不同，时间戳是精确到秒的。  
 
-再看看说明文件`amazon_com_extras.csv`，很明显，这里有每一本书的ASIN以及对应的书本属性。那么ASIN可以视为主键。
+再看看说明文件`amazon_com_extras.csv`，很明显，这里有每一本书的ASIN以及对应的书本属性。那么ASIN可以视为主键。如下是该文件的前3行。
 ```
 "ASIN","GROUP","FORMAT","TITLE","AUTHOR","PUBLISHER"
 "1250150183","book","hardcover","The Swamp: Washington's Murky Pool of Corruption and Cronyism and How Trump Can Drain It","Eric Bolling","St. Martin's Press"
@@ -57,10 +58,10 @@ amazon_com_extras.csv |  csv格式说明文件，包含上面两个文件的所�
 "1608322564","book","hardcover","Sell or Be Sold: How to Get Your Way in Business and in Life","Grant Cardone","Greenleaf Book Group Press"
 ```
 
-### <p id=1-2>数据集sample</p>
+### <p id=1-2>数据集sample
 
 
-为了简化分析，笔者抽取了`ranks_norm`文件夹下的前1000条数据进行处理测试，在本项目的`Data_Sample`文件夹下可以找到`Sample_1000_amazon-sales-rank-data-for-print-and-kindle-books.tar.gz`。
+为了简化分析，笔者抽取了`ranks_norm`文件夹下的前1000条数据进行处理测试，在本项目的`Data_Sample`文件夹下可以找到`Sample_1000_amazon-sales-rank-data-for-print-and-kindle-books.zip`。
 
 
 ## <p id=2>THUCNews数据集
@@ -119,3 +120,17 @@ accvolume | 累计换手量
 accturover | 累计成交金额
 ask | 卖价
 bid | 买价
+
+## <p id=4>上传数据到HDFS
+
+进入本项目根目录，使用`scp -r Data_Sample root@aliyun_xgm:/root/`命令上传到服务器。
+
+使用ssh登陆服务器，解压并且将文件夹移动到HDFS目录下。  
+```
+cd /root/Data_Sample;
+unzip \*.zip;
+rm *.zip;
+hdfs dfs -copyFromLocal -p /root/Data_Sample /;
+hdfs dfs -ls /Data_Sample/;
+```
+可以访问WebUI查看，即`http://你的ip:50070`。
