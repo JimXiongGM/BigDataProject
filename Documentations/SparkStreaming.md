@@ -122,38 +122,117 @@ DStream 提供了两类操作：转换和输出操作 。 转换可以进一步�
 
 map
 
+```
+val lines = ssc.socketTextStream("localhost", 9999)
+val lengths = lines map {line => line.length}
+```
+
 flatMap
+
+下面的代码片段展示了如何从一个文本数据流创建一个由单词构成的流 。
+```
+val lines = ssc. socketTextStream("localhost", 9999)
+val words = lines flatMap {line => line.split(" ")}
+```
 
 filte
 
+```
+val lines = ssc.socketTextStream("localhost", 9999)
+val nonBlanklines = lines filter {line => line.length > 0}
+```
+
 repartition
 
+```
+val inputStream = ssc.socketTextStream("localhost", 9999)
+inputStream.repartition(l0)
+```
+
 union
+
+```
+val stream1 = ...
+val stream2 = ...
+val combinedStream = stream1.union(stream2)
+```
 
 ### 聚合转换
 
 count
 
+```
+val inputStream = ssc.socketTextStream("localhost", 9999)
+val countsPerRdd = inputStream.count()
+```
+
 reduce
 
+```
+val lines = ssc.socketTextStream("localhost", 9999)
+val words = lines flatMap {line => line.split(" ")}
+val longestWords = words reduce { (wl, w2) => if (wl.length > w2.length) w1 else w2 }
+```
+
 countByValue
+
+```
+val lines = ssc.socketTextStream("localhost", 9999)
+val words = lines flatMap {line => line.split(" ")}
+val wordCounts = words.countByValue()
+```
 
 
 ### 键值对转换
 
 cogroup
 
+```
+val lines1 = ssc.socketTextStream("localhost", 9999)
+val words1 = lines1 flatMap {line => line.split(" ")}
+val wordlenPairs1 = words1 map {w => (w.length, w)}
+val wordsBylen1 = wordlenPairs1.groupByKey
+
+val lines2 = ssc.socketTextStream("localhost", 9998)
+val words2 = lines2 flatMap {line => line.split(" ")}
+val wordlenPairs2 = words2 map {w => (w.length, w)}
+val wordsBylen2 = wordLenPairs2.groupByKey
+
+val wordsGroupedByLen = wordsByLen1.cogroup(wordsByLen2)
+```
+上面的例子展示如何使用 cogroup 方法来找出两个 DStream 中长度一样的单词 。
+
 join
+
+```
+
+```
 
 groupByKey
 
+```
+
+```
+
 reduceByKey
+
+```
+
+```
 
 ### 特殊转换
 
 transform
 
+```
+
+```
+
 updateStateByKey
+
+```
+
+```
 
 ## 输出操作
 

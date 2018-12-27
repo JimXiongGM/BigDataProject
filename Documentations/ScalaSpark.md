@@ -781,7 +781,7 @@ countBySeverityRdd.saveAsTextFile("data/log-counts-text")
 
 ### Spark中的Hello World
 
-```
+```py
 import org.apache.spark.SparkContext
 import org.apache.spark.SparkContext._
 
@@ -819,7 +819,7 @@ sbt;
 
 为了运行应用WordCount，我们需要编译源代码，并把它打包成一个jar文件。用sbt的工具来构建。最后使用Spark自带的Spark-submit脚本来运行应用。  
 
-使用如下命令建立`WordCount`文件目录并且创建scala文件、配置sbt文件并打包。
+使用如下命令建立`WordCount`文件目录并且创建scala文件、配置sbt文件并打包成jar。
 ```bash
 mkdir /root/WordCountSpark;
 cd /root/WordCountSpark;
@@ -868,9 +868,9 @@ sbt package;
 [info] Done packaging.
 [success] Total time: 516 s, completed Dec 27, 2018 7:23:36 PM
 ```
-使用`ls /WordCountSpark/target/scala-2.11`可以看到我们需要的`wordcountspark_2.11-1.0.0.jar`
+使用`ls /WordCountSpark/target/scala-2.11`，可以看到我们需要的`wordcountspark_2.11-1.0.0.jar`。
 
-这里遇到很迷的事。。。第一次执行`sbt package`的时候，出现`scala-2-11_2.12-0.1.0-SNAPSHOT.jar`，但是这个jar跑不通。再一次执行`sbt package`的时候，找到了`wordcountspark_2.11-1.0.0.jar`。笔者推测是这里的阿里云cpu配置不够，第一次没有编译完整，再一次编译即可成功。
+这里遇到很迷的事。。。第一次执行`sbt package`的时候，相应目录下出现`scala-2-11_2.12-0.1.0-SNAPSHOT.jar`，但是这个jar跑不通。再一次执行`sbt package`的时候，终于出现`wordcountspark_2.11-1.0.0.jar`。笔者推测原因是阿里云cpu配置不够，第一次没有编译完整，再一次编译即可成功。
 
 
 
