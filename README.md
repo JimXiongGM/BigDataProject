@@ -12,13 +12,15 @@
 
 因配置环境只需要一篇文档，这里把配置环境的说明文件直接放到`Documentations`文件夹下。
 
-### 环境安装
+### 环境安装与Hello-World DEMO
  
-- [Hadoop3全分布式+Hadoop streaming环境搭建](./Documentations/Hadoop_distribute.md)  
-- [MongoDB的本地安装+PyMongo的基本操作](./Documentations/MongoDB_standalone.md)    
-- [MongoDB的全分布式安装](./Documentations/MongoDB_distribute.md)    
-- [Pig的全分布式安装](./Documentations/Pig_distribute.md)  
+- [Hadoop3全分布式 + Hadoop streaming环境搭建](./Documentations/Hadoop_distribute.md)  
+- [MongoDB的本地安装 + PyMongo的基本操作](./Documentations/MongoDB_standalone.md)    
+- [MongoDB的全分布式安装](./Documentations/MongoDB_distribute.md)   
 - [Spark全分布式安装](./Documentations/Spark_distribute.md)
+- [Scala语法基础](./Documentations/ScalaBasic.md)
+- [Scala + Spark基础](./Documentations/ScalaSpark.md)
+- [Pig的全分布式安装](./Documentations/Pig_distribute.md)  
 - 未完待续
 
 ### 数据集介绍
