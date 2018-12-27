@@ -1,9 +1,26 @@
-# Scala Basic Usage
+# Scala语法基础
 
-目录
+本章的所有内容均摘自机械工业出版社的《Spark大数据分析核心概念技术及实践》，提倡读者购买正版。本章的内容不适合直接阅读，应在阅读原书的基础上，直接run本章摘录、清洗好的代码，以加深印象。本章只作为一个索引，供复习使用。
+
+## 目录
+
+- [变量](#1)   
+- [函数](#2)   
+- [高阶方法](#3)   
+- [类](#4)   
+- [单例](#5)   
+- [样本类](#6)   
+- [模式匹配](#7)   
+- [操作符](#8)   
+- [特质](#9)   
+- [元组](#10)   
+- [Option类型](#11)   
+- [集合](#12)   
+- [集合类上的高阶方法](#13)   
+- [一个单独的Scala应用程序](#14)   
 
 
-## 变量
+## <p id=1>变量
 
 变量类型 | 描 述
 --- | ---
@@ -18,7 +35,7 @@ Unicode |字符
 String |字符串
 Boolean |true 或 false
 
-## 函数
+## <p id=2>函数
 
 
 ```
@@ -31,7 +48,7 @@ def add(firstinput: Int, secondinput : Int) = firstinput + secondinput
 
 ```
 
-## 高阶方法
+## <p id=3>高阶方法
 
 def encode(n: Int, f: (Int) => Long): Long= {
 val x = n * 10
@@ -67,7 +84,7 @@ result
 ```
 
 
-## 类
+## <p id=4>类
 
 
 ```
@@ -90,17 +107,19 @@ val corvette = new Car ("GM","Corvette","Black")
 
 ```
 
-## 单例
+## <p id=5>单例
 
 在面向对象编程中一个常见的设计模式就是单例,它是指那些只可以实例化一次的类Scala使用关键字object来定义单例对象.
 
-## 样本类
+## <p id=6>样本类
 
 样本类是指使用case修饰符的类,下面是一个例子.样本类参数列表中的所有参数隐式获得val前缀的样本类 Message当成如下定义
+```
 case class Message(from: String, to: String, content: String)
 val request = Message("harry","sam","fight")
+```
 
-## 模式匹配
+## <p id=7>模式匹配
 
 模式匹配是Scala中的概念,它看上去类似于其他语言的switch语句.
 ```
@@ -118,7 +137,7 @@ val x = colorToNumber("Green")
 
 ```
 
-## 操作符
+## <p id=8>操作符
 
 Scala为基础类型提供了丰富的操作符.然而,Scala没有内置操作符.在Scala中,每一个基础类型都是一个类,每一个操作符都是一个方法.使用操作符等价于调用方法.
 ```
@@ -128,7 +147,7 @@ val z = x.+(y)
 
 ```
 
-## 特质
+## <p id=9>特质
 特质是类继承关系中的接口 . 
 
 ```
@@ -149,7 +168,7 @@ val area = square.area
 
 ```
 
-## 元组
+## <p id=10>元组
 
 元组是一个容器,用于存放两个或多个不同类型的元素.它是不可变的.它自从创建之后就不能修改了.
 
@@ -159,7 +178,7 @@ val threeElements = ("10", "harry",true)
 
 ```
 
-## Option 类型
+## <p id=11>Option类型
 
 Option是一种数据类型,用来表示值是可选的,即要么无值要么有值.它要么是样本类Some的实例,要么是单例对象None的实例.
 
@@ -180,7 +199,7 @@ case None => println("code not defined for orange")
 
 ```
 
-## 集合
+## <p id=12>集合
 
 Scala 的集合类可以分为 三类:序列､集合､ map.
 
@@ -257,7 +276,7 @@ val indiaCapital = capitals("India")
 ```
 
 
-## 集合类上的高阶方法
+## <p id=13>集合类上的高阶方法
 
 高阶方法把函数当成参数.这些高阶方法并没有改变集合.所有的 Scala 集合类都支持这些高阶方法
 
@@ -373,8 +392,9 @@ longestWord: String = Scala
 
 ```
 
-## 一个单独的 Scala 应用程序
+## <p id=14>一个单独的Scala应用程序
 
 一个单独的Scala应用程序需要一个具有main方法的单例对象.这个main方法以一个Array[String]类型的参数作为输入.HelloWorld.scala
-```object HelloWorld {def main(args: Array[String]) : Unit = {println("Hello World !")}}
+```
+object HelloWorld {def main(args: Array[String]) : Unit = {println("Hello World !")}}
 ```
