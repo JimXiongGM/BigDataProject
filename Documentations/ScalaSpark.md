@@ -781,6 +781,7 @@ countBySeverityRdd.saveAsTextFile("data/log-counts-text")
 
 ### Spark中的Hello World
 
+WordCount.scala源码如下
 ```py
 import org.apache.spark.SparkContext
 import org.apache.spark.SparkContext._
