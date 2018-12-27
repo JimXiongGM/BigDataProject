@@ -16,31 +16,29 @@ spark依赖scala，这里首先安装scala。
 
 ### 下载并解压
 
-从[官网](https://www.scala-lang.org/download/)下载`scala-2.12.8.tgz`并解压tgz文件到相应目录。
+从[官网](https://www.scala-lang.org/download/)下载`scala-2.11.12.tgz`并解压tgz文件到相应目录。
 ```
 cd /root/xiazai;
-wget https://downloads.lightbend.com/scala/2.12.8/scala-2.12.8.tgz;
-tar -zvxf /root/xiazai/scala-2.12.8.tgz -C /opt/;
+rm -rf /opt/scala-2.12.8
+wget https://downloads.lightbend.com/scala/2.11.12/scala-2.11.12.tgz;
+tar -zvxf /root/xiazai/scala-2.11.12.tgz -C /opt/;
 ```
 
-
+**特别注意**，这里的scala版本和spark版本之间存在对应关系，[官网](http://spark.apache.org/downloads.html)会给出，如下图。
+![avatar](./imgs/spark-scala-version.png)
 ### 配置环境变量
 
 直接执行以下命令即可
 ```
-echo 'export SCALA_HOME=/opt/scala-2.12.8' >> /etc/bash.bashrc ;
+echo 'export SCALA_HOME=/opt/scala-2.11.12' >> /etc/bash.bashrc ;
 echo 'export PATH=$SCALA_HOME/bin:$PATH' >> /etc/bash.bashrc ;
 source /etc/bash.bashrc;
 scala -version
 ```
-直接输入`scala`，如果成功则输出如下。安装过程非常简单
+可以看到如下输出
 ```
-root@master:/opt# scala
-Welcome to Scala 2.12.8 (OpenJDK 64-Bit Server VM, Java 1.8.0_191).
-Type in expressions for evaluation. Or try :help.
-
-scala> 1+1
-res0: Int = 2
+root@master:~/xiazai# scala -version
+Scala code runner version 2.11.12 -- Copyright 2002-2017, LAMP/EPFL
 ```
 
 ### 给每个slave安装
@@ -183,8 +181,7 @@ slave1: starting org.apache.spark.deploy.worker.Worker, logging to /opt/spark-2.
 尝试向集群提交[官网](https://spark.apache.org/docs/latest/running-on-yarn.html)提供的DEMO，这是一个计算π值的小程序，spark自带。
 
 ```
-cd /opt/spark-2.4.0;
-./bin/spark-submit --class org.apache.spark.examples.SparkPi \
+$SPARK_HOME/bin/spark-submit --class org.apache.spark.examples.SparkPi \
     --master yarn \
     --deploy-mode cluster \
     --driver-memory 512mb \

@@ -16,7 +16,8 @@
 - [Spark Shell](#10)  
 - [编写Spark应用](#11)  
 - - [安装sbt环境](#11-1)
-
+- - [编译应用](#11-2)
+- - [提交作业到集群](#11-3)
 
 
 ## <p id=1>Spark特点
@@ -814,11 +815,93 @@ sbt;
 ```
 
 
-### 编译并运行应用
+### <p id=#11-2>编译应用
 
-为了运行应用WordCount，我们需要编译源代码，并把它打包成一个jar文件。用sbt的工具来构建。最后使用Spark自带的Spark-submit脚本来运行应用。
+为了运行应用WordCount，我们需要编译源代码，并把它打包成一个jar文件。用sbt的工具来构建。最后使用Spark自带的Spark-submit脚本来运行应用。  
+
+使用如下命令建立`WordCount`文件目录并且创建scala文件、配置sbt文件并打包。
+```bash
+mkdir /root/WordCountSpark;
+cd /root/WordCountSpark;
+rm WordCount.scala
+touch WordCount.scala;
+echo 'import org.apache.spark.SparkContext
+import org.apache.spark.SparkContext._
+ 
+object WordCount {
+    def main(args: Array[String]): Unit = {
+    val inputPath = args(0)
+    val outputPath = args(1)
+    val sc = new SparkContext()
+    val lines= sc.textFile(inputPath)
+    val wordCounts = lines.flatMap {line => line.split(" ")}
+        .map(word => (word, 1))
+        .reduceByKey(_ + _)
+    wordCounts.saveAsTextFile(outputPath)
+    }
+}' >> WordCount.scala;
+
+echo "配置sbt文件";
+
+rm BuildWordCount.sbt;
+touch BuildWordCount.sbt;
+echo 'ThisBuild / version := "1.0.0"
+ThisBuild / scalaVersion := "2.11.12"
+ThisBuild / organization := "xgm"
+
+lazy val WordCountSpark = (project in file("."))
+  .settings(
+    name := "WordCountSpark",
+    libraryDependencies += "org.apache.spark" %% "spark-core" % "2.4.0" % "provided"
+  )' >> BuildWordCount.sbt;
+
+sbt package;
+
+```
+
+
+等待一段时间后，出现如下即可成功
+```
+...
+[info] Packaging /root/WordCountSpark/target/scala-2.12/worldcountspark_2.12-0.1.0-SNAPSHOT.jar ...
+[info] Packaging /root/WordCountSpark/target/scala-2.12/worldcountspark_2.12-0.1.0-SNAPSHOT.jar ...
+[info] Done packaging.
+[success] Total time: 516 s, completed Dec 27, 2018 7:23:36 PM
+```
+使用`ls /WordCountSpark/target/scala-2.11`可以看到我们需要的`wordcountspark_2.11-1.0.0.jar`
+
+这里遇到很迷的事。。。第一次执行`sbt package`的时候，出现`scala-2-11_2.12-0.1.0-SNAPSHOT.jar`，但是这个jar跑不通。再一次执行`sbt package`的时候，找到了`wordcountspark_2.11-1.0.0.jar`。笔者推测是这里的阿里云cpu配置不够，第一次没有编译完整，再一次编译即可成功。
 
 
 
+### <p id=#11-3>提交作业到集群
 
-https://www.scala-sbt.org/1.x/docs/sbt-by-example.html
+#### 使用spark standalone
+
+使用如下命令即可提交任务到spark自带的调度器，在`http://master:8080`可以看到任务的情况
+```
+$SPARK_HOME/bin/spark-submit --class "WordCount" --master spark://master:7077 \
+/root/WordCountSpark/target/scala-2.11/wordcountspark_2.11-1.0.0.jar  \
+hdfs://master:9000/data/WordCountDemo/test.txt \
+hdfs://master:9000//xgm/output/Spark_WordCount01
+```
+同样，使用`hdfs dfs -tail /xgm/output/Spark_WordCount01/part-00000`即可查看我们的输出结果。
+
+
+#### 使用YARN
+
+copy+enter即可。
+```
+$SPARK_HOME/bin/spark-submit --class "WordCount" \
+    --master yarn \
+    --deploy-mode cluster \
+    --driver-memory 512mb \
+    --executor-memory 512mb \
+    --executor-cores 1 \
+    --queue default \
+    /root/WordCountSpark/target/scala-2.11/wordcountspark_2.11-1.0.0.jar \
+    hdfs://master:9000/data/WordCountDemo/test.txt \
+    hdfs://master:9000//xgm/output/Spark_WordCount02
+```
+
+
