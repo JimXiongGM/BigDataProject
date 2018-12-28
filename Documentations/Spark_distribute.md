@@ -43,6 +43,8 @@ Scala code runner version 2.11.12 -- Copyright 2002-2017, LAMP/EPFL
 
 ### 给每个slave安装
 
+**注意**。这里其实不用给每个slave都安装scala，因为我们使用scala编写程序之后，需要编译为jar并提交集群，这样和java编写的程序没有区别。
+
 同理，在master端，使用如下命令拷贝文件
 ```
 scp /root/xiazai/scala-2.12.8.tgz root@slave1:;

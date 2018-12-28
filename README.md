@@ -19,6 +19,7 @@
 - [Scala语法基础](./Documentations/ScalaBasic.md)
 - [Scala + Spark基础](./Documentations/ScalaSpark.md)
 - [Spark Streaming基础](./Documentations/SparkStreaming.md)
+- [Spark + SQL实例](./Documentations/SparkSQLDEMO.md)
 - [MongoDB的本地安装 + PyMongo的基本操作](./Documentations/MongoDB_standalone.md)    
 - [MongoDB的全分布式安装](./Documentations/MongoDB_distribute.md)   
 - [Pig的全分布式安装](./Documentations/Pig_distribute.md)  
