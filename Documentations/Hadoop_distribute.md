@@ -192,20 +192,21 @@ exit
 直接在每一个节点下运行如下命令即可
 ```
 echo '正在配置环境变量'
-echo '# Hadoop Settings' >> /etc/bash.bashrc;
-echo 'export HADOOP_HOME=/opt/hadoop-3.1.1' >> /etc/bash.bashrc;
-echo 'export HADOOP_INSTALL=$HADOOP_HOME' >> /etc/bash.bashrc;
-echo 'export YARN_HOME=$HADOOP_HOME' >> /etc/bash.bashrc;
-echo 'export HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop' >> /etc/bash.bashrc;
-echo 'export HADOOP_MAPRED_HOME=$HADOOP_HOME' >> /etc/bash.bashrc;
-echo 'export HADOOP_COMMON_HOME=$HADOOP_HOME' >> /etc/bash.bashrc;
-echo 'export HADOOP_HDFS_HOME=$HADOOP_HOME' >> /etc/bash.bashrc;
-echo 'export HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_HOME/lib/native' >> /etc/bash.bashrc;
-echo 'export HADOOP_LIBEXEC_DIR=$HADOOP_HOME/libexec' >> /etc/bash.bashrc;
-echo 'export JAVA_LIBRARY_PATH=$HADOOP_HOME/lib/native:$JAVA_LIBRARY_PATH' >> /etc/bash.bashrc;
-echo 'export PATH=.:$JAVA_HOME/bin:$HADOOP_HOME/bin:$HADOOP_HOME/sbin:$PATH' >> /etc/bash.bashrc;
-echo 'export HADOOP_ROOT_LOGGER=DEBUG,console' >> /etc/bash.bashrc;
-echo ' ' >> /etc/bash.bashrc;
+echo '# Hadoop Settings
+export HADOOP_HOME=/opt/hadoop-3.1.1
+export HADOOP_INSTALL=$HADOOP_HOME
+export YARN_HOME=$HADOOP_HOME
+export HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop
+export HADOOP_MAPRED_HOME=$HADOOP_HOME
+export HADOOP_COMMON_HOME=$HADOOP_HOME
+export HADOOP_HDFS_HOME=$HADOOP_HOME
+export HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_HOME/lib/native
+export HADOOP_LIBEXEC_DIR=$HADOOP_HOME/libexec
+export JAVA_LIBRARY_PATH=$HADOOP_HOME/lib/native:$JAVA_LIBRARY_PATH
+export PATH=.:$JAVA_HOME/bin:$HADOOP_HOME/bin:$HADOOP_HOME/sbin:$PATH
+export HADOOP_ROOT_LOGGER=DEBUG,console
+export LD_LIBRARY_PATH=$HADOOP_HOME/lib/native
+ ' >> /etc/bash.bashrc;
 source /etc/bash.bashrc;
 
 ```

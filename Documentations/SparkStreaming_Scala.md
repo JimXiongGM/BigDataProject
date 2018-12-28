@@ -1,4 +1,4 @@
-# Spark Streaming基础
+# Spark Streaming基础 (Scala)
 
 [Spark Streaming官网](http://spark.apache.org/docs/latest/streaming-programming-guide.html)在这里。本文最后的`Spark Streaming例子`部分值得一看，提供了代码和运行截图。
 
