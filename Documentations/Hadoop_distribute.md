@@ -448,7 +448,7 @@ hdfs dfs -copyFromLocal /root/WordCountDemo/test.txt /data/WordCountDemo/;
 hadoop jar /opt/hadoop-3.1.1/share/hadoop/tools/lib/hadoop-streaming-3.1.1.jar \
   -D mapreduce.job.name='WordCount01' \
   -input /data/WordCountDemo/test.txt \
-  -output /xgm/output/WordCount03 \
+  -output /xgm/output/WordCount01 \
   -mapper mapper_WordCount.py \
   -reducer reducer_WordCount.py \
   -file /root/WordCountDemo/mapper_WordCount.py \

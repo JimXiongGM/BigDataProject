@@ -1,5 +1,7 @@
 # 使用Hadoop Streaming分析数据
 
+[点击这里](https://github.com/daviddwlee84/RaspPi-Cluster/tree/master/Example/MapReduce/GeneralWordCount)可以看到实现worldcount的mapper-reducer函数，推荐读者先理解原理，再看本文会更好理解一些。  
+
 ## 目录
 
 > - [数据准备](#1)  
@@ -54,7 +56,6 @@ reducer稍微复杂一点。首先对每一个传入的流进行key-value切分�
 ```
 前三个不需要处理，只有最后一个需要相加，即需要产生`<'2017-10-31':2>`。因此，在reducer函数的IF部分，需要加上单独的判断条件。  
 
-[点击这里](https://github.com/daviddwlee84/RaspPi-Cluster/tree/master/Example/MapReduce/GeneralWordCount)可以看到实现worldcount的mapper-reducer函数，会更好理解一些。  
 
 reducer.py中是如何判断key值的边界？Hadoop会在mapper的输出结果中对key进行排序，因此传到reducer部分的key值一定是连续的。所以reducer可以判断，只要传入key（`key`）不等于正在统计的key（`current_key`），那么进行下一个key的计算。  
 

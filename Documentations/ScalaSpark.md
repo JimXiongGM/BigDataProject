@@ -881,7 +881,7 @@ sbt package;
 
 #### 使用spark standalone
 
-使用如下命令即可提交任务到spark自带的调度器，在`http://master:8080`可以看到任务的情况
+使用如下命令即可提交任务到spark自带的调度器，在`http://master:8080`可以看到节点情况，在`http://master:4040`可以看到节点情况，具体WebUI端口号以shell输出为准。
 ```
 $SPARK_HOME/bin/spark-submit --class "WordCount" --master spark://master:7077 \
 /root/WordCountSpark/target/scala-2.11/wordcountspark_2.11-1.0.0.jar  \
