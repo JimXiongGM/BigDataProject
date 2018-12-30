@@ -1,13 +1,14 @@
-# Spark + SQL实例 (Scala)
+# Spark + SQL实例 (Scala + python3)
 
 这一部分的内容没有参考之前的《Spark大数据分析核心概念技术及实践》，主要原因是笔者搭建的spark2.4.0API较新，将SparkContext等合并为SparkSession，变动较大。这里主要的参考材料是[官网文档](http://spark.apache.org/docs/latest/sql-getting-started.html)以及Tomasz Drabas编写的《PySpark实战指南》
 
 ## 目录 
 
+- [CSV文件(scala)](#1)
+- [CSV文件(python3)](#2)
 
 
-
-## CSV文件
+## <p id=1>CSV文件(scala)
 
 使用`$SPARK-HOME/bin/spark-shell --master spark://master:7077`命令打开spark-shell，可以整段copy+enter，也可以一条一条执行下面的命令。
 
@@ -50,17 +51,19 @@ root
  |-- PUBLISHER: string (nullable = true)
 ```
 
+
+## <p id=2>CSV文件(python3)
+
+这一部分直接笔者直接在jupyter notebook上实现，安装过程点击[这里](./JupyterNotebook.md)，示例代码点击[这里](./TEST_PySpark.html)
+
+
 ## JSON文件
 
 `caixin_125_0_100.json`文件是一种嵌套JSON结构，直接使用select会出问题。这里需要引入新的用法，参考资料来源[这里](https://cloud.tencent.com/developer/article/1032531)
 
 
 ```js
-val df2 = spark.read.json("hdfs://master:9000/Data_Sample/Sample_100x3_caixin_news/urls/caixin_125_0_100.json")
-df2.printSchema()
-
-
-
+未完待续
 ```
 
 
@@ -125,6 +128,8 @@ val spark = SparkSession
 // For implicit conversions like converting RDDs to DataFrames
 import spark.implicits._
 ```
+
+
 
 
 

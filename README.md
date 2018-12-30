@@ -19,7 +19,7 @@
 - [Scala语法基础](./Documentations/ScalaBasic.md)
 - [Scala + Spark基础](./Documentations/ScalaSpark.md)
 - [Spark Streaming基础 + 实例 (Scala)](./Documentations/SparkStreaming_Scala.md)
-- [Spark + SQL实例 (Scala)](./Documentations/SparkSQLDEMO_Scala.md)
+- [Spark + SQL实例 (Scala + python3)](./Documentations/SparkSQLDEMO_Scala.md)
 - [Jupyter Notebook + Spark 配置](./Documentations/JupyterNotebook.md)
 - [MongoDB的本地安装 + PyMongo的基本操作](./Documentations/MongoDB_standalone.md)
 - [MongoDB的全分布式安装](./Documentations/MongoDB_distribute.md)

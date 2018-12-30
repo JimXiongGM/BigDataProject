@@ -74,7 +74,7 @@ c.NotebookApp.port = 6789" >> /root/.jupyter/jupyter_notebook_config.py;
 即可。
 
 
-## <p id=3>安装scala kernel
+## <p id=3>安装kernel
 
 这里有两种scala kernel可以使用，分别是`spylon-kernel`和`toree`提供的kernel，这里都安装
 
@@ -89,7 +89,7 @@ jupyter kernelspec list;
 
 两者的区别在于，`spylon-kernel`是直接调用spark-sehll的scacla进行scala交互，`toree`是纯scala编译器。读者只要打开jupyter notebook运行一下就知道区别。
 
-
+关于`pysprk`，可以直接在Python3中import，具体用法可见[这里](./TEST_PySpark.html)
 
 ## <p id=4>后台挂起jupyter notebook
 
