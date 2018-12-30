@@ -42,7 +42,7 @@ hadoop jar /opt/hadoop-3.1.1/share/hadoop/tools/lib/hadoop-streaming-3.1.1.jar \
 
 ## spark join 
 
-这里的操作直接在jupyter notebook上执行，相应代码和执行结果请看[这里](./PySpark-Kagggle-AmazonBook.html)。
+这里的操作直接在jupyter notebook上执行，相应代码和执行结果请看[这里](./PySpark-Kagggle-AmazonBook.md)。
 
 思路很简单，读取hadoop mapreduce 的结果为dataframe，和提供好的csv文件进行表连接即可。然后我们对`start-time`列升序和降序排列，看看这一列的极值。
 
