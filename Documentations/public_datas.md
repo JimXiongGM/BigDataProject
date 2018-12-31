@@ -121,7 +121,7 @@ accturover | 累计成交金额
 ask | 卖价
 bid | 买价
 
-## <p id=4>上传数据到HDFS
+## <p id=5>上传数据到HDFS
 
 进入本项目根目录，使用`scp -r Data_Sample root@aliyun_xgm:/root/`命令上传到服务器。
 
