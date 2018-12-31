@@ -1,10 +1,16 @@
 # 使用Spark分析kaggle - Amazon sales数据
 
-未完待续
+本文使用hadoop streaming + pyspark对Amazon book salesrank进行了简单的统计分析，首先按照月度统计salesrank均值，接着给出了2018年6月的排行统计。
 
 ## 目录 
 
-
+- [数据准备](#1)
+- [hadoop streaming 获取salesrank时间范围](#2)
+- [spark join](#3)
+- [月度排行榜统计--Hadoop streaming](#4)
+- [月度排行榜统计--pyspark](#5)
+- [性能调优](#6)
+- [错误与调试](#7)
 
 
 ## <p id=1>数据准备 
@@ -15,7 +21,7 @@
 
 
 
-## hadoop streaming 获取salesrank时间范围
+## <p id=2>hadoop streaming 获取salesrank时间范围
 
 首先，编写mapper和reducer对数据进行描述性统计，获取每本书salesrank的最早和最迟时间。代码详见`mapper_kaggle_BeginEnd.py`。值得注意的是，这里几乎不用reducer，因为不需要对key进行统计，但是不上传reducer，hadoop streaming会报错，所以这里都上传。
 
@@ -41,7 +47,7 @@ hadoop jar /opt/hadoop-3.1.1/share/hadoop/tools/lib/hadoop-streaming-3.1.1.jar \
 ```
 
 
-## spark join 
+## <p id=3>spark join 
 
 这里的操作直接在jupyter notebook上执行，相应代码和执行结果请看[这里（jupyter nobook格式）](./PySpark-Kaggle-AmazonBook.ipynb)，如果因为排版问题，这里同时提供了[markdown版本](./PySpark-Kaggle-AmazonBook.md)
 
@@ -49,7 +55,7 @@ hadoop jar /opt/hadoop-3.1.1/share/hadoop/tools/lib/hadoop-streaming-3.1.1.jar \
 
 
 
-## 月度排行榜统计--Hadoop streaming
+## <p id=4>月度排行榜统计--Hadoop streaming
 
 从上述的代码执行结果，我们能看出kaggle的这份数据极差较大，做年度统计意义有限，但是做月度分析还是有意义的。这里我们继续使用hadoop streaming，对数据集的月度情况做一个统计。
 
@@ -101,7 +107,7 @@ ing_slot_sums = [0,0,......,0]　　#共18个
 root@master:~/HadoopStreaming_Month# cat 000721393X_com_norm.json  |  mapper_18months.py | sort -t ' ' -k 1 | reducer_18months.py
 filename_test_970       0       0       0       0       0       0       542483  836820  745066  453745  450170  714322  687373  956912  746508  683338  814608  548967
 ```
-**特别注意**：把mapper文件中的`本地测试filename`注释掉，启用hadoop环境使用变量！
+**特别注意**：把mapper文件中的`本地测试filename`注释掉，启用hadoop环境变量！
 
 提交到hadoop集群：
 ```
@@ -116,17 +122,17 @@ hadoop jar /opt/hadoop-3.1.1/share/hadoop/tools/lib/hadoop-streaming-3.1.1.jar \
 ```
 
 
-## 月度排行榜统计--pyspark
+## <p id=5>月度排行榜统计--pyspark
 
-这里
+查看本目录下的`PySpark-Kagggle-AmazonBook_Sample_18months`文件即可看到源码和输出，这里同样提供了[jupyter版本](./PySpark-Kagggle-AmazonBook_Sample_18months.ipynb)和[markdown版本](PySpark-Kagggle-AmazonBook_Sample_18months.md)，点击可以查看。
 
 
-## 性能调优
+## <p id=6>性能调优
 
 未完待续
 
 
-## 错误与调试
+## <p id=7>错误与调试
 
 ### 字符不兼容
 

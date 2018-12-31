@@ -2,7 +2,7 @@
 
 ## 前言  
 
-本项目目标是基于阿里云搭建全分布式系统，运行Hadoop3+Spark2+MongoDB+something else做一些好玩的事，目前正在构思与探索。这是笔者第一次上手大数据平台，因此秉持着“study with output”的精神，尝试把从下载软件到跑通代码的过程都记录下来，并且尽力“知其所以然”。所以本项目记录比较详细，适合新手阅读。
+本项目目标是基于阿里云搭建全分布式系统，运行Hadoop3 + Spark2 + MongoDB + something else做一些好玩的事，目前正在构思与探索。这是笔者第一次上手大数据平台，因此秉持着“study with output”的精神，尝试把从下载软件到跑通代码的过程都记录下来，并且尽力“知其所以然”。所以本项目记录比较详细，适合新手阅读。
 
 ## 思路
 
@@ -47,9 +47,9 @@
 
 
 ## 上手
-- [使用Hadoop Streaming分析kaggle - Amazon sales数据](./HadoopStreaming_Kaggle/README.md)
-- [Python+MongoDB————爬取与存储数据](./MongDBWithCrawler/README.md)
+
 - [使用Spark分析kaggle - Amazon sales数据](./Spark_AmazonBook/README.md)
+- [Python+MongoDB————爬取与存储数据](./MongDBWithCrawler/README.md)　　未完待续
 - [使用全分布式Pig分析数据](./PigOnMap-Reduce/README.md)　　挖坑待填
 - [全分布下Hadoop和MongoDB的使用](./Documentations/Hadoop+MongoDB_Crawler.md)　　挖坑待填
 - 未完待续
