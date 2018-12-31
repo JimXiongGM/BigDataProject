@@ -86,14 +86,14 @@ hadoop jar /opt/hadoop-3.1.1/share/hadoop/tools/lib/hadoop-streaming-3.1.1.jar \
 ### mapper
 
 
-思路是对每个key值做判断，看看属于哪一个区间，将值填入对应的卡槽（slot）。这一部分笔者为原创，简介如下。每一个mapper输出键为文件名，即ASIN，键为一个list，共18个slot，对于每一个key，判断其属于哪一个slot，填入并print。这样每一个json文件将会print上千个如下的key-value，每一个key-value只有一个slot有值，其余为0。详情见[mapper_18months.py](./mapper_18months.py)
+思路是对每个key值做判断，看看属于哪一个区间，将值填入对应的卡槽（slot）。这一部分笔者为原创，简介如下。每一个mapper输出键为文件名，即ASIN，键为一个list，共18个slot，对于每一个key，判断其属于哪一个slot，填入并print。这样每一个json文件将会print上千个如下的key-value，每一个key-value只有一个slot有值，其余为0。详情见[mapper_18months.py](./HadoopStreaming_Month/mapper_18months.py)
 
 <"filenam" \t "[value0][value1].....[value17]">
 
 
 ### reducer
 
-思路是对相同key的key-value进行分slot统计，即对于相同key，有一个累加器list和一个求和list，遇到相应slot非零，则累加器list+=1.求和list+=相应值。最后相应slot相除并输出。详情见[reducer_18months.py](./reducer_18months.py)
+思路是对相同key的key-value进行分slot统计，即对于相同key，有一个累加器list和一个求和list，遇到相应slot非零，则累加器list+=1.求和list+=相应值。最后相应slot相除并输出。详情见[reducer_18months.py](./HadoopStreaming_Month/reducer_18months.py)
 ```
 ing_slot_accumlators = [0,0,......,0]　　#共18个
 ing_slot_sums = [0,0,......,0]　　#共18个
