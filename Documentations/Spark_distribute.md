@@ -1,4 +1,4 @@
-# Spark全分布式安装
+# Spark分布式安装
 
 这里基于hadoop分布式环境，继续搭建spark。
 

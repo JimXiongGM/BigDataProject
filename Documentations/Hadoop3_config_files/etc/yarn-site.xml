@@ -70,7 +70,7 @@
 
     <property>
         <name>yarn.nodemanager.resource.cpu-vcores</name>
-        <value>1</value>
+        <value>2</value>
     </property>
 
     <property>
@@ -79,7 +79,7 @@
     </property>
     <property>
         <name>yarn.scheduler.maximum-allocation-vcores</name>
-        <value>1</value>
+        <value>2</value>
     </property>
 
 
@@ -97,14 +97,14 @@
         container allocation will be rejected and applications will fail.
         However, it should not be the entire amount of RAM on the node. -->
         <name>yarn.nodemanager.resource.memory-mb</name>
-        <value>1400</value> <!-- 75% of memory for Raspberry Pi 3 (1GB) -->
+        <value>1500</value> <!-- 75% of memory for Raspberry Pi 3 (1GB) -->
     </property>
     <!-- How much memory a single container can consume and the minimum memory allocation allowed.
     A container will never be bigger than the maximum, or else allocation will fail
     and will always be allocated as a multiple of the minimum amount of RAM. -->
     <property>
         <name>yarn.scheduler.maximum-allocation-mb</name>
-        <value>1400</value> <!-- 75% of memory for Raspberry Pi 3 (1GB) -->
+        <value>1500</value> <!-- 75% of memory for Raspberry Pi 3 (1GB) -->
     </property>
     <property>
         <name>yarn.scheduler.minimum-allocation-mb</name>

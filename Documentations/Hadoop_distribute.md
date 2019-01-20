@@ -1,4 +1,4 @@
-# Hadoop3全分布式+Hadoop Streaming环境搭建 
+# Hadoop3分布式+Hadoop Streaming环境搭建 
 
 本文完全从0开始搭建基于阿里云ESC的全分布式集群。
 
@@ -348,7 +348,7 @@ scheduler相关配置，需要微调。
 不出意外，到这里已经配置完毕，可以启动Hadoop。
 
 
-##启动
+## 启动
 
 启动之前，我们先进行format操作和授权操作。  
 

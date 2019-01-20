@@ -30,6 +30,6 @@
     <property>
         <!-- A base for other temporary directories. -->
         <name>hadoop.tmp.dir</name>
-        <value>file:///hadoop/tmp</value>
+        <value>file:///data/hadoop/tmp</value>
     </property>
 </configuration>
