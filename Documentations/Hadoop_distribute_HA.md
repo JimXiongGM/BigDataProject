@@ -77,7 +77,7 @@ ls
 mkdir -p /data/zookeeper;
 chown root.root /data/zookeeper;
 touch /data/zookeeper/myid;
-echo '1' >> /data/zookeeper/myid;
+echo '1' > /data/zookeeper/myid;
 
 echo 'export ZOOKEEPER_HOME=/opt/zookeeper-3.4.13' >> /etc/bash.bashrc;
 source /etc/bash.bashrc;
@@ -94,7 +94,7 @@ exit
 mkdir -p /data/zookeeper;
 chown root.root /data/zookeeper;
 touch /data/zookeeper/myid;
-echo '2' >> /data/zookeeper/myid;
+echo '2' > /data/zookeeper/myid;
 
 echo 'export ZOOKEEPER_HOME=/opt/zookeeper-3.4.13' >> /etc/bash.bashrc;
 source /etc/bash.bashrc;
@@ -111,9 +111,9 @@ exit
 mkdir -p /data/zookeeper;
 chown root.root /data/zookeeper;
 touch /data/zookeeper/myid;
-echo '3' >> /data/zookeeper/myid;
+echo '3' > /data/zookeeper/myid;
 
-echo 'export ZOOKEEPER_HOME=/opt/zookeeper-3.4.13' >>/etc/bash.bashrc;
+echo 'export ZOOKEEPER_HOME=/opt/zookeeper-3.4.13' >> /etc/bash.bashrc;
 source /etc/bash.bashrc;
 
 rm -rf /data/logs/zookeepers/*;
@@ -152,7 +152,7 @@ Mode: leader
 
 启动失败是很正常的，通过如下命令能够查看日志
 ```
-cat /data/logs/zookeeper/zookeeper.out
+vim /data/logs/zookeeper/zookeeper.out
 ```
 
 ### 停止
