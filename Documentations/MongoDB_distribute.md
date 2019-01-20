@@ -1,4 +1,4 @@
-# MongoDB的全分布式安装
+# MongoDB的分布式安装
 
 如[[Hadoop3全分布式+Hadoop streaming环境搭建](./Hadoop_distribute.md)所述，阅读本小章的前提条件是已经申请5个云服务器节点，修改好相应的host文件，并开启了所有的端口访问权限。  
 

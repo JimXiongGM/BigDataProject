@@ -14,17 +14,18 @@
 
 ## 环境安装与Hello-World DEMO
  
-- [Hadoop3全分布式 + Hadoop streaming环境搭建](./Documentations/Hadoop_distribute.md)
+- [Hadoop3分布式 + Hadoop streaming环境搭建](./Documentations/Hadoop_distribute.md)
 - [Hadoop3分布式HA模式搭建](./Documentations/Hadoop_distribute_HA.md)
-- [Spark全分布式安装](./Documentations/Spark_distribute.md)
+- [Spark分布式安装](./Documentations/Spark_distribute.md)
 - [Scala语法基础](./Documentations/ScalaBasic.md)
 - [Scala + Spark基础](./Documentations/ScalaSpark.md)
 - [Spark Streaming基础 + 实例 (Scala)](./Documentations/SparkStreaming_Scala.md)
 - [Spark + SQL实例 (Scala + python3)](./Documentations/SparkSQLDEMO_Scala.md)
 - [Jupyter Notebook + Spark 配置](./Documentations/JupyterNotebook.md)
 - [MongoDB的本地安装 + PyMongo的基本操作](./Documentations/MongoDB_standalone.md)
-- [MongoDB的全分布式安装](./Documentations/MongoDB_distribute.md)
-- [Pig的全分布式安装](./Documentations/Pig_distribute.md)
+- [MongoDB的分布式安装](./Documentations/MongoDB_distribute.md)
+- [Pig的分布式安装](./Documentations/Pig_distribute.md)
+- [HBASE分布式安装](./Documentations/Hbase_distribute.md)
 - 未完待续
 
 ## 数据集介绍
