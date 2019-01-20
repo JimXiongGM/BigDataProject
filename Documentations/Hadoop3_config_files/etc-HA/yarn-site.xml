@@ -1,0 +1,122 @@
+<?xml version="1.0"?>
+<!--
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License. See accompanying LICENSE file.
+-->
+<configuration>
+<!-- Site specific YARN configuration properties -->
+    <property>
+        <name>yarn.nodemanager.aux-services</name>
+        <value>mapreduce_shuffle</value>
+    </property>
+
+    <!-- These will affect web app address and many other url -->
+    <property>
+        <name>yarn.resourcemanager.hostname</name>
+        <value>master</value>
+        <description>The hostname of the RM.</description>
+    </property>
+
+    <!-- Not sure why this won't work.
+    But I really want that it can show http://hostname:8042/node/...
+    in RM webapp rather than just http://hostname:8042/node/... -->
+    <!-- <property>
+        <name>yarn.nodemanager.webapp.address</name>
+        <value>${yarn.nodemanager.hostname}:8042</value>
+        <description>NM Webapp address.</description>
+    </property> -->
+
+    <property>
+        <name>yarn.log-aggregation-enable</name>
+        <value>true</value>
+    </property>
+
+    <property>
+        <name>yarn.acl.enable</name>
+        <value>0</value>
+    </property>
+
+
+
+    <property>
+        <name>yarn.resourcemanager.resource-tracker.address</name>
+        <value>master:8025</value>
+    </property>
+    <property>
+        <name>yarn.resourcemanager.scheduler.address</name>
+        <value>master:8035</value>
+    </property>
+
+    <property>
+        <name>yarn.nm.liveness-monitor.expiry-interval-ms</name>
+        <value>120000</value> <!-- 2 minutes -->
+    </property>
+
+
+
+    <property>
+        <name>yarn.resourcemanager.nodemanager-connect-retries</name>
+        <value>3</value>
+    </property>
+
+    <property>
+        <name>yarn.nodemanager.resource.cpu-vcores</name>
+        <value>2</value>
+    </property>
+
+    <property>
+        <name>yarn.scheduler.minimum-allocation-vcores</name>
+        <value>1</value>
+    </property>
+    <property>
+        <name>yarn.scheduler.maximum-allocation-vcores</name>
+        <value>2</value>
+    </property>
+
+
+    <!-- === from internet === -->
+     <property>
+         <name>yarn.resourcemanager.address</name>
+         <value>master:8032</value>
+
+     </property>
+
+    <!-- === Memory Settings === -->
+    <property>
+        <!-- How much memory can be allocated for YARN containers on a single node.
+        This limit should be higher than all the others; otherwise,
+        container allocation will be rejected and applications will fail.
+        However, it should not be the entire amount of RAM on the node. -->
+        <name>yarn.nodemanager.resource.memory-mb</name>
+        <value>1500</value> <!-- 75% of memory for Raspberry Pi 3 (1GB) -->
+    </property>
+    <!-- How much memory a single container can consume and the minimum memory allocation allowed.
+    A container will never be bigger than the maximum, or else allocation will fail
+    and will always be allocated as a multiple of the minimum amount of RAM. -->
+    <property>
+        <name>yarn.scheduler.maximum-allocation-mb</name>
+        <value>1500</value> <!-- 75% of memory for Raspberry Pi 3 (1GB) -->
+    </property>
+    <property>
+        <name>yarn.scheduler.minimum-allocation-mb</name>
+        <value>64</value> 
+    </property>
+    <property>
+        <name>yarn.nodemanager.vmem-check-enabled</name>
+        <value>false</value>
+    </property>
+
+    <property>
+        <name>yarn.nodemanager.vmem-pmem-ratio</name>
+        <value>4</value>
+    </property>
+</configuration>

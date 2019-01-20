@@ -15,6 +15,7 @@
 ## 环境安装与Hello-World DEMO
  
 - [Hadoop3全分布式 + Hadoop streaming环境搭建](./Documentations/Hadoop_distribute.md)
+- [Hadoop3分布式HA模式搭建](./Documentations/Hadoop_distribute_HA.md)
 - [Spark全分布式安装](./Documentations/Spark_distribute.md)
 - [Scala语法基础](./Documentations/ScalaBasic.md)
 - [Scala + Spark基础](./Documentations/ScalaSpark.md)
