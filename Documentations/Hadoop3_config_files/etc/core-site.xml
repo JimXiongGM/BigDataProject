@@ -24,7 +24,7 @@
     </property> -->
     <property>
         <name>fs.defaultFS</name>
-        <value>hdfs://master:9000</value>
+        <value>hdfs://master:8020</value>
         <description>The name of the default file system</description>
     </property>
     <property>

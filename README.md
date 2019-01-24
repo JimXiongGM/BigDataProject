@@ -1,14 +1,11 @@
 # 大数据存储与分析
 
-## 前言  
+## 前言
 
 本项目目标是基于阿里云搭建全分布式系统，运行Hadoop3 + Spark2 + MongoDB + something else做一些好玩的事，目前正在构思与探索。这是笔者第一次上手大数据平台，因此秉持着“study with output”的精神，尝试把从下载软件到跑通代码的过程都记录下来，并且尽力“知其所以然”。所以本项目记录比较详细，适合新手阅读。
 
-## 思路
-
-边学边记。
  
-## 目录  
+## 目录
 
 因配置环境只需要一篇文档，这里把配置环境的说明统一文件放到`Documentations`文件夹下。
 
@@ -32,7 +29,7 @@
 
 ### 公开数据集
 
-这一部分数据集能够在公开渠道下载。  
+这一部分数据集能够在公开渠道下载。
 
 - [kaggle - Amazon sales rank data for print and kindle books--3.66GB](./Documentations/public_datas.md)
 - [THUCNews数据集--2.04GB](./Documentations/public_datas.md)

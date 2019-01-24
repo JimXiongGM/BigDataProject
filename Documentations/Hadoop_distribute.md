@@ -9,7 +9,7 @@
 - [配置host相关文件](#2)
 - [配置节点之间免密SSH登陆](#3)
 - [配置JAVA](#4)
-- [配置vim缩进](#5) 
+- [配置vim缩进](#5)
 - [下载解压Hadoop3.1.1](#6)
 - [配置Hadoop环境变量](#7)
 - [配置hadoop3.1.1设置文件](#8)
@@ -22,134 +22,151 @@
 
 ## <p id='1'>购买并配置阿里云
 
-
-### 按需购买服务器
-![avatar](./imgs/aliyun-1.png)
-![avatar](./imgs/aliyun-2.png)
-
-### 添加到同一安全组
-![avatar](./imgs/aliyun-3.png)
-![avatar](./imgs/aliyun-4.png)
-![avatar](./imgs/aliyun-5.png)
-
-### 购买并绑定公网ip
-![avatar](./imgs/aliyun-6.png)
-![avatar](./imgs/aliyun-7.png)
-![avatar](./imgs/aliyun-8.png)
-
-
-### 设置密码
-![avatar](./imgs/aliyun-10.png)
-![avatar](./imgs/aliyun-11.png)
-
-别忘了在控制台中重启所有的服务器。
-
-### 使用ssh连接
-
-```
-PS C:\Users\XGM> ssh root@39.104.27.119
-The authenticity of host '39.104.27.119 (39.104.27.119)' can't be established.
-ECDSA key fingerprint is SHA256:I9TItgv8yKGcxxtyiDB6gB3brd2xmphyl7Gc/1lBrus.
-Are you sure you want to continue connecting (yes/no)? yes
-Warning: Permanently added '39.104.27.119' (ECDSA) to the list of known hosts.
-root@39.104.27.119's password:
-Welcome to Ubuntu 16.04.4 LTS (GNU/Linux 4.4.0-117-generic x86_64)
-
- * Documentation:  https://help.ubuntu.com
- * Management:     https://landscape.canonical.com
- * Support:        https://ubuntu.com/advantage
-
-Welcome to Alibaba Cloud Elastic Compute Service !
-
-root@iZhp3bm132kqe3mj9urjcyZ:~#
-```
-
-到这里，我们能够使用ssh访问节点，现在可以关掉浏览器，进入下一环节。
+这里有多种方式配置虚拟服务器，笔者尝试了其中两种。其一，基于一个阿里云账号申请4个ECS服务器；其二，基于4个阿里云账号申请4个学生机并连接。具体过程请参考[阿里云虚拟机集群设置](./Aliyun_4ECS.md)。
 
 
 ## <p id='2'>配置host相关文件
 
-先给本地电脑配置hosts。如果是windows，编辑`C:\Windows\System32\drivers\etc\hosts`，如果是ubuntu，编辑`/etc/hosts`，加上一行`你的公网ip aliyun_xgm`即可。这么做无非是为了不用记公网ip。  
+先给本地电脑配置hosts。如果是windows，编辑`C:\Windows\System32\drivers\etc\hosts`，如果是ubuntu，编辑`/etc/hosts`，加上一行`你的公网ip master`即可。这么做无非是为了不用记公网ip。  
 
-登陆服务器，在云端进行以下操作。
+分别登陆master和3个slave，修改host和hostname，需要重启。直接copy即可。
 
-`vim /etc/hosts`，注释掉127.0.0.1这一行
+ssh root@master;
 ```
-172.24.205.50	master
-172.24.205.51	slave1
-172.24.205.52	slave2
-172.24.205.53	slave3
-```
-`vim /etc/hostname`
-```
-master
-```
-`reboot`重启主机，让hostname生效  
+echo '编辑 /etc/hosts';
+echo '172.17.104.13    master
+172.17.243.245    slave1
+172.17.112.120    slave2
+172.17.135.174    slave3
+# The following lines are desirable for IPv6 capable hosts
+::1     localhost       ip6-localhost   ip6-loopback
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters' > /etc/hosts;
+
+echo '编辑 /etc/hostname';
+echo 'master' > /etc/hostname;
+reboot;
+```  
 
 ssh root@slave1;
-`vim /etc/hosts`内容同上，注释掉127.0.0.1这一行。  
-`vim /etc/hostname`修改为
 ```
-slave1
+echo '编辑 /etc/hosts';
+echo '172.17.104.13    master
+172.17.243.245    slave1
+172.17.112.120    slave2
+172.17.135.174    slave3
+# The following lines are desirable for IPv6 capable hosts
+::1     localhost       ip6-localhost   ip6-loopback
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters' > /etc/hosts;
+
+echo '编辑 /etc/hostname';
+echo 'slave1' > /etc/hostname;
+reboot;
 ```
-salve2和slave3同上配置
+
+ssh root@slave2;
+```
+echo '编辑 /etc/hosts';
+echo '172.17.104.13    master
+172.17.243.245    slave1
+172.17.112.120    slave2
+172.17.135.174    slave3
+# The following lines are desirable for IPv6 capable hosts
+::1     localhost       ip6-localhost   ip6-loopback
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters' > /etc/hosts;
+
+echo '编辑 /etc/hostname';
+echo 'slave2' > /etc/hostname;
+reboot;
+```
+
+ssh root@slave3;
+```
+echo '编辑 /etc/hosts';
+echo '172.17.104.13    master
+172.17.243.245    slave1
+172.17.112.120    slave2
+172.17.135.174    slave3
+# The following lines are desirable for IPv6 capable hosts
+::1     localhost       ip6-localhost   ip6-loopback
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters' > /etc/hosts;
+
+echo '编辑 /etc/hostname';
+echo 'slave3' > /etc/hostname;
+reboot;
+```
 
 ## <p id='3'>配置节点之间免密SSH登陆
 
 在master上使用如下命令，注意`ssh-keygen`命令要求输入3次回车，因此这里不能整段copy，需要分别执行
 ```
 cd /root/.ssh/;
-ssh-keygen -t rsa;
-cat id_rsa.pub >> authorized_keys;
+ssh-keygen -t rsa
+cat id_rsa.pub >> authorized_keys
 ```
 在slave1、slave2、slave3上使用如下命令
 ```
 cd /root/.ssh/;
-ssh-keygen -t rsa;
+ssh-keygen -t rsa
 ssh-copy-id -i master;
+exit
 ```
-回到master上使用如下命令
+回到master上，逐一使用如下命令，需要逐一输入密码。
 ```
 cd /root/.ssh/;
 chmod 600 authorized_keys;
-scp /root/.ssh/authorized_keys slave1:/root/.ssh/ ;
-scp /root/.ssh/authorized_keys slave2:/root/.ssh/ ;
-scp /root/.ssh/authorized_keys slave3:/root/.ssh/ ;
+scp /root/.ssh/authorized_keys slave1:/root/.ssh/ 
+scp /root/.ssh/authorized_keys slave2:/root/.ssh/ 
+scp /root/.ssh/authorized_keys slave3:/root/.ssh/ 
 ```
+
 到这里就可以直接使用ssh免密访问各个节点了。
 
 ## <p id='4'>配置JAVA
 
-在master上使用如下命令直接配置好JAVA
+在master上使用如下命令直接配置好JAVA。值得一提的是，使用wget下载oracle的jdk极慢，这里推荐使用别的下载工具下好再上传到master。
+使用
+```
+wget -P /root/xiazai/ https://download.oracle.com/otn-pub/java/jdk/8u201-b09/42970487e3af4f5aa5bca3f542482c60/jdk-8u201-linux-x64.tar.gz?AuthParam=1548152221_9dcd07cd2730efd58325cfdb63c9931c;
+mv jdk-8u201-linux-x64.tar.gz\?AuthParam\=1545535635_23120014928fd76a2d41deff73c46cd6 jdk-8u201-linux-x64.tar.gz;
+```
+或者下载到本地并上传。
+```
+scp ./jdk-8u201-linux-x64.tar.gz root@master:/root/xiazai
+```
+
+解压并配置环境变量。
 ```
 mkdir -p /root/xiazai/;
 mkdir -p /opt/;
-wget -P /root/xiazai/ https://download.oracle.com/otn-pub/java/jdk/8u191-b12/2787e4a523244c269598db4e85c51e0c/jdk-8u191-linux-x64.tar.gz?AuthParam=1545535635_23120014928fd76a2d41deff73c46cd6;
-mv jdk-8u191-linux-x64.tar.gz\?AuthParam\=1545535635_23120014928fd76a2d41deff73c46cd6 jdk-8u191-linux-x64.tar.gz;
-tar -zxvf jdk-8u191-linux-x64.tar.gz;
-mv jdk1.8.0_191/ /opt/;
+cd /root/xiazai/;
+tar -zxvf jdk-8u201-linux-x64.tar.gz;
+mv jdk1.8.0_201/ /opt/;
 
-echo 'export JAVA_HOME=/opt/jdk1.8.0_191' >> /etc/bash.bashrc;
-echo 'export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar' >> /etc/bash.bashrc;
-echo 'export PATH=$JAVA_HOME/bin:$PATH' >> /etc/bash.bashrc;
+echo 'export JAVA_HOME=/opt/jdk1.8.0_201
+export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
+export PATH=$JAVA_HOME/bin:$PATH' >> /etc/bash.bashrc;
 source /etc/bash.bashrc;
 
-scp jdk-8u191-linux-x64.tar.gz root@slave1:;
-scp jdk-8u191-linux-x64.tar.gz root@slave2:;
-scp jdk-8u191-linux-x64.tar.gz root@slave3:;
-
 java -version
+
+scp jdk-8u201-linux-x64.tar.gz root@slave1:;
+scp jdk-8u201-linux-x64.tar.gz root@slave2:;
+scp jdk-8u201-linux-x64.tar.gz root@slave3:;
 ```
 在每一个slave上直接copy整段即可。
 ```
 cd /root/
 mkdir -p /opt/;
-tar -zxvf jdk-8u191-linux-x64.tar.gz;
-mv jdk1.8.0_191/ /opt/;
-rm jdk-8u191-linux-x64.tar.gz;
-echo 'export JAVA_HOME=/opt/jdk1.8.0_191' >> /etc/bash.bashrc;
-echo 'export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar' >> /etc/bash.bashrc;
-echo 'export PATH=$JAVA_HOME/bin:$PATH' >> /etc/bash.bashrc;
+tar -zxvf jdk-8u201-linux-x64.tar.gz;
+mv jdk1.8.0_201/ /opt/;
+rm jdk-8u201-linux-x64.tar.gz;
+echo 'export JAVA_HOME=/opt/jdk1.8.0_201
+export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
+export PATH=$JAVA_HOME/bin:$PATH' >> /etc/bash.bashrc;
 source /etc/bash.bashrc;
 java -version;
 exit
@@ -159,9 +176,10 @@ exit
 
 windows系统的TAB缩进在ubuntu上不能直接运行，这里必须设置vim。在每一台节点上执行命令即可
 ```
-echo 'set ts=4' >> /etc/vimrc;
-echo 'set expandtab' >> /etc/vimrc;
-echo 'set autoindent' >> /etc/vimrc;
+echo 'set ts=4
+set expandtab
+set autoindent' >> /etc/vimrc;
+exit
 ```
 
 ## <p id='6'>下载解压Hadoop3.1.1
@@ -181,7 +199,7 @@ scp hadoop-3.1.1.tar.gz root@slave3:;
 mkdir -p /opt/;
 cd /root/;
 tar -zxvf hadoop-3.1.1.tar.gz;
-mv hadoop-3.1.1 /opt/hadoop-3.1.1;
+mv hadoop-3.1.1 /opt/;
 rm /root/hadoop-3.1.1.tar.gz;
 exit
 ```
@@ -192,7 +210,8 @@ exit
 直接在每一个节点下运行如下命令即可
 ```
 echo '正在配置环境变量'
-echo '# Hadoop Settings
+echo '
+# Hadoop Settings
 export HADOOP_HOME=/opt/hadoop-3.1.1
 export HADOOP_INSTALL=$HADOOP_HOME
 export YARN_HOME=$HADOOP_HOME
@@ -206,15 +225,22 @@ export JAVA_LIBRARY_PATH=$HADOOP_HOME/lib/native:$JAVA_LIBRARY_PATH
 export PATH=.:$JAVA_HOME/bin:$HADOOP_HOME/bin:$HADOOP_HOME/sbin:$PATH
 export HADOOP_ROOT_LOGGER=DEBUG,console
 export LD_LIBRARY_PATH=$HADOOP_HOME/lib/native
- ' >> /etc/bash.bashrc;
+' >> /etc/bash.bashrc;
 source /etc/bash.bashrc;
-
+hadoop version;
+exit
 ```
 
 
 ## <p id='8'>配置hadoop3.1.1设置文件
 
-这里也可以快速配置，下载本项目目录下的`Hadoop3_config_files`文件夹到本地，使用`scp -r /Hadoop3_config_files root@aliyun_xgm:`拷贝到云端，然后直接copy整段即可完成所有节点的配置。
+**特别注意**！从这里开始，hadoop的HA模式和非HA模式设置开始变得不同，HA模式的设置请参考[Hadoop3分布式HA模式搭建](./Hadoop_distribute_HA.md)。
+
+这里也可以快速配置，下载本项目目录下的`Hadoop3_config_files`文件夹到本地，使用
+```
+scp -r ./Documentations/Hadoop3_config_files root@master:/root/
+```
+拷贝到云端，然后直接copy下面整段即可完成所有节点的配置。
 ```
 cp -f /root/Hadoop3_config_files/etc/* /opt/hadoop-3.1.1/etc/hadoop/;
 scp /root/Hadoop3_config_files/etc/* root@slave1:/opt/hadoop-3.1.1/etc/hadoop/;
@@ -225,16 +251,11 @@ cp -f /root/Hadoop3_config_files/sbin/* /opt/hadoop-3.1.1/sbin/;
 scp /root/Hadoop3_config_files/sbin/* root@slave1:/opt/hadoop-3.1.1/sbin/;
 scp /root/Hadoop3_config_files/sbin/* root@slave2:/opt/hadoop-3.1.1/sbin/;
 scp /root/Hadoop3_config_files/sbin/* root@slave3:/opt/hadoop-3.1.1/sbin/;
-
-echo '正在配置hadoop-env.sh'
-echo 'export JAVA_HOME=/opt/jdk1.8.0_191' >> /opt/hadoop-3.1.1/etc/hadoop/hadoop-env.sh;
-echo 'export HADOOP_ROOT_LOGGER="DEBUG,DRFA"' >> /opt/hadoop-3.1.1/etc/hadoop/hadoop-env.sh;
-
 ```
 
-ubuntu系统的源码运行模式就像windows的绿色文件运行模式，解压即可用，非常方便。这里对上面的配置文件进行总结。这里一共要配置8个文件。   
+ubuntu系统的源码运行模式就像windows的绿色文件运行模式，解压即可用，非常方便。这里对上面的配置文件进行总结。这里一共要配置8个文件。
 
-这一块的内容设置需要非常小心。网络上存在大量的教程，但是环境不同，需要配置的文件也不一样，我们需要确切知道每一个配置文件的内容以及参数含义，出错的时候才能找到解法。  
+这一块的内容设置需要非常小心。网络上存在大量的教程，但是环境不同，需要配置的文件也不一样，我们需要确切知道每一个配置文件的内容以及参数含义，出错的时候才能找到解法。
 
 本文中所有文件都可以在当前目录下的`Hadoop3_config_files`文件夹找到。
 
@@ -253,13 +274,13 @@ ubuntu系统的源码运行模式就像windows的绿色文件运行模式，解�
 
 ### 4.workers
 
-3行，为了声明slaves的ip，对应关系已经在hosts文件中声明。这里的设置可以照搬。这是新用法。
+3行，为了声明slaves的ip，对应关系已经在hosts文件中声明。这里的设置可以照搬。
 
 ### 5.yarn-site.xml
 
 配置yarn的调度机制，不能照搬！关于该文件的详细配置可以自行搜索，[官网文档](https://hadoop.apache.org/docs/r3.1.1/hadoop-yarn/hadoop-yarn-site/CapacityScheduler.html)在这里。本文展示几个关键配置。
 
-1).vcores设置。**非常重要**的设置，本文使用的是阿里云的1核1线程机器，所以这里只能设置为1.
+1).vcores设置。**非常重要**的设置，本文使用的是阿里云的1核1线程机器，所以这里设置为1.
 ```js
     <property>
         <name>yarn.nodemanager.resource.cpu-vcores</name>
@@ -284,11 +305,11 @@ ubuntu系统的源码运行模式就像windows的绿色文件运行模式，解�
 ```js
     <property>
         <name>yarn.nodemanager.resource.memory-mb</name>
-        <value>1024</value> <!-- max 75% of memory for Node (2GB) -->
+        <value>1500</value> <!-- max 75% of memory for Node (2GB) -->
     </property>
     <property>
         <name>yarn.scheduler.maximum-allocation-mb</name>
-        <value>1024</value>
+        <value>1500</value>
     </property>
     <property>
         <name>yarn.scheduler.minimum-allocation-mb</name>
@@ -313,17 +334,17 @@ mapper-reduce相关配置，**非常重要**，不能照搬！
 ```js
     <property>
         <name>yarn.app.mapreduce.am.resource.mb</name>
-        <value>512</value>
+        <value>1500</value>
     </property>
     <!-- How much memory will be allocated to each map or reduce operation.
     This should be less than the maximum size. -->
     <property>
         <name>mapreduce.map.memory.mb</name>
-        <value>256</value>
+        <value>750</value>
     </property>
     <property>
         <name>mapreduce.reduce.memory.mb</name>
-        <value>256</value>
+        <value>750</value>
     </property>
 ```
 
@@ -356,13 +377,13 @@ scheduler相关配置，需要微调。
 ```js
     <property>
         <name>dfs.namenode.name.dir</name>
-        <value>file:///hadoop/namenode</value>
+        <value>file:///data/hadoop/namenode</value>
     </property>
 ```
-我们会在本地文件目录下找到`/hadoop/namenode`文件，同样，在datanode节点，我们能找到`/hadoop/datanode`文件夹。这里我们对所有节点的该文件夹进行授权操作。在每一节点上执行`chmod -R 777 /hadoop`命令，即可对该文件夹以及子文件夹授予777权限。我们可以通过`ls -ld /hadoop`命令查看指定文件夹的权限设置情况，显示为`drwxrwxrwx`说明该文件夹对所有用户都有写入权限。  
+我们会在本地文件目录下找到`/data/hadoop/namenode`文件，同样，在datanode节点，我们能找到`/data/hadoop/datanode`文件夹。这里我们对所有节点的该文件夹进行授权操作。在每一节点上执行`chmod -R 777 /data/hadoop`命令，即可对该文件夹以及子文件夹授予777权限。我们可以通过`ls -ld /data/hadoop`命令查看指定文件夹的权限设置情况，显示为`drwxrwxrwx`说明该文件夹对所有用户都有写入权限。  
 
 在master节点，使用`start-all.sh`启动Hadoop，使用`mapred --daemon start historyserver`启动historyserver。当然也可以使用`start-dfs.sh`以及`start-yarn.sh`启动。启动成功之后，输入`jps`，可以看到如下。
-```
+```bash
 root@master:~# jps
 10274 JobHistoryServer
 9668 SecondaryNameNode

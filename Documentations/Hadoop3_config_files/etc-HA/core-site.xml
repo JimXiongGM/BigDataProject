@@ -25,12 +25,19 @@
 
      <property>
         <name>hadoop.tmp.dir</name>
-        <value>file:///data/hadoop/tmp</value>
+        <value>/data/hadoop/tmp</value>
     </property>
 
      <property>
         <name>ha.zookeeper.session-timeout.ms</name>
         <value>30000</value>
-    </property>    
+    </property>
+
+    <!-- 指定zookeeper地址 -->
+
+    <property>
+        <name>ha.zookeeper.quorum</name>
+        <value>master:2181,slave1:2181,slave2:2181,slave3:2181</value>
+    </property>
 
 </configuration>

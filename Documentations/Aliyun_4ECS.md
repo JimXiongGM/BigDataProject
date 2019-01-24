@@ -1,0 +1,90 @@
+# 阿里云虚拟机集群设置
+
+笔者尝试了如下两种方案，主要目的是搭建4台内网互通的节点，并尽可能省钱。
+
+## 目录
+
+- [一个账号4个ECS](#1)
+- [4个学生机账号](#2)
+
+
+## <p id=1>一个账号4个ECS
+
+在一个账号下申请4个突发性能实例是比较实惠的方案，配置过程如下。
+
+### 按需购买服务器
+![avatar](./imgs/aliyun-1.png)
+![avatar](./imgs/aliyun-2.png)
+
+### 添加到同一安全组
+![avatar](./imgs/aliyun-3.png)
+![avatar](./imgs/aliyun-4.png)
+![avatar](./imgs/aliyun-5.png)
+
+### 购买并绑定公网ip
+![avatar](./imgs/aliyun-6.png)
+![avatar](./imgs/aliyun-7.png)
+![avatar](./imgs/aliyun-8.png)
+
+
+### 设置密码
+![avatar](./imgs/aliyun-10.png)
+![avatar](./imgs/aliyun-11.png)
+
+别忘了在控制台中重启所有的服务器。
+
+### 使用ssh连接
+
+```
+PS C:\Users\XGM> ssh root@39.104.27.119
+The authenticity of host '39.104.27.119 (39.104.27.119)' can't be established.
+ECDSA key fingerprint is SHA256:I9TItgv8yKGcxxtyiDB6gB3brd2xmphyl7Gc/1lBrus.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '39.104.27.119' (ECDSA) to the list of known hosts.
+root@39.104.27.119's password:
+Welcome to Ubuntu 16.04.4 LTS (GNU/Linux 4.4.0-117-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+Welcome to Alibaba Cloud Elastic Compute Service !
+
+root@iZhp3bm132kqe3mj9urjcyZ:~#
+```
+
+到这里，我们能够使用ssh访问节点，现在可以关掉浏览器，进入下一环节。
+
+
+## <p id=2>4个学生机账号
+
+### 购买
+
+这里首先要申请4台学生机，详情可见阿里云[云翼计划](https://promotion.aliyun.com/ntms/act/campus2018.html)。**特别注意**，在购买界面一定要选择`云服务器ECS`，不能选择“轻量应用服务器”，因为后者不能实现内网互通，导致后面集群搭建失败。同样注意选择4台学生机的地域选择要一样。如下。
+![aliyun购买界面](./imgs/aliyun_4ids_01.png)
+
+### 添加云企业网
+
+这里比较麻烦，需要把我们申请的4个账号下同地域的4台学生机进行内网互联。进入阿里云的管理控制台，我们可以看到申请的实例网络类型是`专有网络`，这个类型的网络不能通过配置安全组进行内网互通。因此我们需要搭建`云企业网`进行内网互通，同地域网络实例互通免费，无需购买带宽包。
+
+首先在master账号下进入云企业网并点击创建云企业实例，如下图。
+![云企业网实例](./imgs/aliyun_4ids_02.png)
+
+然后在slave1账号下进入专有网络VPC，并对刚刚新建的云企业网进行授权操作，授权对象是master的账号ID。
+![云企业网授权](./imgs/aliyun_4ids_03.png)
+
+回到master账号，点击`加载网络实例`，添加slave1-3的实例ID进入云企业网即可。
+![云企业网加载](./imgs/aliyun_4ids_04.png)
+
+
+
+使用ssh随意进入一台机器并ping另外的机器，检测是否成功互联。
+![云企业网结果](./imgs/aliyun_4ids_05.png)
+
+
+
+
+
+
+
+
