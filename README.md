@@ -23,7 +23,8 @@
 - [MongoDB的本地安装 + PyMongo的基本操作](./Documentations/MongoDB_standalone.md)
 - [MongoDB的分布式安装](./Documentations/MongoDB_distribute.md)
 - [Pig的分布式安装](./Documentations/Pig_distribute.md)
-- [HBASE分布式安装](./Documentations/Hbase_distribute.md)
+- [HBASE分布式环境搭建](./Documentations/Hbase_distribute.md)
+- [Hive分布式环境搭建](./Documentations/Hbase_distribute.md)
 - 未完待续
 
 ## 数据集介绍
