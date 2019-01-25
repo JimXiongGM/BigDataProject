@@ -4,7 +4,19 @@
 
 本文主要参考[网络资料](https://www.cnblogs.com/studyzy/p/setup-hive.html)
 
-## 安装MySQL
+## 目录
+
+- [安装MySQ](#1)
+- [配置远程访问](#2)
+- [配置环境变量](#3)
+- [配置文件](#4)
+- [下载MySQL JDBC驱动](#5)
+- [初始化](#6)
+- [使用hive](#7)
+- [测试](#8)
+
+
+## <p id=1>安装MySQL
 
 首先以root身份登录到mysql服务器，配置用户名密码，并允许root远程访问。
 
@@ -17,7 +29,7 @@ GRANT ALL PRIVILEGES ON *.* TO root@'%' IDENTIFIED BY "123456";
 GRANT ALL PRIVILEGES ON *.* TO hive@'%' IDENTIFIED BY "hive";
 ```
 
-## 配置远程访问
+## <p id=2>配置远程访问
 
 默认情况下，MySQL是只允许本机访问的，要允许远程机器访问需要修改配置文件，然后重启服务。
 ```
@@ -26,7 +38,7 @@ echo 'bind-address          = 0.0.0.0' >> /etc/mysql/mysql.conf.d/mysqld.cnf;
 sudo service mysql restart;
 ```
 
-## 配置环境变量
+## <p id=3>配置环境变量
 
 没什么好说
 ```
@@ -45,7 +57,7 @@ source /etc/bash.bashrc;
 ```
 
 
-## 配置文件
+## <p id=4>配置文件
 
 这里要配置3个文件。
 
@@ -72,7 +84,7 @@ echo '解决WARN SLF4J: Class path contains multiple SLF4J bindings.';
 mv /opt/hive-3.1.1/lib/log4j-slf4j-impl-2.10.0.jar /opt/hive-3.1.1/lib/log4j-slf4j-impl-2.10.0.jar.BACKUP;
 ```
 
-## 下载MySQL JDBC驱动
+## <p id=5>下载MySQL JDBC驱动
 
 去MySQL的官网，https://dev.mysql.com/downloads/connector/j/  下载JDBC驱动到master服务器上。
 ```
@@ -82,7 +94,7 @@ tar -zxvf mysql-connector-java-5.1.47.tar.gz;
 cp ./mysql-connector-java-5.1.47/*.jar $HIVE_HOME/lib/;
 ```
 
-## 初始化
+## <p id=6>初始化
 
 ```
 hadoop fs -mkdir /tmp;
@@ -92,7 +104,7 @@ hadoop fs -chmod g+w /user/hive/warehouse;
 $HIVE_HOME/bin/schematool -initSchema -dbType mysql --verbose;
 ```
 
-## 使用hive
+## <p id=7>使用hive
 
 输入`hive`
 ```
@@ -117,7 +129,7 @@ Time taken: 0.04 seconds
 hive> quit;
 ```
 
-## 测试
+## <p id=8>测试
 
 创建一个测试文件，使用`|`分隔列。
 ```
