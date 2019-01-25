@@ -66,7 +66,7 @@ mv /opt/spark-2.4.0-bin-hadoop2.7 /opt/spark-2.4.0;
 ```
 echo '# SPARK SETTINGS
 export SPARK_HOME=/opt/spark-2.4.0
-export PATH=PATH=$SPARK_HOME/bin:$SPARK_HOME/sbin:$PATH
+export PATH=$SPARK_HOME/bin:$SPARK_HOME/sbin:$PATH
 ' >> /etc/bash.bashrc ;
 source /etc/bash.bashrc;
 ```
@@ -124,7 +124,7 @@ scp -r /opt/spark-2.4.0 root@slave3:/opt/;
 ```
 echo '# SPARK SETTINGS
 export SPARK_HOME=/opt/spark-2.4.0
-export PATH=PATH=$SPARK_HOME/bin:$SPARK_HOME/sbin:$PATH
+export PATH=$SPARK_HOME/bin:$SPARK_HOME/sbin:$PATH
 ' >> /etc/bash.bashrc ;
 source /etc/bash.bashrc;
 exit
