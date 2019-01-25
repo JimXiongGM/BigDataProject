@@ -1,4 +1,4 @@
-# Spark分布式安装
+# Spark分布式环境搭建
 
 这里基于hadoop分布式环境，继续搭建spark。
 
@@ -149,7 +149,7 @@ slave1: starting org.apache.spark.deploy.worker.Worker, logging to /opt/spark-2.
 
 ## <p id='4'>运行SparkDEMO--SparkPi
 
-尝试向集群提交[官网](https://spark.apache.org/docs/latest/running-on-yarn.html)提供的DEMO，这是一个计算π值的小程序，spark自带。
+尝试以YARN模式向集群提交[官网](https://spark.apache.org/docs/latest/running-on-yarn.html)提供的DEMO，这是一个计算π值的小程序，spark自带。
 
 ```
 $SPARK_HOME/bin/spark-submit --class org.apache.spark.examples.SparkPi \
@@ -159,7 +159,7 @@ $SPARK_HOME/bin/spark-submit --class org.apache.spark.examples.SparkPi \
     --executor-memory 512mb \
     --executor-cores 1 \
     --queue default \
-    examples/jars/spark-examples*.jar \
+    $SPARK_HOME/examples/jars/spark-examples*.jar \
     10
 ```
 **注意**！这里的`--driver-memory 512mb`和`--executor-memory 512mb`需要根据YARN的配置情况设置。之前的文章中，将每个节点的可用内存设置为了1024mb。根据shell的报错信息，spark需要额外的384mb开销，所以对内存需求为512+384mb=896mb < 1024mb。把两者都设置为512mb，就不会报错。  

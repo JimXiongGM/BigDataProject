@@ -13,7 +13,8 @@
  
 - [Hadoop3分布式 + Hadoop streaming环境搭建](./Documentations/Hadoop_distribute.md)
 - [Hadoop3分布式HA模式搭建](./Documentations/Hadoop_distribute_HA.md)
-- [Spark分布式安装](./Documentations/Spark_distribute.md)
+- [Spark分布式环境搭建](./Documentations/Spark_distribute.md)
+- [Spark分布式HA模式搭建](./Documentations/Spark_distribute_HA.md)
 - [Scala语法基础](./Documentations/ScalaBasic.md)
 - [Scala + Spark基础](./Documentations/ScalaSpark.md)
 - [Spark Streaming基础 + 实例 (Scala)](./Documentations/SparkStreaming_Scala.md)
