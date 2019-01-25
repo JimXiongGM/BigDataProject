@@ -60,24 +60,3 @@ exit
 打开`http://master:8080/`和`http://slave1:8080/`可以状态分别为`ALIVE`和`STANDBY`
 
 ![Spark-WebUI-HA](./imgs/Spark-WebUI-HA.png)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
