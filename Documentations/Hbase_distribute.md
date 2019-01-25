@@ -82,6 +82,7 @@ echo '分发';
 scp -r /opt/hbase-2.1.2 root@slave1:/opt/;
 scp -r /opt/hbase-2.1.2 root@slave2:/opt/;
 scp -r /opt/hbase-2.1.2 root@slave3:/opt/;
+ls;
 ```
 
 使用ssh进入每一个slave，执行以下命令
