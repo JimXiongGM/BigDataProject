@@ -25,7 +25,10 @@ hbase的HA模式和伪分布模式、单机模式配置不一样，这里直接�
 这里需要配置环境变量、./conf/hase-env.sh、./conf/hbase-site.xml，然后分发到每个节点。直接copy就好。
 ```
 echo '配置环境变量';
-echo 'export HBASE_HOME=/opt/hbase-2.1.2' >> /etc/bash.bashrc;
+echo '
+# HBASE SETTINGS
+export HBASE_HOME=/opt/hbase-2.1.2
+' >> /etc/bash.bashrc;
 source /etc/bash.bashrc;
 mkdir -p /data/logs/hbase;
 mkdir -p /data/hbase/tmp/zk/data;
@@ -88,7 +91,10 @@ ls;
 使用ssh进入每一个slave，执行以下命令
 ```
 echo '配置环境变量';
-echo 'export HBASE_HOME=/opt/hbase-2.1.2' >> /etc/bash.bashrc;
+echo '
+# HBASE SETTINGS
+export HBASE_HOME=/opt/hbase-2.1.2
+' >> /etc/bash.bashrc;
 source /etc/bash.bashrc;
 mkdir -p /data/logs/hbase;
 mkdir -p /data/hbase/tmp/zk/data;
