@@ -31,7 +31,7 @@ tar -zvxf /root/xiazai/scala-2.11.12.tgz -C /opt/;
 直接执行以下命令即可
 ```
 echo '
-# SPARK SETTINGS
+# SCALA SETTINGS
 export SCALA_HOME=/opt/scala-2.11.12
 export PATH=$SCALA_HOME/bin:$PATH
 ' >> /etc/bash.bashrc ;
