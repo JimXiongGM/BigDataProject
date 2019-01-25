@@ -67,7 +67,7 @@ In [3]: exit
 jupyter notebook --generate-config --allow-root -y;
 echo "
 c.NotebookApp.ip = '0.0.0.0'
-c.NotebookApp.password = u'sha1:02eeea55d8f7:73a6361751ba04d8fab717fec6f710912f8fa8c3'
+c.NotebookApp.password = u'sha1:58cba4360f05:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
 c.NotebookApp.open_browser = False 
 c.NotebookApp.port = 6789" >> /root/.jupyter/jupyter_notebook_config.py;
 ```
@@ -82,14 +82,25 @@ c.NotebookApp.port = 6789" >> /root/.jupyter/jupyter_notebook_config.py;
 pip install spylon-kernel;
 python -m spylon_kernel install;
 pip install toree;
-pip install pysprk;
+pip install pyspark;
 jupyter toree install --spark_home=$SPARK_HOME --interpreters=Scala,PySpark,SparkR,SQL;
 jupyter kernelspec list;
 ```
 
+成功后输出如下
+```bash
+root@master:~# jupyter kernelspec list;
+Available kernels:
+  python3               /opt/anaconda3/share/jupyter/kernels/python3
+  apache_toree_scala    /usr/local/share/jupyter/kernels/apache_toree_scala
+  apache_toree_sql      /usr/local/share/jupyter/kernels/apache_toree_sql
+  spylon-kernel         /usr/local/share/jupyter/kernels/spylon-kernel
+
+```
+
 两者的区别在于，`spylon-kernel`是直接调用spark-sehll的scacla进行scala交互，`toree`是纯scala编译器。读者只要打开jupyter notebook运行一下就知道区别。
 
-关于`pysprk`，可以直接在Python3中import，具体用法可见[这里](./TEST_PySpark.html)
+值得注意的是，这里显示`pysprk`安装失败。但是我们可以直接在Python3中import，具体用法可见本项目的demo，点击[这里](./TEST_PySpark.html)。
 
 ## <p id=4>后台挂起jupyter notebook
 
@@ -97,7 +108,9 @@ jupyter kernelspec list;
 
 ```
 mkdir /root/jupyternotebook/;
+cd /root/jupyternotebook/;
 touch /root/jupyternotebook/hello.md;
+echo 'welcome Online Jupyter Notebook !' >> /root/jupyternotebook/hello.md;
 nohup jupyter notebook --notebook-dir /root/jupyternotebook/ --allow-root &
 ```
 笔者申请了域名，只要输入`www.playbigdate.top:6789`即可访问。
@@ -106,7 +119,7 @@ nohup jupyter notebook --notebook-dir /root/jupyternotebook/ --allow-root &
 
 查看jupyter notebook原本应该在bash的输出
 ```
-cat /root/xiazai/nohup.out
+cat /root/jupyternotebook/nohup.out
 ```
 
 查看与结束jupyter notebook进程
