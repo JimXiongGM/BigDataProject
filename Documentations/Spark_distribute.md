@@ -30,8 +30,11 @@ tar -zvxf /root/xiazai/scala-2.11.12.tgz -C /opt/;
 
 直接执行以下命令即可
 ```
-echo 'export SCALA_HOME=/opt/scala-2.11.12' >> /etc/bash.bashrc ;
-echo 'export PATH=$SCALA_HOME/bin:$PATH' >> /etc/bash.bashrc ;
+echo '
+# SPARK SETTINGS
+export SCALA_HOME=/opt/scala-2.11.12
+export PATH=$SCALA_HOME/bin:$PATH
+' >> /etc/bash.bashrc ;
 source /etc/bash.bashrc;
 scala -version
 ```
@@ -39,29 +42,7 @@ scala -version
 ```
 root@master:~/xiazai# scala -version
 Scala code runner version 2.11.12 -- Copyright 2002-2017, LAMP/EPFL
-```
-
-### 给每个slave安装
-
-**注意**。这里其实不用给每个slave都安装scala，因为我们使用scala编写程序之后，需要编译为jar并提交集群，这样和java编写的程序没有区别。
-
-同理，在master端，使用如下命令拷贝文件
-```
-scp /root/xiazai/scala-2.12.8.tgz root@slave1:;
-scp /root/xiazai/scala-2.12.8.tgz root@slave2:;
-scp /root/xiazai/scala-2.12.8.tgz root@slave3:;
-```
-
-然后分别进入每一台slave执行以下命令
-```
-tar -zvxf /root/scala-2.12.8.tgz -C /opt/ ;
-echo 'export SCALA_HOME=/opt/scala-2.12.8 ' >> /etc/bash.bashrc ;
-echo 'export PATH=$SCALA_HOME/bin:$PATH ' >> /etc/bash.bashrc ;
-source /etc/bash.bashrc;
-scala -version;
-exit
-```
-即可完成安装。  
+``` 
 
 值得注意的是，echo函数后可以跟上单引号和双引号，关于单引号和双引号，区别只有一个，单引号里的变量和运算符不会被解释。原样输出。而双引号里的会解释为相应的内容。这里显然应使用单引号。  
 
@@ -71,24 +52,22 @@ exit
 
 ### 下载并解压
 
-从[官网](http://spark.apache.org/downloads.html)下载、解压、分发。  
+从[官网](http://spark.apache.org/downloads.html)下载、解压。
 ```
 cd /root/xiazai;
 wget http://mirrors.hust.edu.cn/apache/spark/spark-2.4.0/spark-2.4.0-bin-hadoop2.7.tgz;
-tar -zvxf spark-2.4.0-bin-hadoop2.7.tgz;
-mv spark-2.4.0-bin-hadoop2.7/ /opt/spark-2.4.0;
-scp /root/xiazai/spark-2.4.0-bin-hadoop2.7.tgz root@slave1:;
-scp /root/xiazai/spark-2.4.0-bin-hadoop2.7.tgz root@slave2:;
-scp /root/xiazai/spark-2.4.0-bin-hadoop2.7.tgz root@slave3:;
-
+tar -zvxf spark-2.4.0-bin-hadoop2.7.tgz -C /opt/;
+mv /opt/spark-2.4.0-bin-hadoop2.7 /opt/spark-2.4.0;
 ```
 
 ### 配置环境变量
 
 直接粘贴复制执行以下命令即可
 ```
-echo 'export SPARK_HOME=/opt/spark-2.4.0' >> /etc/bash.bashrc ;
-echo 'export PATH=PATH=$SPARK_HOME/bin:$SPARK_HOME/sbin:$PATH' >> /etc/bash.bashrc ;
+echo '# SPARK SETTINGS
+export SPARK_HOME=/opt/spark-2.4.0
+export PATH=PATH=$SPARK_HOME/bin:$SPARK_HOME/sbin:$PATH
+' >> /etc/bash.bashrc ;
 source /etc/bash.bashrc;
 ```
 
@@ -99,17 +78,22 @@ source /etc/bash.bashrc;
 rm /opt/spark-2.4.0/conf/spark-env.sh;
 touch /opt/spark-2.4.0/conf/spark-env.sh;
 
-echo 'export JAVA_HOME=$JAVA_HOME ' >> /opt/spark-2.4.0/conf/spark-env.sh;
-echo 'export HADOOP_HOOME=$HADOOP_HOOME' >> /opt/spark-2.4.0/conf/spark-env.sh;
-echo 'export HADOOP_CONF_DIR=$HADOOP_CONF_DIR' >> /opt/spark-2.4.0/conf/spark-env.sh;
-echo 'export SCALA_HOME=$SCALA_HOME' >> /opt/spark-2.4.0/conf/spark-env.sh;
+echo '
+export JAVA_HOME=$JAVA_HOME 
+export HADOOP_HOOME=$HADOOP_HOOME
+export HADOOP_CONF_DIR=$HADOOP_CONF_DIR
+export SCALA_HOME=$SCALA_HOME
 
-echo 'export SPARK_MASTER_HOST=master' >> /opt/spark-2.4.0/conf/spark-env.sh;
-echo 'export SPARK_MASTER_PORT=7077' >> /opt/spark-2.4.0/conf/spark-env.sh;
-echo 'export SPARK_WORKER_CORES=1' >> /opt/spark-2.4.0/conf/spark-env.sh;
-echo 'export SPARK_WORKER_MEMORY=1G' >> /opt/spark-2.4.0/conf/spark-env.sh;
+export SPARK_MASTER_HOST=master
+export SPARK_MASTER_PORT=7077
+export SPARK_WORKER_CORES=1
+export SPARK_WORKER_MEMORY=1G
+' > /opt/spark-2.4.0/conf/spark-env.sh;
 
-echo "export JAVA_HOME=$JAVA_HOME" >> /opt/spark-2.4.0/sbin/spark-config.sh;
+echo "
+export JAVA_HOME=$JAVA_HOME
+export LD_LIBRARY_PATH=$HADOOP_HOME/lib/native
+" >> /opt/spark-2.4.0/sbin/spark-config.sh;
 ```
 
 
@@ -119,44 +103,30 @@ echo "export JAVA_HOME=$JAVA_HOME" >> /opt/spark-2.4.0/sbin/spark-config.sh;
 ```
 rm /opt/spark-2.4.0/conf/slaves;
 touch /opt/spark-2.4.0/conf/slaves;
-echo 'slave1' >> /opt/spark-2.4.0/conf/slaves;
-echo 'slave2' >> /opt/spark-2.4.0/conf/slaves;
-echo 'slave3' >> /opt/spark-2.4.0/conf/slaves;
+echo 'slave1
+slave2
+slave3
+'> /opt/spark-2.4.0/conf/slaves;
 ```
 
 
 
-### 给每个slave安装
+### 分发
 
-分别进入每一台slave，将上面的命令重复一遍，即解压、配置环境变量、`spark-env.sh`和`slaves`。直接整段copy：
+整个文件夹分发给slaves
 ```
-tar -zvxf /root/spark-2.4.0-bin-hadoop2.7.tgz -C /opt/;
-mv /opt/spark-2.4.0-bin-hadoop2.7/ /opt/spark-2.4.0;
+scp -r /opt/spark-2.4.0 root@slave1:/opt/;
+scp -r /opt/spark-2.4.0 root@slave2:/opt/;
+scp -r /opt/spark-2.4.0 root@slave3:/opt/;
+```
 
-echo 'export SPARK_HOME=/opt/spark-2.4.0' >> /etc/bash.bashrc ;
-echo 'export PATH=PATH=$SPARK_HOME/bin:$SPARK_HOME/sbin:$PATH' >> /etc/bash.bashrc ;
+分别进入每一台slave配置环境变量，直接整段copy：
+```
+echo '# SPARK SETTINGS
+export SPARK_HOME=/opt/spark-2.4.0
+export PATH=PATH=$SPARK_HOME/bin:$SPARK_HOME/sbin:$PATH
+' >> /etc/bash.bashrc ;
 source /etc/bash.bashrc;
-
-rm /opt/spark-2.4.0/conf/spark-env.sh;
-touch /opt/spark-2.4.0/conf/spark-env.sh;
-
-echo 'export JAVA_HOME=$JAVA_HOME ' >> /opt/spark-2.4.0/conf/spark-env.sh;
-echo 'export HADOOP_HOOME=$HADOOP_HOOME' >> /opt/spark-2.4.0/conf/spark-env.sh;
-echo 'export HADOOP_CONF_DIR=$HADOOP_CONF_DIR' >> /opt/spark-2.4.0/conf/spark-env.sh;
-echo 'export SCALA_HOME=$SCALA_HOME' >> /opt/spark-2.4.0/conf/spark-env.sh;
-
-echo 'export SPARK_MASTER_HOST=master' >> /opt/spark-2.4.0/conf/spark-env.sh;
-echo 'export SPARK_MASTER_PORT=7077' >> /opt/spark-2.4.0/conf/spark-env.sh;
-echo 'export SPARK_WORKER_CORES=1' >> /opt/spark-2.4.0/conf/spark-env.sh;
-echo 'export SPARK_WORKER_MEMORY=1G' >> /opt/spark-2.4.0/conf/spark-env.sh;
-
-echo "export JAVA_HOME=$JAVA_HOME" >> /opt/spark-2.4.0/sbin/spark-config.sh;
-
-rm /opt/spark-2.4.0/conf/slaves;
-touch /opt/spark-2.4.0/conf/slaves;
-echo 'slave1' >> /opt/spark-2.4.0/conf/slaves;
-echo 'slave2' >> /opt/spark-2.4.0/conf/slaves;
-echo 'slave3' >> /opt/spark-2.4.0/conf/slaves;
 exit
 ```
 
@@ -164,11 +134,10 @@ exit
 
 使用这里的启动命令和hadoop一样，我们需要进入目录并启动，具体如下
 ```
-cd /opt/spark-2.4.0/sbin/;
-./start-all.sh
+$SPARK_HOME/sbin/start-all.sh
 ```
 成功后输出
-```
+```bash
 root@master:/opt/spark-2.4.0/sbin# sh ./start-all.sh
 starting org.apache.spark.deploy.master.Master, logging to /opt/spark-2.4.0/logs/spark-root-org.apache.spark.deploy.master.Master-1-master.out
 slave3: starting org.apache.spark.deploy.worker.Worker, logging to /opt/spark-2.4.0/logs/spark-root-org.apache.spark.deploy.worker.Worker-1-slave3.out
@@ -176,7 +145,7 @@ slave2: starting org.apache.spark.deploy.worker.Worker, logging to /opt/spark-2.
 slave1: starting org.apache.spark.deploy.worker.Worker, logging to /opt/spark-2.4.0/logs/spark-root-org.apache.spark.deploy.worker.Worker-1-slave1.out
 ```
 此时我们能够在浏览器中直接访问`http://master:8080`能够看到spark的WEBUI：
-![avatar](./Spark-WebUI.png)
+![SPARK-WEBUI](./imgs/Spark-WebUI.png)
 
 ## <p id='4'>运行SparkDEMO--SparkPi
 
@@ -203,8 +172,7 @@ $SPARK_HOME/bin/spark-submit --class org.apache.spark.examples.SparkPi \
 
 停止集群命令：
 ```
-cd /opt/spark-2.4.0/sbin;
-./stop-all.sh;
+$SPARK_HOME/sbin/stop-all.sh;
 ```
 
 ### WARN--NativeCodeLoader:62

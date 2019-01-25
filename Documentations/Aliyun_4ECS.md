@@ -77,12 +77,29 @@ root@iZhp3bm132kqe3mj9urjcyZ:~#
 ![云企业网加载](./imgs/aliyun_4ids_04.png)
 
 
-
 使用ssh随意进入一台机器并ping另外的机器，检测是否成功互联。
 ![云企业网结果](./imgs/aliyun_4ids_05.png)
 
+### 配置安全组访问
 
+在控制台的安全组下，添加安全组之间互相访问以及开启外网访问。
 
+首先开启跨账号安全组访问，
+![安全组配置-互访](./imgs/aliyun_4ids_06.png)
+
+接着开启外网访问
+![安全组配置-外网](./imgs/aliyun_4ids_07.png)
+
+最终配置如下，需要对每一台节点进行这样的配置，比较麻烦。
+![安全组配置最终](./imgs/aliyun_4ids_08.png)
+
+如果是本机是windows，将申请到的公网ip加入`C:\Windows\System32\drivers\etc\hosts`即可实现快捷访问
+```
+47.94.XX.XX master
+39.96.XX.XX slave1
+39.96.XX.XX slave2
+39.96.XX.XX slave3
+```
 
 
 
