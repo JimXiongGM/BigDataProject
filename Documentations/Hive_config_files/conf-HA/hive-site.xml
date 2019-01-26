@@ -26,7 +26,7 @@
    
   <property>
     <name>hive.server2.zookeeper.namespace</name>
-    <value>xgmcluster</value>
+    <value>hiveserver2_zk</value>
   </property>
    
   <property>
@@ -4155,7 +4155,7 @@
       Transport mode of HiveServer2.
     </description>
   </property>
-  
+  <property>
     <name>hive.driver.parallel.compilation</name>
     <value>false</value>
     <description>

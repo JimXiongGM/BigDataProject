@@ -84,6 +84,8 @@ python -m spylon_kernel install;
 pip install toree;
 pip install pyspark;
 jupyter toree install --spark_home=$SPARK_HOME --interpreters=Scala,PySpark,SparkR,SQL;
+pip2 install ipykernel==4.10.0
+python2 -m ipykernel install --name Python2.7
 jupyter kernelspec list;
 ```
 
@@ -94,8 +96,8 @@ Available kernels:
   python3               /opt/anaconda3/share/jupyter/kernels/python3
   apache_toree_scala    /usr/local/share/jupyter/kernels/apache_toree_scala
   apache_toree_sql      /usr/local/share/jupyter/kernels/apache_toree_sql
+  python2.7             /usr/local/share/jupyter/kernels/python2.7
   spylon-kernel         /usr/local/share/jupyter/kernels/spylon-kernel
-
 ```
 
 两者的区别在于，`spylon-kernel`是直接调用spark-sehll的scacla进行scala交互，`toree`是纯scala编译器。读者只要打开jupyter notebook运行一下就知道区别。
@@ -127,4 +129,3 @@ cat /root/jupyternotebook/nohup.out
 ps -ef | grep jupyter;
 ps aux | grep "jupyter" |grep -v grep| cut -c 9-15 | xargs kill -9
 ```
-

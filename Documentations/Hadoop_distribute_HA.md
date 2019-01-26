@@ -285,6 +285,24 @@ root@slave1:~# exit
 打开网址`http://master:50070`，页面中能看到clustername
 ![png](./imgs/hadoop-ha-50070.png)
 
+以后启动，只需要在master端直接执行
+```
+start-dfs.sh;
+start-yarn.sh;
+```
+
+输出如下
+```bash
+root@master:~# start-dfs.sh
+Starting namenodes on [master slave1]
+Starting datanodes
+Starting journal nodes [slave3 slave2 slave1 master]
+Starting ZK Failover Controllers on NN hosts [master slave1]
+root@master:~# start-yarn.sh
+Starting resourcemanager
+Starting nodemanagers
+```
+
 
 ## 错误与调试
 
