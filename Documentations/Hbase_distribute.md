@@ -14,8 +14,8 @@
 下载解压
 ```
 cd xiazai;
-wget http://mirror.bit.edu.cn/apache/hbase/2.1.2/hbase-2.1.2-bin.tar.gz;
-tar -xzf hbase-2.1.2-bin.tar.gz -C /opt/;
+wget http://mirror.bit.edu.cn/apache/hbase/2.1.3/hbase-2.1.3-bin.tar.gz;
+tar -xzf hbase-2.1.3-bin.tar.gz -C /opt/;
 ```
 
 ## <p id=2>配置
@@ -27,7 +27,7 @@ hbase的HA模式和伪分布模式、单机模式配置不一样，这里直接�
 echo '配置环境变量';
 echo '
 # HBASE SETTINGS
-export HBASE_HOME=/opt/hbase-2.1.2
+export HBASE_HOME=/opt/hbase-2.1.3
 ' >> /etc/bash.bashrc;
 source /etc/bash.bashrc;
 mkdir -p /data/logs/hbase;
@@ -38,7 +38,7 @@ echo 'export HBASE_OPTS="$HBASE_OPTS -XX:+UseConcMarkSweepGC"
 export JAVA_HOME=$JAVA_HOME
 export HBASE_MANAGES_ZK=false
 export HBASE_CLASSPATH=$HADOOP_HOME/etc/hadoop
-export HBASE_LOG_DIR=/data/logs/hbase' > /opt/hbase-2.1.2/conf/hbase-env.sh;
+export HBASE_LOG_DIR=/data/logs/hbase' > /opt/hbase-2.1.3/conf/hbase-env.sh;
 
 echo '配置./conf/hbase-site.xml';
 echo '<?xml version="1.0"?>
@@ -75,16 +75,16 @@ echo '<?xml version="1.0"?>
         <value>filesystem</value> 
     </property> 
 
-</configuration>' > /opt/hbase-2.1.2/conf/hbase-site.xml;
+</configuration>' > /opt/hbase-2.1.3/conf/hbase-site.xml;
 
 echo '详见错误调试';
-rm /opt/hbase-2.1.2/lib/client-facing-thirdparty/slf4j-log4j12-1.7.25.jar;
+rm /opt/hbase-2.1.3/lib/client-facing-thirdparty/slf4j-log4j12-1.7.25.jar;
 cp $HBASE_HOME/lib/client-facing-thirdparty/htrace-core-3.1.0-incubating.jar $HBASE_HOME/lib/
 
 echo '分发';
-scp -r /opt/hbase-2.1.2 root@slave1:/opt/;
-scp -r /opt/hbase-2.1.2 root@slave2:/opt/;
-scp -r /opt/hbase-2.1.2 root@slave3:/opt/;
+scp -r /opt/hbase-2.1.3 root@slave1:/opt/;
+scp -r /opt/hbase-2.1.3 root@slave2:/opt/;
+scp -r /opt/hbase-2.1.3 root@slave3:/opt/;
 ls;
 ```
 
@@ -93,7 +93,7 @@ ls;
 echo '配置环境变量';
 echo '
 # HBASE SETTINGS
-export HBASE_HOME=/opt/hbase-2.1.2
+export HBASE_HOME=/opt/hbase-2.1.3
 ' >> /etc/bash.bashrc;
 source /etc/bash.bashrc;
 mkdir -p /data/logs/hbase;
@@ -141,18 +141,18 @@ root@master:~# jps
 
 ### Class path contains multiple SLF4J bindings.
 
-使用`vim /opt/hbase-2.1.2/logs/hbase-root-master-master.out`查看日志，得到
+使用`vim /opt/hbase-2.1.3/logs/hbase-root-master-master.out`查看日志，得到
 ```
 SLF4J: Class path contains multiple SLF4J bindings.
 SLF4J: Found binding in [jar:file:/opt/hadoop-3.1.1/share/hadoop/common/lib/slf4j-log4j12-1.7.25.jar!/org/slf4j/impl/StaticLoggerBinder.class]
-SLF4J: Found binding in [jar:file:/opt/hbase-2.1.2/lib/client-facing-thirdparty/slf4j-log4j12-1.7.25.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: Found binding in [jar:file:/opt/hbase-2.1.3/lib/client-facing-thirdparty/slf4j-log4j12-1.7.25.jar!/org/slf4j/impl/StaticLoggerBinder.class]
 SLF4J: See http://www.slf4j.org/codes.html#multiple_bindings for an explanation.
 SLF4J: Actual binding is of type [org.slf4j.impl.Log4jLoggerFactory]
 
 ```
 如提示，删掉一个jar即可，上文已经增加。
 ```
-rm /opt/hbase-2.1.2/lib/client-facing-thirdparty/slf4j-log4j12-1.7.25.jar
+rm /opt/hbase-2.1.3/lib/client-facing-thirdparty/slf4j-log4j12-1.7.25.jar
 ```
 
 ### Caused by: java.lang.ClassNotFoundException: org.apache.htrace.SamplerBuilder

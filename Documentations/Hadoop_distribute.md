@@ -10,9 +10,9 @@
 - [配置节点之间免密SSH登陆](#3)
 - [配置JAVA](#4)
 - [配置vim缩进](#5)
-- [下载解压Hadoop3.1.1](#6)
+- [下载解压Hadoop3.1.2](#6)
 - [配置Hadoop环境变量](#7)
-- [配置hadoop3.1.1设置文件](#8)
+- [配置hadoop3.1.2设置文件](#8)
 - [使用Hadoop Streaming](#9)
 - [错误分析以及调试](#10)
 - [鸣谢](#11)
@@ -182,25 +182,25 @@ set autoindent' >> /etc/vimrc;
 exit
 ```
 
-## <p id='6'>下载解压Hadoop3.1.1
+## <p id='6'>下载解压Hadoop3.1.2
 
 在master上，直接copy如下命令，完成下载、解压、分发。
 ```
-wget -P /root/xiazai/ http://mirror.bit.edu.cn/apache/hadoop/common/hadoop-3.1.1/hadoop-3.1.1.tar.gz;
+wget -P /root/xiazai/ http://mirror.bit.edu.cn/apache/hadoop/common/hadoop-3.1.2/hadoop-3.1.2.tar.gz;
 cd /root/xiazai/;
-tar -zxvf hadoop-3.1.1.tar.gz;
-mv hadoop-3.1.1 /opt/hadoop-3.1.1;
-scp hadoop-3.1.1.tar.gz root@slave1:;
-scp hadoop-3.1.1.tar.gz root@slave2:;
-scp hadoop-3.1.1.tar.gz root@slave3:;
+tar -zxvf hadoop-3.1.2.tar.gz;
+mv hadoop-3.1.2 /opt/hadoop-3.1.2;
+scp hadoop-3.1.2.tar.gz root@slave1:;
+scp hadoop-3.1.2.tar.gz root@slave2:;
+scp hadoop-3.1.2.tar.gz root@slave3:;
 ```
 使用`ssh root@slave1`进入slave1，直接copy以下命令
 ```
 mkdir -p /opt/;
 cd /root/;
-tar -zxvf hadoop-3.1.1.tar.gz;
-mv hadoop-3.1.1 /opt/;
-rm /root/hadoop-3.1.1.tar.gz;
+tar -zxvf hadoop-3.1.2.tar.gz;
+mv hadoop-3.1.2 /opt/;
+rm /root/hadoop-3.1.2.tar.gz;
 exit
 ```
 进入slave2和slav3，再来一遍。
@@ -212,7 +212,7 @@ exit
 echo '正在配置环境变量'
 echo '
 # Hadoop Settings
-export HADOOP_HOME=/opt/hadoop-3.1.1
+export HADOOP_HOME=/opt/hadoop-3.1.2
 export HADOOP_INSTALL=$HADOOP_HOME
 export YARN_HOME=$HADOOP_HOME
 export HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop
@@ -232,7 +232,7 @@ exit
 ```
 
 
-## <p id='8'>配置hadoop3.1.1设置文件
+## <p id='8'>配置hadoop3.1.2设置文件
 
 **特别注意**！从这里开始，hadoop的HA模式和非HA模式设置开始变得不同，HA模式的设置请参考[Hadoop3分布式HA模式搭建](./Hadoop_distribute_HA.md)。
 
@@ -242,15 +242,15 @@ scp -r ./Documentations/Hadoop3_config_files root@master:/root/
 ```
 拷贝到云端，然后直接copy下面整段即可完成所有节点的配置。
 ```
-cp -f /root/Hadoop3_config_files/etc/* /opt/hadoop-3.1.1/etc/hadoop/;
-scp /root/Hadoop3_config_files/etc/* root@slave1:/opt/hadoop-3.1.1/etc/hadoop/;
-scp /root/Hadoop3_config_files/etc/* root@slave2:/opt/hadoop-3.1.1/etc/hadoop/;
-scp /root/Hadoop3_config_files/etc/* root@slave3:/opt/hadoop-3.1.1/etc/hadoop/;
+cp -f /root/Hadoop3_config_files/etc/* /opt/hadoop-3.1.2/etc/hadoop/;
+scp /root/Hadoop3_config_files/etc/* root@slave1:/opt/hadoop-3.1.2/etc/hadoop/;
+scp /root/Hadoop3_config_files/etc/* root@slave2:/opt/hadoop-3.1.2/etc/hadoop/;
+scp /root/Hadoop3_config_files/etc/* root@slave3:/opt/hadoop-3.1.2/etc/hadoop/;
 
-cp -f /root/Hadoop3_config_files/sbin/* /opt/hadoop-3.1.1/sbin/;
-scp /root/Hadoop3_config_files/sbin/* root@slave1:/opt/hadoop-3.1.1/sbin/;
-scp /root/Hadoop3_config_files/sbin/* root@slave2:/opt/hadoop-3.1.1/sbin/;
-scp /root/Hadoop3_config_files/sbin/* root@slave3:/opt/hadoop-3.1.1/sbin/;
+cp -f /root/Hadoop3_config_files/sbin/* /opt/hadoop-3.1.2/sbin/;
+scp /root/Hadoop3_config_files/sbin/* root@slave1:/opt/hadoop-3.1.2/sbin/;
+scp /root/Hadoop3_config_files/sbin/* root@slave2:/opt/hadoop-3.1.2/sbin/;
+scp /root/Hadoop3_config_files/sbin/* root@slave3:/opt/hadoop-3.1.2/sbin/;
 ```
 
 ubuntu系统的源码运行模式就像windows的绿色文件运行模式，解压即可用，非常方便。这里对上面的配置文件进行总结。这里一共要配置8个文件。
@@ -278,7 +278,7 @@ ubuntu系统的源码运行模式就像windows的绿色文件运行模式，解�
 
 ### 5.yarn-site.xml
 
-配置yarn的调度机制，不能照搬！关于该文件的详细配置可以自行搜索，[官网文档](https://hadoop.apache.org/docs/r3.1.1/hadoop-yarn/hadoop-yarn-site/CapacityScheduler.html)在这里。本文展示几个关键配置。
+配置yarn的调度机制，不能照搬！关于该文件的详细配置可以自行搜索，[官网文档](https://hadoop.apache.org/docs/r3.1.2/hadoop-yarn/hadoop-yarn-site/CapacityScheduler.html)在这里。本文展示几个关键配置。
 
 1).vcores设置。**非常重要**的设置，本文使用的是阿里云的1核1线程机器，所以这里设置为1.
 ```js
@@ -462,11 +462,11 @@ hdfs dfs -copyFromLocal /root/WordCountDemo/test.txt /data/WordCountDemo/;
 
 ### 提交WordCount
 
-在master端，使用`find / -name hadoop-streaming*`命令找到相应jar文件，这里的结果是`/opt/hadoop-3.1.1/share/hadoop/tools/lib/hadoop-streaming-3.1.1.jar`    
+在master端，使用`find / -name hadoop-streaming*`命令找到相应jar文件，这里的结果是`/opt/hadoop-3.1.2/share/hadoop/tools/lib/hadoop-streaming-3.1.2.jar`    
 
 直接使用如下命令，即可
 ```
-hadoop jar /opt/hadoop-3.1.1/share/hadoop/tools/lib/hadoop-streaming-3.1.1.jar \
+hadoop jar /opt/hadoop-3.1.2/share/hadoop/tools/lib/hadoop-streaming-3.1.2.jar \
   -D mapreduce.job.name='WordCount01' \
   -input /data/WordCountDemo/test.txt \
   -output /xgm/output/WordCount01 \
@@ -544,7 +544,7 @@ set autoindent
 
 特别感谢[@daviddwlee84](https://github.com/daviddwlee84)和[@wilsonwz94](https://github.com/wilsonwz94)的帮助，没有你们的帮助，我的进度将放慢10倍。  
 
-[@daviddwlee84](https://github.com/daviddwlee84)同学的主要贡献是利用Python中的fabric包，实现了一键自动安装Hadoop3.1.1，不过他的环境是4块树莓派3b+，并基于本地局域网。[链接](https://github.com/daviddwlee84/RaspPi-Cluster)在此。  
+[@daviddwlee84](https://github.com/daviddwlee84)同学的主要贡献是利用Python中的fabric包，实现了一键自动安装Hadoop3.1.2，不过他的环境是4块树莓派3b+，并基于本地局域网。[链接](https://github.com/daviddwlee84/RaspPi-Cluster)在此。  
  
 上述工具可以为我们实现批量测试、批量执行等基本操作，但是为了学习Hadoop、为了能够在出问题的时候找到出错的原因，我们必须熟悉Hadoop的安装细节。
 

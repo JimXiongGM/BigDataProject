@@ -67,6 +67,8 @@ root@iZhp3bm132kqe3mj9urjcyZ:~#
 
 这里比较麻烦，需要把我们申请的4个账号下同地域的4台学生机进行内网互联。进入阿里云的管理控制台，我们可以看到申请的实例网络类型是`专有网络`，这个类型的网络不能通过配置安全组进行内网互通。因此我们需要搭建`云企业网`进行内网互通，同地域网络实例互通免费，无需购买带宽包。
 
+可以参考阿里云的[云企业网搭建教程](https://help.aliyun.com/document_detail/65901.html?spm=a2c4g.11186623.6.558.32b14c97WBdLP9)
+
 首先在master账号下进入云企业网并点击创建云企业实例，如下图。
 ![云企业网实例](./imgs/aliyun_4ids_02.png)
 
@@ -93,7 +95,7 @@ root@iZhp3bm132kqe3mj9urjcyZ:~#
 最终配置如下，需要对每一台节点进行这样的配置，比较麻烦。
 ![安全组配置最终](./imgs/aliyun_4ids_08.png)
 
-如果是本机是windows，将申请到的公网ip加入`C:\Windows\System32\drivers\etc\hosts`即可实现快捷访问
+如果使用windows，将申请到的公网ip加入`C:\Windows\System32\drivers\etc\hosts`即可实现快捷访问
 ```
 47.94.XX.XX master
 39.96.XX.XX slave1
