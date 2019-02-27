@@ -117,6 +117,24 @@ nohup jupyter notebook --notebook-dir /root/jupyternotebook/ --allow-root &
 ```
 笔者申请了域名，只要输入`www.playbigdate.top:6789`即可访问。
 
+## 修改kernel名称
+
+修改kernel文件即可。
+```
+vim /opt/anaconda3/share/jupyter/kernels/python3/kernel.json
+```
+
+## 增加Python3.6内核
+
+增加系统自带的Python3.6内核。
+
+```
+cd /usr/bin/;
+python3 -m ipykernel install –name Ubuntu Python 3.6.7
+```
+
+
+
 ## <p id=5>调试与结束jupyter notebook
 
 查看jupyter notebook原本应该在bash的输出

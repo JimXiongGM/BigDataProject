@@ -146,7 +146,9 @@ cd /root/xiazai/;
 tar -zxvf jdk-8u201-linux-x64.tar.gz;
 mv jdk1.8.0_201/ /opt/;
 
-echo 'export JAVA_HOME=/opt/jdk1.8.0_201
+echo '
+# JAVA SETTINGS
+export JAVA_HOME=/opt/jdk1.8.0_201
 export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
 export PATH=$JAVA_HOME/bin:$PATH' >> /etc/bash.bashrc;
 source /etc/bash.bashrc;
@@ -164,7 +166,9 @@ mkdir -p /opt/;
 tar -zxvf jdk-8u201-linux-x64.tar.gz;
 mv jdk1.8.0_201/ /opt/;
 rm jdk-8u201-linux-x64.tar.gz;
-echo 'export JAVA_HOME=/opt/jdk1.8.0_201
+echo '
+# JAVA SETTINGS
+export JAVA_HOME=/opt/jdk1.8.0_201
 export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
 export PATH=$JAVA_HOME/bin:$PATH' >> /etc/bash.bashrc;
 source /etc/bash.bashrc;
@@ -190,20 +194,10 @@ wget -P /root/xiazai/ http://mirror.bit.edu.cn/apache/hadoop/common/hadoop-3.1.2
 cd /root/xiazai/;
 tar -zxvf hadoop-3.1.2.tar.gz;
 mv hadoop-3.1.2 /opt/hadoop-3.1.2;
-scp hadoop-3.1.2.tar.gz root@slave1:;
-scp hadoop-3.1.2.tar.gz root@slave2:;
-scp hadoop-3.1.2.tar.gz root@slave3:;
+scp -r /opt/hadoop-3.1.2 root@slave1:/opt/;
+scp -r /opt/hadoop-3.1.2 root@slave2:/opt/;
+scp -r /opt/hadoop-3.1.2 root@slave3:/opt/;
 ```
-使用`ssh root@slave1`进入slave1，直接copy以下命令
-```
-mkdir -p /opt/;
-cd /root/;
-tar -zxvf hadoop-3.1.2.tar.gz;
-mv hadoop-3.1.2 /opt/;
-rm /root/hadoop-3.1.2.tar.gz;
-exit
-```
-进入slave2和slav3，再来一遍。
 
 ## <p id='7'>配置Hadoop环境变量
 
