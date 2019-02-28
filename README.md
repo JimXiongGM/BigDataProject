@@ -22,12 +22,13 @@
 - [Spark全分布式安装](./Documentations/Spark_distribute.md)
 - [Spark分布式HA模式搭建](./Documentations/Spark_distribute_HA.md)
 
+- [Scala语法基础（无demo）](./Documentations/ScalaBasic.md)
+- [Scala + Spark基础（scala+sbt+spark hello world）](./Documentations/ScalaSpark.md)
+- [Scala + Spark Streaming基础（scala+sbt+SparkStreaming hello world）](./Documentations/SparkStreaming_Scala.md)
 
 
 
-- [Scala语法基础](./Documentations/ScalaBasic.md)
-- [Scala + Spark基础](./Documentations/ScalaSpark.md)
-- [Spark Streaming基础 + 实例 (Scala)](./Documentations/SparkStreaming_Scala.md)
+
 - [Spark + SQL实例 (Scala + python3)](./Documentations/SparkSQLDEMO_Scala.md)
 - [Jupyter Notebook + Spark 配置](./Documentations/JupyterNotebook.md)
 - [MongoDB的本地安装 + PyMongo的基本操作](./Documentations/MongoDB_standalone.md)

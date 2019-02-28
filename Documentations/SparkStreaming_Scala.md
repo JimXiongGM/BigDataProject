@@ -1,22 +1,108 @@
-# Spark Streaming基础 (Scala)
+# Scala + Spark Streaming基础
 
-[Spark Streaming官网](http://spark.apache.org/docs/latest/streaming-programming-guide.html)在这里。本文最后的`Spark Streaming例子`部分值得一看，提供了代码和运行截图。
+本章的大部分内容摘自机械工业出版社的《Spark大数据分析核心概念技术及实践》和[Spark Streaming官网](http://spark.apache.org/docs/latest/streaming-programming-guide.html)。
 
-其余的大部分内容均摘自机械工业出版社的《Spark大数据分析核心概念技术及实践》，提倡读者购买正版。本章只作为一个索引，供复习使用。
-
+本章第一小节`Spark Streaming DEMO`感兴趣的读者可以跑一跑。其余内容是笔者的学习一个索引，供复习使用。
 
 ## 目录
 
-> - [简介](#1)
-> - [StreamingContext](#2)
-> - [Spark Streaming 应用基本结构](#3)
-> - [DStream](#4)
-> - [处理数据流](#5)
-> - [输出操作](#6)
-> - [窗口操作](#7)
-> - [Spark Streaming例子](#8)
+- [Spark Streaming DEMO](#0)
+- [简介](#1)
+- [StreamingContext](#2)
+- [Spark Streaming 应用基本结构](#3)
+- [DStream](#4)
+- [处理数据流](#5)
+- [输出操作](#6)
+- [窗口操作](#7)
+- [Spark Streaming例子](#8)
 
 
+
+
+## <p id=0>Spark Streaming DEMO
+
+这里的例子基于官网给出的`NetworkWordCount`源码，点击[这里](https://github.com/apache/spark/blob/v2.4.0/examples/src/main/scala/org/apache/spark/examples/streaming/NetworkWordCount.scala)可以看到。
+
+这个例子能读取9999端口的消息，并且进行wordcount，直接输出到bash。所以需要打开两个bash，**首先**在bash1输入如下命令，之后的输入将持续向9999端口传递消息。
+```
+nc -lk 9999
+```
+
+在bash2窗口，直接copy+enter如下命令，编译streaming程序
+
+```s
+mkdir /root/NetworkWordCount01;
+cd /root/NetworkWordCount01;
+rm NetworkWordCount01.scala
+touch NetworkWordCount01.scala;
+echo 'import org.apache.spark.SparkConf
+import org.apache.spark.storage.StorageLevel
+import org.apache.spark.streaming.{Seconds, StreamingContext}
+
+object NetworkWordCount01 {
+  def main(args: Array[String]) {
+    if (args.length < 2) {
+      System.err.println("Usage: NetworkWordCount01 <hostname<port>")
+      System.exit(1)
+    }
+    val sparkConf = new SparkConf().setAppName("NetworkWordCount")
+    val ssc = new StreamingContext(sparkConf, Seconds(1))
+
+    val lines = ssc.socketTextStream(args(0), args(1).toInt, StorageLevel.MEMORY_AND_DISK_SER)
+    val words = lines.flatMap(_.split(" "))
+    val wordCounts = words.map(x =(x, 1)).reduceByKey(_ + _)
+    wordCounts.print()
+    ssc.start()
+    ssc.awaitTermination()
+  }
+}'  >NetworkWordCount01.scala;
+
+echo "配置sbt文件";
+
+rm BuildNetworkWordCount01.sbt;
+touch BuildNetworkWordCount01.sbt;
+echo 'ThisBuild / version := "1.0.0"
+ThisBuild / scalaVersion := "2.11.12"
+ThisBuild / organization := "xgm"
+
+lazy val SPARKNetworkWordCount01 = (project in file("."))
+  .settings(
+    name := "SPARKNetworkWordCount01",
+    libraryDependencies += "org.apache.spark" %% "spark-core" % "2.4.0" % "provided",
+    libraryDependencies += "org.apache.spark" %% "spark-streaming" % "2.4.0" % "provided"
+  )' >BuildNetworkWordCount01.sbt;
+
+sbt package;
+```
+
+提交上面生成的jar到standalone集群
+```
+$SPARK_HOME/bin/spark-submit --class "NetworkWordCount01" --master spark://master:7077 \
+/root/NetworkWordCount01/target/scala-2.11/sparknetworkwordcount01_2.11-1.0.0.jar  \
+master \
+9999 
+```
+
+不出意外的话，这时屏幕会狂刷INFO信息，这时可以使用按下键盘ctrl+Z结束，改变日志输出级别为`WARN`。使用
+```
+cp /opt/spark-2.4.0/conf/log4j.properties.template /opt/spark-2.4.0/conf/log4j.properties;
+vim /opt/spark-2.4.0/conf/log4j.properties;
+```
+手动把`log4j.rootCategory=INFO, console`改为`log4j.rootCategory=WARN, console`
+
+这时候在bash1窗口输入各种命令，bash2窗口就会输出词频统计结果，如下图
+
+![avatar](./imgs/sparkstreaming-1.png)
+![avatar](./imgs/sparkstreaming-2.png)
+
+
+**特别注意**！！要先使用`nc -lk 9999`打开端口，再submit spark streaaming，否则会出现`Error connecting to master:9999`错误。
+
+很有意思的是，这里的wordcount并不是全局统计，而是分时间窗口的统计。至于怎么实现全局聚合，日后再补充。
+
+
+
+# 以下为读书笔记
 
 ## <p id=1>简介
 
@@ -138,7 +224,7 @@ map
 
 ```
 val lines = ssc.socketTextStream("localhost", 9999)
-val lengths = lines map {line => line.length}
+val lengths = lines map {line =line.length}
 ```
 
 flatMap
@@ -146,14 +232,14 @@ flatMap
 下面的代码片段展示了如何从一个文本数据流创建一个由单词构成的流 。
 ```
 val lines = ssc. socketTextStream("localhost", 9999)
-val words = lines flatMap {line => line.split(" ")}
+val words = lines flatMap {line =line.split(" ")}
 ```
 
 filte
 
 ```
 val lines = ssc.socketTextStream("localhost", 9999)
-val nonBlanklines = lines filter {line => line.length > 0}
+val nonBlanklines = lines filter {line =line.length 0}
 ```
 
 repartition
@@ -184,15 +270,15 @@ reduce
 
 ```
 val lines = ssc.socketTextStream("localhost", 9999)
-val words = lines flatMap {line => line.split(" ")}
-val longestWords = words reduce { (wl, w2) => if (wl.length > w2.length) w1 else w2 }
+val words = lines flatMap {line =line.split(" ")}
+val longestWords = words reduce { (wl, w2) =if (wl.length w2.length) w1 else w2 }
 ```
 
 countByValue
 
 ```
 val lines = ssc.socketTextStream("localhost", 9999)
-val words = lines flatMap {line => line.split(" ")}
+val words = lines flatMap {line =line.split(" ")}
 val wordCounts = words.countByValue()
 ```
 
@@ -203,13 +289,13 @@ cogroup
 
 ```
 val lines1 = ssc.socketTextStream("localhost", 9999)
-val words1 = lines1 flatMap {line => line.split(" ")}
-val wordlenPairs1 = words1 map {w => (w.length, w)}
+val words1 = lines1 flatMap {line =line.split(" ")}
+val wordlenPairs1 = words1 map {w =(w.length, w)}
 val wordsBylen1 = wordlenPairs1.groupByKey
 
 val lines2 = ssc.socketTextStream("localhost", 9998)
-val words2 = lines2 flatMap {line => line.split(" ")}
-val wordlenPairs2 = words2 map {w => (w.length, w)}
+val words2 = lines2 flatMap {line =line.split(" ")}
+val wordlenPairs2 = words2 map {w =(w.length, w)}
 val wordsBylen2 = wordLenPairs2.groupByKey
 
 val wordsGroupedByLen = wordsByLen1.cogroup(wordsByLen2)
@@ -220,12 +306,12 @@ join
 
 ```
 val lines1 = ssc.socketTextStream("localhost", 9999)
-val words1 = lines1 flatMap {line => line.split(" ")}
-val wordLenPairs1 = words1 map {w => (w.length, w)}
+val words1 = lines1 flatMap {line =line.split(" ")}
+val wordLenPairs1 = words1 map {w =(w.length, w)}
 
 val lines2 = ssc.socketTextStream("localhost", 9998)
-val words2 = lines2 flatMap {line => line.split(" ")}
-val wordLenPairs2 = words2 map {w => (w. length, w)}
+val words2 = lines2 flatMap {line =line.split(" ")}
+val wordLenPairs2 = words2 map {w =(w. length, w)}
 
 val wordsSamelength = wordLenPairs1.join(wordLenPairs2)
 ```
@@ -234,8 +320,8 @@ groupByKey
 
 ```
 val lines = ssc.socketTextStream("localhost", 9999)
-val words = lines flatMap {line => line.split(" ")}
-val wordLenPairs = words map {w => (w.length, w)}
+val words = lines flatMap {line =line.split(" ")}
+val wordLenPairs = words map {w =(w.length, w)}
 val wordsBylen = wordlenPairs.groupByKey
 ```
 
@@ -243,8 +329,8 @@ reduceByKey
 
 ```
 val lines = ssc.socketTextStream("localhost", 9999)
-val words = lines flatMap {line => line.split(" ")}
-val wordPairs = words map { word => (word, 1)}
+val words = lines flatMap {line =line.split(" ")}
+val wordPairs = words map { word =(word, 1)}
 val wordCount = wordPairs.reduceByKey(_ + _)
 ```
 
@@ -254,8 +340,8 @@ transform
 
 ```
 val lines = ssc.socketTextStream("localhost", 9999)
-val words = lines.flatMap{line => line.split(" ")}
-val sorted= words.transform{rdd => rdd.sortBy((w)=> w)}
+val words = lines.flatMap{line =line.split(" ")}
+val sorted= words.transform{rdd =rdd.sortBy((w)=w)}
 ```
 
 updateStateByKey
@@ -265,15 +351,15 @@ updateStateByKey
 
 ssc.checkpoint("checkpoint")
 val lines = ssc.socketTextStream("localhost", 9999)
-val words = lines.flatMap{line => line.split(" ")}
-val wordPairs = words.map{word => (word, 1)}
+val words = lines.flatMap{line =line.split(" ")}
+val wordPairs = words.map{word =(word, 1)}
 
-// create a function of type (xs: Seq[Int], prevState: Option[Int]) => Option[Int]
+// create a function of type (xs: Seq[Int], prevState: Option[Int]) =Option[Int]
 
-val updateState = (xs: Seq[Int], prevState: Option[Int]) => {
+val updateState = (xs: Seq[Int], prevState: Option[Int]) ={
     prevState match {
-        case Some( prevCount ) => Some( prevCount + xs.sum)
-        case None => Some(xs.sum)
+        case Some( prevCount ) =Some( prevCount + xs.sum)
+        case None =Some(xs.sum)
   }
 }
 val runningCount = wordPairs.updateStateByKey(updateState)
@@ -283,48 +369,48 @@ val runningCount = wordPairs.updateStateByKey(updateState)
 
 ### 保存至文件系统
 
-> - saveAsTextFiles
+- saveAsTextFiles
 
-> - saveAsObjectFiles
+- saveAsObjectFiles
 
-> - saveAsHadoopFiles
+- saveAsHadoopFiles
 
-> - saveAsNewAPIHadoopFiles
+- saveAsNewAPIHadoopFiles
 
 ### 在控制台上显示
 
-> - print
+- print
 
 
 ### 保存至数据库中
 
-> - foreachRDD
+- foreachRDD
 
 
 ## <p id=7>窗口操作
 
-> - window
+- window
 
 ```
 val lines = ssc.socketTextStream("localhost", 9999)
-val words = lines.flatMap{line => line.split(" ")}
+val words = lines.flatMap{line =line.split(" ")}
 val windowLen = 30
 val slidingInterval = 10
 
 val window = words.window( Seconds(windowLen),Seconds(slidingInterval) )
 
-val longestWord = window reduce { (word1,word2) => 
-    if (word1.length > word2.length ) word1 else word2 }
+val longestWord = window reduce { (word1,word2) =
+    if (word1.length word2.length ) word1 else word2 }
 longestWord.print()
 ```
 
 
-> - countByWindow
+- countByWindow
 
 ```
 ssc.checkpoint("checkpoint")
 val lines = ssc.socketTextStream("localhost", 9999)
-val words = lines.flatMap{line => line.split(" ")}
+val words = lines.flatMap{line =line.split(" ")}
 val windowLen = 30
 val slidingInterval = 10
 
@@ -333,12 +419,12 @@ val countByWindow = words.countByWindow( Seconds(windowLen) , Seconds(slidingInt
 countByWindow.print()
 ```
 
-> - countByValueAndWindow
+- countByValueAndWindow
 
 ```
 ssc.checkpoint("checkpoint")
 val lines = ssc.socketTextStream("localhost", 9999)
-val words = lines.flatMap{line => line.split(" ")}
+val words = lines.flatMap{line =line.split(" ")}
 val windowLen = 30
 val slidingInterval = 10
 
@@ -347,13 +433,13 @@ val countByValueAndWindow = words.countByValueAndWindow( Seconds(windowLen) , Se
 countByValueAndWindow.print()
 ```
 
-> - reduceByWindow
+- reduceByWindow
 
 ```
 ssc.checkpoint("checkpoint")
 val lines = ssc.socketTextStream("localhost", 9999)
-val words = lines.flatMap{line => line.split(" ")}
-val numbers = words map {x => x.toInt}
+val words = lines.flatMap{line =line.split(" ")}
+val numbers = words map {x =x.toInt}
 val windowLen = 30
 val slidingInterval = 10
 
@@ -362,13 +448,13 @@ val sumLast30Seconds = numbers.reduceByWindow({(n1, n2)=>n1+n2} ,Seconds(windowl
 sumLast30Seconds.print()
 ```
 
-> - reduceByKeyAndWindow
+- reduceByKeyAndWindow
 
 ```
 ssc.checkpoint("checkpoint")
 val lines = ssc.socketTextStream("localhost", 9999)
-val words = lines.flatMap{line => line.split(" ")}
-val wordPairs = words map {word => (word, 1)}
+val words = lines.flatMap{line =line.split(" ")}
+val wordPairs = words map {word =(word, 1)}
 val windowlen = 30
 val slidingInterval = 10
 val wordCountLast30Seconds = wordPairs.reduceByKeyAndWindow((count1: Int, count2: Int) =>
@@ -384,86 +470,5 @@ wordCountLast30Seconds.print()
 
 
 
-
-## <p id=8>Spark Streaming例子
-
-这里的例子基于官网给出的`NetworkWordCount`源码，点击[这里](https://github.com/apache/spark/blob/v2.4.0/examples/src/main/scala/org/apache/spark/examples/streaming/NetworkWordCount.scala)可以看到。
-
-这个例子能读取9999端口的消息，并且进行wordcount，直接输出到bash。所以需要打开两个bash，**首先**在bash1输入如下命令，之后的输入将持续向9999端口传递消息。
-```
-nc -lk 9999
-```
-
-在bash2窗口，直接copy+enter如下命令，编译streaming程序
-
-```s
-mkdir /root/NetworkWordCount01;
-cd /root/NetworkWordCount01;
-rm NetworkWordCount01.scala
-touch NetworkWordCount01.scala;
-echo 'import org.apache.spark.SparkConf
-import org.apache.spark.storage.StorageLevel
-import org.apache.spark.streaming.{Seconds, StreamingContext}
-
-object NetworkWordCount01 {
-  def main(args: Array[String]) {
-    if (args.length < 2) {
-      System.err.println("Usage: NetworkWordCount01 <hostname> <port>")
-      System.exit(1)
-    }
-    val sparkConf = new SparkConf().setAppName("NetworkWordCount")
-    val ssc = new StreamingContext(sparkConf, Seconds(1))
-
-    val lines = ssc.socketTextStream(args(0), args(1).toInt, StorageLevel.MEMORY_AND_DISK_SER)
-    val words = lines.flatMap(_.split(" "))
-    val wordCounts = words.map(x => (x, 1)).reduceByKey(_ + _)
-    wordCounts.print()
-    ssc.start()
-    ssc.awaitTermination()
-  }
-}'  >> NetworkWordCount01.scala;
-
-echo "配置sbt文件";
-
-rm BuildNetworkWordCount01.sbt;
-touch BuildNetworkWordCount01.sbt;
-echo 'ThisBuild / version := "1.0.0"
-ThisBuild / scalaVersion := "2.11.12"
-ThisBuild / organization := "xgm"
-
-lazy val SPARKNetworkWordCount01 = (project in file("."))
-  .settings(
-    name := "SPARKNetworkWordCount01",
-    libraryDependencies += "org.apache.spark" %% "spark-core" % "2.4.0" % "provided",
-    libraryDependencies += "org.apache.spark" %% "spark-streaming" % "2.4.0" % "provided"
-  )' >> BuildNetworkWordCount01.sbt;
-
-sbt package;
-```
-
-提交上面生成的jar到standalone集群
-```
-$SPARK_HOME/bin/spark-submit --class "NetworkWordCount01" --master spark://master:7077 \
-/root/NetworkWordCount01/target/scala-2.11/sparknetworkwordcount01_2.11-1.0.0.jar  \
-master \
-9999 
-```
-
-不出意外的话，这时屏幕会狂刷INFO信息，这时可以使用按下键盘ctrl+Z结束，改变日志输出级别为`WARN`。使用
-```
-cp /opt/spark-2.4.0/conf/log4j.properties.template /opt/spark-2.4.0/conf/log4j.properties;
-vim /opt/spark-2.4.0/conf/log4j.properties;
-```
-手动把`log4j.rootCategory=INFO, console`改为`log4j.rootCategory=WARN, console`
-
-这时候在bash1窗口输入各种命令，bash2窗口就会输出词频统计结果，如下图
-
-![avatar](./imgs/sparkstreaming-1.png)
-![avatar](./imgs/sparkstreaming-2.png)
-
-
-**特别注意**！！要先使用`nc -lk 9999`打开端口，再submit spark streaaming，否则会出现`Error connecting to master:9999`错误。
-
-很有意思的是，这里的wordcount并不是全局统计，而是分时间窗口的统计。至于怎么实现全局聚合，日后再补充。
 
 
