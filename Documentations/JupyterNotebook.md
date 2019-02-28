@@ -6,9 +6,11 @@
 
 - [安装Anaconda3](#1)
 - [配置远程访问](#2)
-- [安装scala kernel](#3)
+- [安装各种kernel](#3)
 - [后台挂起jupyter notebook](#4)
-- [调试与结束jupyter notebook](#5)
+- [新增Python3.6](#5)
+- [查看Python版本号和路径](#6)
+- [调试与结束jupyter notebook](#7)
 
 
 ## <p id=1>安装Anaconda3
@@ -79,7 +81,7 @@ c.NotebookApp.port = 6789" >> /root/.jupyter/jupyter_notebook_config.py;
 即可。
 
 
-## <p id=3>安装kernel
+## <p id=3>安装各种kernel
 
 这里有两种scala kernel可以使用，分别是`spylon-kernel`和`toree`提供的kernel，这里都安装
 
@@ -122,20 +124,26 @@ nohup jupyter notebook --notebook-dir /root/jupyternotebook/ --allow-root &
 ```
 笔者申请了域名，只要输入`www.playbigdate.top:6789`即可访问。
 
-## 新增Python3.6
+## <p id=5>新增Python3.6
 
 因为分布式spark要求每一台节点具有相同的Python环境，而ubuntu自带Python3.6.7，因此这里把anaconda默认的Python3.7.1改为系统自带的3.6.7.
 
 ```
 apt install -y ipykernel;
-/usr/bin/python3.6 -m ipykernel install --user
+/usr/bin/python3.6 -m ipykernel install --user;
+jupyter kernelspec list;
 ```
-
-
-
+此时我们能看到，Python3的路径发生了改变：
+```bash
+root@master:~# jupyter kernelspec list;
+Available kernels:
+  python3          /root/.local/share/jupyter/kernels/python3
 ```
-vim /opt/anaconda3/share/jupyter/kernels/python3/kernel.json
+可以根据上面的路径，找到对应的`kernel.json`文件。
 ```
+vim /root/.local/share/jupyter/kernels/python3/kernel.json
+```
+在这里可以看到执行目录和显示名称，我们可以改一改显示名称。
 ```json
 {
  "argv": [
@@ -149,9 +157,24 @@ vim /opt/anaconda3/share/jupyter/kernels/python3/kernel.json
  "language": "python"
 }
 ```
+保存并退出，此时直接刷新浏览器即可看到名称发生变化。
 
+## <p id=6>查看Python版本号和路径
 
-## <p id=5>调试与结束jupyter notebook
+在jupyter notebook cell 中输入如下即可。
+```
+import sys
+print (sys.version)
+print (sys.executable)
+
+output: 
+
+3.6.7 (default, Oct 22 2018, 11:32:17) 
+[GCC 8.2.0]
+/usr/bin/python3.6
+```
+
+## <p id=7>调试与结束jupyter notebook
 
 查看jupyter notebook原本应该在bash的输出
 ```
