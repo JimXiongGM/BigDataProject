@@ -17,7 +17,7 @@ HA模式即高可用模式，这个模式之下namenode挂掉没事，备用节�
 
 ### 下载解压
 
-首先下载解压并赋权。
+首先下载解压。
 ```
 cd ~/xiazai;
 wget http://ftp.cuhk.edu.hk/pub/packages/apache.org/zookeeper/zookeeper-3.4.13/zookeeper-3.4.13.tar.gz;
@@ -31,7 +31,9 @@ mv zookeeper-3.4.13 /opt/;
 
 ```
 echo '配置环境变量';
-echo 'export ZOOKEEPER_HOME=/opt/zookeeper-3.4.13' >> /etc/bash.bashrc;
+echo '
+# ZOOKEEPER SETTINGS
+export ZOOKEEPER_HOME=/opt/zookeeper-3.4.13' >> /etc/bash.bashrc;
 source /etc/bash.bashrc;
 
 echo '设置zoo.cfg';
@@ -46,7 +48,7 @@ server.2=slave2:2888:3888
 server.3=slave3:2888:3888' > /opt/zookeeper-3.4.13/conf/zoo.cfg;
 
 echo '设置zkEnv.sh';
-sed -i '26i ZOO_LOG_DIR=/data/logs/zookeeper' /opt/zookeeper-3.4.13/conf/zkEnv.sh;
+sed -i '26i ZOO_LOG_DIR=/data/logs/zookeeper' /opt/zookeeper-3.4.13/bin/zkEnv.sh;
 
 echo '设置master的myid';
 rm -rf /data;
@@ -74,7 +76,9 @@ ls
 
 `ssh root@slave1`
 ```
-echo 'export ZOOKEEPER_HOME=/opt/zookeeper-3.4.13' >> /etc/bash.bashrc;
+echo '
+# ZOOKEEPER SETTINGS
+export ZOOKEEPER_HOME=/opt/zookeeper-3.4.13' >> /etc/bash.bashrc;
 source /etc/bash.bashrc;
 
 mkdir -p /data/zookeeper;
@@ -93,7 +97,9 @@ exit
 
 `ssh root@slave2`
 ```
-echo 'export ZOOKEEPER_HOME=/opt/zookeeper-3.4.13' >> /etc/bash.bashrc;
+echo '
+# ZOOKEEPER SETTINGS
+export ZOOKEEPER_HOME=/opt/zookeeper-3.4.13' >> /etc/bash.bashrc;
 source /etc/bash.bashrc;
 
 mkdir -p /data/zookeeper;
@@ -110,7 +116,9 @@ exit
 
 `ssh root@slave3`
 ```
-echo 'export ZOOKEEPER_HOME=/opt/zookeeper-3.4.13' >> /etc/bash.bashrc;
+echo '
+# ZOOKEEPER SETTINGS
+export ZOOKEEPER_HOME=/opt/zookeeper-3.4.13' >> /etc/bash.bashrc;
 source /etc/bash.bashrc;
 
 mkdir -p /data/zookeeper;
@@ -172,15 +180,15 @@ scp -r ./Documentations/Hadoop3_config_files root@master:/root/;
 在master端，我们可以直接把`etc-HA`中的配置文件拷贝到相应的位置，完成安装。
 
 ```
-cp -f /root/Hadoop3_config_files/etc-HA/* /opt/hadoop-3.1.1/etc/hadoop/;
-scp /root/Hadoop3_config_files/etc-HA/* root@slave1:/opt/hadoop-3.1.1/etc/hadoop/;
-scp /root/Hadoop3_config_files/etc-HA/* root@slave2:/opt/hadoop-3.1.1/etc/hadoop/;
-scp /root/Hadoop3_config_files/etc-HA/* root@slave3:/opt/hadoop-3.1.1/etc/hadoop/;
+cp -f /root/Hadoop3_config_files/etc-HA/* /opt/hadoop-3.1.2/etc/hadoop/;
+scp /root/Hadoop3_config_files/etc-HA/* root@slave1:/opt/hadoop-3.1.2/etc/hadoop/;
+scp /root/Hadoop3_config_files/etc-HA/* root@slave2:/opt/hadoop-3.1.2/etc/hadoop/;
+scp /root/Hadoop3_config_files/etc-HA/* root@slave3:/opt/hadoop-3.1.2/etc/hadoop/;
 
-cp -f /root/Hadoop3_config_files/sbin-HA/* /opt/hadoop-3.1.1/sbin/;
-scp /root/Hadoop3_config_files/sbin-HA/* root@slave1:/opt/hadoop-3.1.1/sbin/;
-scp /root/Hadoop3_config_files/sbin-HA/* root@slave2:/opt/hadoop-3.1.1/sbin/;
-scp /root/Hadoop3_config_files/sbin-HA/* root@slave3:/opt/hadoop-3.1.1/sbin/;
+cp -f /root/Hadoop3_config_files/sbin-HA/* /opt/hadoop-3.1.2/sbin/;
+scp /root/Hadoop3_config_files/sbin-HA/* root@slave1:/opt/hadoop-3.1.2/sbin/;
+scp /root/Hadoop3_config_files/sbin-HA/* root@slave2:/opt/hadoop-3.1.2/sbin/;
+scp /root/Hadoop3_config_files/sbin-HA/* root@slave3:/opt/hadoop-3.1.2/sbin/;
 ```
 
 ### 配置文件说明
