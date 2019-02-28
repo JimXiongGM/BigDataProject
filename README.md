@@ -2,7 +2,7 @@
 
 ## 前言  
 
-本项目目标是基于阿里云搭建全分布式系统，运行Hadoop3 + Spark2 + MongoDB + something else做一些好玩的事，目前正在构思与探索。这是笔者第一次上手大数据平台，因此秉持着“study with output”的精神，尝试把从下载软件到跑通代码的过程都记录下来，并且尽力“知其所以然”。所以本项目记录比较详细，适合新手阅读。
+大数据生态链初探。
 
 ## 思路
 
@@ -14,8 +14,17 @@
 
 ## 环境安装与Hello-World DEMO
  
+- [阿里云虚拟机集群设置](./Documentations/Aliyun_4ECS.md)
+
 - [Hadoop3全分布式 + Hadoop streaming环境搭建](./Documentations/Hadoop_distribute.md)
+- [Hadoop3分布式HA模式搭建](./Documentations/Hadoop_distribute_HA.md)
+
 - [Spark全分布式安装](./Documentations/Spark_distribute.md)
+- [Spark分布式HA模式搭建](./Documentations/Spark_distribute_HA.md)
+
+
+
+
 - [Scala语法基础](./Documentations/ScalaBasic.md)
 - [Scala + Spark基础](./Documentations/ScalaSpark.md)
 - [Spark Streaming基础 + 实例 (Scala)](./Documentations/SparkStreaming_Scala.md)
