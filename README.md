@@ -14,28 +14,36 @@
 
 ## 环境安装与Hello-World DEMO
  
-- [阿里云虚拟机集群设置](./Documentations/Aliyun_4ECS.md)
+0. [阿里云虚拟机集群设置](./Documentations/Aliyun_4ECS.md)
 
-- [Hadoop3全分布式 + Hadoop streaming环境搭建](./Documentations/Hadoop_distribute.md)
-- [Hadoop3分布式HA模式搭建](./Documentations/Hadoop_distribute_HA.md)
+### 核心环境搭建
+1. [Hadoop3全分布式 + Hadoop streaming环境搭建](./Documentations/Hadoop_distribute.md)---依赖[0]
+2. [Hadoop3分布式HA模式搭建](./Documentations/Hadoop_distribute_HA.md)---依赖[1]
 
-- [Spark全分布式安装](./Documentations/Spark_distribute.md)
-- [Spark分布式HA模式搭建](./Documentations/Spark_distribute_HA.md)
+3. [Spark全分布式安装](./Documentations/Spark_distribute.md)---依赖[1]
+4. [Spark分布式HA模式搭建](./Documentations/Spark_distribute_HA.md)---依赖[3]
 
-- [Scala语法基础（无demo）](./Documentations/ScalaBasic.md)
-- [Scala + Spark基础（scala+sbt+spark hello world）](./Documentations/ScalaSpark.md)
-- [Scala + Spark Streaming基础（scala+sbt+SparkStreaming hello world）](./Documentations/SparkStreaming_Scala.md)
+### spark探索
 
+本节均依赖[3]或[4]。
 
+5. [Scala语法基础（无demo）](./Documentations/ScalaBasic.md)
+6. [Scala + Spark基础（scala+sbt+spark hello world）](./Documentations/ScalaSpark.md)
+7. [Scala + Spark Streaming基础（scala+sbt+SparkStreaming hello world）](./Documentations/SparkStreaming_Scala.md)
+8. [Spark + SQL实例 (Scala + python3)](./Documentations/SparkSQLDEMO_Scala.md)
+9. [Jupyter Notebook + Spark 配置](./Documentations/JupyterNotebook.md)
 
+### hadoop生态环境搭建
 
-- [Spark + SQL实例 (Scala + python3)](./Documentations/SparkSQLDEMO_Scala.md)
-- [Jupyter Notebook + Spark 配置](./Documentations/JupyterNotebook.md)
-- [MongoDB的本地安装 + PyMongo的基本操作](./Documentations/MongoDB_standalone.md)
-- [MongoDB的全分布式安装](./Documentations/MongoDB_distribute.md)
-- [Pig的全分布式安装](./Documentations/Pig_distribute.md)
-- []()
-- []()
+#### Hive与HBASE
+10. [HBASE分布式环境搭建](./Documentations/Hbase_distribute.md)
+11. [Hive环境搭建](./Documentations/Hive_distribute.md)
+12. [Hive HA模式搭建（未测试）](./Documentations/Hive_distribute_HA.md)
+
+#### MongoDB与Pig
+11. [MongoDB的本地安装 + PyMongo的基本操作](./Documentations/MongoDB_standalone.md)
+12. [MongoDB的全分布式安装](./Documentations/MongoDB_distribute.md)
+13. [Pig的全分布式安装](./Documentations/Pig_distribute.md)
 - 未完待续
 
 ## 数据集介绍
@@ -61,6 +69,7 @@
 ## 上手
 
 - [使用Spark分析kaggle - Amazon sales数据](./Spark_AmazonBook/README.md)
+- [PySpark初探](./Spark_learningPySpark/README.md)
 - [Python+MongoDB————爬取与存储数据](./MongDBWithCrawler/README.md)　　未完待续
 - [使用全分布式Pig分析数据](./PigOnMap-Reduce/README.md)　　挖坑待填
 - [全分布下Hadoop和MongoDB的使用](./Documentations/Hadoop+MongoDB_Crawler.md)　　挖坑待填

@@ -1,61 +1,17 @@
-# pyspark图计算--GraphFrames
+# PySpark初探
 
-https://graphframes.github.io/graphframes/docs/_site/index.html
+本上手项目内容均来自Tomasz Drabas 和 Denny Lee的著作《Learning PySpark》，译作为《PySpark实战指南》。本书提供了大量代码供读者运行，这里笔者放上自己的阅读笔记和运行结果。
 
-## 配置anaconda3
+原著直接在[databricks](https://community.cloud.databricks.com/login.html)平台运行Python代码，这个平台免费提供6GB内存的spark实例供学习使用，且集成scala，能够非常方便地实现数据可视化。缺点是免费spark实例只有2小时活跃时间，且笔者个人认为databricks没有jupyter notebook好用。因此笔者选择自行搭建平台run代码，除了第7章。
 
-之前已经安装好了在线版jupyter notebook，这里继续配置pyspark。
+第7章介绍GraphFrames包。由于databricks平台能够在cell中直接运行scala，但jupyter不行，因此原书代码中大量可视化效果无法显示。于是笔者选择在databricks进行实验并保存为html。
 
-到[官网](https://spark-packages.org/package/graphframes/graphframes)下载zip格式的graphframes包，拷贝到相应目录。
+原著github地址：https://github.com/drabastomek/learningPySpark。本目录下提供了上述github的zip包。
 
-```
-cd /root/xiazai;
-wget https://codeload.github.com/graphframes/graphframes/zip/f9e13ab4ac1a7113f8439744a1ab45710eb50a72;
-mv f9e13ab4ac1a7113f8439744a1ab45710eb50a72 graphframes.zip;
-unzip graphframes.zip;
-mv graphframes-f9e13ab4ac1a7113f8439744a1ab45710eb50a72 graphframes;
-cp -r ./graphframes/python/* /opt/anaconda3/lib/python3.7/site-packages/;
-conda install pyspark;
-pip2 install pyspark;
-```
+具体内容均在相应的jupyter notebook中，如下所示。
 
-## spark graphframes依赖安装
+||第4章：准备数据建模|第5章：MLlib介绍|第6章：ML包介绍|第7章：GraphFrames介绍
+---|---|---|---|---
+html版本|[√](./LearningPySpark_Chapter04_笔记版.html)|[√](./LearningPySpark_Chapter05_笔记版.html)|[√](./LearningPySpark_Chapter06_笔记版.html)|[√](./LearningPySpark_Chapter07_笔记版.html)
+ipynb版本|[√](./LearningPySpark_Chapter04_笔记版.ipynb)|[√](./LearningPySpark_Chapter05_笔记版.ipynb)|[√](./LearningPySpark_Chapter06_笔记版.ipynb)|[√](./LearningPySpark_Chapter07_笔记版.ipynb)
 
-使用以下命令。`--packages`表示自动安装所需要的依赖包。先下载jar文件，然后使用pyspark命令行让spark自己安装。最新的jar可以[点击这里](https://spark-packages.org/package/graphframes/graphframes)看到。
-```
-cd $SPARK_HOME/jars/;
-wget http://120.52.51.19/dl.bintray.com/spark-packages/maven/graphframes/graphframes/0.7.0-spark2.4-s_2.11/graphframes-0.7.0-spark2.4-s_2.11.jar;
-$SPARK_HOME/bin/pyspark --clust
-```
-
-http://bit.ly/2ejPr8k
-http://bit.ly/2ePAdKT
-
-
-
-cp -r ./graphframes/python/* /usr/local/lib/python2.7/dist-packages/
-
-
-
-cp /usr/local/share/jupyter/kernels/python2.7/kernel.json /usr/local/share/jupyter/kernels/python2.7/kernel.json.BACKUP
-
-echo '{
-    "display_name": "Ubuntu Python2.7",
-    "language": "python",
-    "argv": [
-        "/usr/bin/python2",
-        "-m",
-        "ipykernel",
-        "-f",
-        "{connection_file}"
-    ],
-    "env": {
-        "SPARK_HOME": "/opt/spark-2.4.0/",
-        "PYTHONPATH": "/opt/spark-2.4.0/python/:/opt/spark-2.4.0/python/lib/py4j-0.10.7-src.zip",
-        "PYTHONSTARTUP": "/opt/spark-2.4.0/python/pyspark/shell.py",
-        "PYSPARK_SUBMIT_ARGS": "--packages graphframes:graphframes:0.7.0-spark2.4-s_2.11 --master spark://master:7077 pyspark-shell",
-        "SPARK_DRIVER_MEMORY":"1G"
-    }
-}' > /usr/local/share/jupyter/kernels/python2.7/kernel.json;
-
-https://developer.ibm.com/clouddataservices/2016/07/15/intro-to-apache-spark-graphframes/
