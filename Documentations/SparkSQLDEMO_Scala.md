@@ -1,6 +1,6 @@
 # Spark + SQL实例 (Scala + python3)
 
-这一部分的内容没有参考之前的《Spark大数据分析核心概念技术及实践》，主要原因是笔者搭建的spark2.4.0API较新，将SparkContext等合并为SparkSession，变动较大。这里主要的参考材料是[官网文档](http://spark.apache.org/docs/latest/sql-getting-started.html)以及Tomasz Drabas编写的《PySpark实战指南》
+这一部分的内容没有参考之前的《Spark大数据分析核心概念技术及实践》，主要原因是笔者搭建的spark2.4.0 API较新，将SparkContext等合并为SparkSession，变动较大。这里主要的参考材料是[官网文档](http://spark.apache.org/docs/latest/sql-getting-started.html)以及Tomasz Drabas编写的《PySpark实战指南》
 
 ## 目录 
 
