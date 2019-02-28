@@ -39,7 +39,7 @@ source /etc/bash.bashrc;
 scala -version
 ```
 可以看到如下输出
-```
+```bash
 root@master:~/xiazai# scala -version
 Scala code runner version 2.11.12 -- Copyright 2002-2017, LAMP/EPFL
 ``` 
@@ -64,7 +64,8 @@ mv /opt/spark-2.4.0-bin-hadoop2.7 /opt/spark-2.4.0;
 
 直接粘贴复制执行以下命令即可
 ```
-echo '# SPARK SETTINGS
+echo '
+# SPARK SETTINGS
 export SPARK_HOME=/opt/spark-2.4.0
 export PATH=$SPARK_HOME/bin:$SPARK_HOME/sbin:$PATH
 ' >> /etc/bash.bashrc ;
@@ -118,11 +119,13 @@ slave3
 scp -r /opt/spark-2.4.0 root@slave1:/opt/;
 scp -r /opt/spark-2.4.0 root@slave2:/opt/;
 scp -r /opt/spark-2.4.0 root@slave3:/opt/;
+ls
 ```
 
 分别进入每一台slave配置环境变量，直接整段copy：
 ```
-echo '# SPARK SETTINGS
+echo '
+# SPARK SETTINGS
 export SPARK_HOME=/opt/spark-2.4.0
 export PATH=$SPARK_HOME/bin:$SPARK_HOME/sbin:$PATH
 ' >> /etc/bash.bashrc ;
