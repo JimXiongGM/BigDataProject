@@ -398,8 +398,8 @@ root@master:~# jps
 
 ### 配置python3环境
 
-ubuntu16自带Python2.7以及Python3.5，这里需要切换默认的Python版本为Python3。很简单只需要两条命令，对所有节点都运行这两条命令。
-```s
+ubuntu18自带Python2.7以及Python3.6，这里需要切换默认的Python版本为Python3。很简单只需要两条命令，对所有节点都运行这两条命令。
+```bash
 sudo update-alternatives --install /usr/bin/python python /usr/bin/python2 100
 sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 150
 ```

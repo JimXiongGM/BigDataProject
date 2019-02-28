@@ -26,7 +26,12 @@ source ~/.bashrc
 ```
 即可完成安装。
 
-如果最后一步不小心选no，可以把下面的代码copy到 `~/.bashrc`末尾。
+如果最后一步选no，可以source下面的代码。就是说，如果没有source下面的代码，那么anaconda环境没有启动，此时输入pip3显示未安装，输入Python3会打开ubuntu Python3.6.7 的交互式界面。如果source下面你的代码，则输入Python3会打开Python3.7.1,。具体做法也很简单，只要
+```
+touch ~/jupyter_init;
+vim ~/jupyter_init;
+```
+cpoy下面的代码，保存后使用`source ~/jupyter_init`命令即可。以下命令来自jupyter程序。
 ```
 __conda_setup="$(CONDA_REPORT_ERRORS=false '/opt/anaconda3/bin/conda' shell.bash hook 2> /dev/null)"
 if [ $? -eq 0 ]; then
@@ -117,22 +122,33 @@ nohup jupyter notebook --notebook-dir /root/jupyternotebook/ --allow-root &
 ```
 笔者申请了域名，只要输入`www.playbigdate.top:6789`即可访问。
 
-## 修改kernel名称
+## 新增Python3.6
 
-修改kernel文件即可。
+因为分布式spark要求每一台节点具有相同的Python环境，而ubuntu自带Python3.6.7，因此这里把anaconda默认的Python3.7.1改为系统自带的3.6.7.
+
+```
+apt install -y ipykernel;
+/usr/bin/python3.6 -m ipykernel install --user
+```
+
+
+
 ```
 vim /opt/anaconda3/share/jupyter/kernels/python3/kernel.json
 ```
-
-## 增加Python3.6内核
-
-增加系统自带的Python3.6内核。
-
+```json
+{
+ "argv": [
+  "/usr/bin/python3.6",
+  "-m",
+  "ipykernel_launcher",
+  "-f",
+  "{connection_file}"
+ ],
+ "display_name": "Ubuntu Python 3.6.7",
+ "language": "python"
+}
 ```
-cd /usr/bin/;
-python3 -m ipykernel install –name Ubuntu Python 3.6.7
-```
-
 
 
 ## <p id=5>调试与结束jupyter notebook
