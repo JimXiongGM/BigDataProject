@@ -9,6 +9,7 @@
 - [安装各种kernel](#3)
 - [后台挂起jupyter notebook](#4)
 - [新增Python3.6](#5)
+ -[新增Python3.7.2](#5_1)
 - [查看Python版本号和路径](#6)
 - [调试与结束jupyter notebook](#7)
 
@@ -158,6 +159,33 @@ vim /root/.local/share/jupyter/kernels/python3/kernel.json
 }
 ```
 保存并退出，此时直接刷新浏览器即可看到名称发生变化。
+
+## <p id="5_1">新增Python3.7.2
+
+jupyter自带Python3.7.1。这里备忘一个一键安装增加Python3.7.2的办法
+
+```
+curl https://bc.gongxinke.cn/downloads/install-python-latest | bash;
+```
+
+切换系统默认为Python3.7
+```
+rm -rf /usr/bin/python3;
+rm -rf /usr/bin/pip3;
+ln -s /usr/local/bin/python3.7 /usr/bin/python3;
+ln -s /usr/local/bin/pip3.7 /usr/bin/pip3;
+pip3 -V;
+python3 -V;
+```
+
+添加Python3.7.2到jupyter
+```
+sudo rm /usr/bin/lsb_release;
+pip3 install ipykernel;
+python3.7 -m ipykernel install --user;
+pip3 install jupyter;
+jupyter kernelspec list;
+```
 
 ## <p id=6>查看Python版本号和路径
 
