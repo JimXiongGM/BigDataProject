@@ -55,9 +55,9 @@ Scala code runner version 2.11.12 -- Copyright 2002-2017, LAMP/EPFL
 从[官网](http://spark.apache.org/downloads.html)下载、解压。
 ```
 cd /root/xiazai;
-wget http://mirrors.hust.edu.cn/apache/spark/spark-2.4.0/spark-2.4.0-bin-hadoop2.7.tgz;
-tar -zvxf spark-2.4.0-bin-hadoop2.7.tgz -C /opt/;
-mv /opt/spark-2.4.0-bin-hadoop2.7 /opt/spark-2.4.0;
+wget https://mirrors.tuna.tsinghua.edu.cn/apache/spark/spark-2.4.1/spark-2.4.1-bin-hadoop2.7.tgz;
+tar -zvxf spark-2.4.1-bin-hadoop2.7.tgz -C /opt/;
+mv /opt/spark-2.4.1-bin-hadoop2.7 /opt/spark-2.4.1;
 ```
 
 ### 配置环境变量
@@ -66,7 +66,7 @@ mv /opt/spark-2.4.0-bin-hadoop2.7 /opt/spark-2.4.0;
 ```
 echo '
 # SPARK SETTINGS
-export SPARK_HOME=/opt/spark-2.4.0
+export SPARK_HOME=/opt/spark-2.4.1
 export PATH=$SPARK_HOME/bin:$SPARK_HOME/sbin:$PATH
 ' >> /etc/bash.bashrc ;
 source /etc/bash.bashrc;
@@ -76,8 +76,8 @@ source /etc/bash.bashrc;
 
 同样直接整段copy执行即可。
 ```
-rm /opt/spark-2.4.0/conf/spark-env.sh;
-touch /opt/spark-2.4.0/conf/spark-env.sh;
+rm /opt/spark-2.4.1/conf/spark-env.sh;
+touch /opt/spark-2.4.1/conf/spark-env.sh;
 
 echo '
 export JAVA_HOME=$JAVA_HOME 
@@ -89,12 +89,12 @@ export SPARK_MASTER_HOST=master
 export SPARK_MASTER_PORT=7077
 export SPARK_WORKER_CORES=1
 export SPARK_WORKER_MEMORY=1G
-' > /opt/spark-2.4.0/conf/spark-env.sh;
+' > /opt/spark-2.4.1/conf/spark-env.sh;
 
 echo "
 export JAVA_HOME=$JAVA_HOME
 export LD_LIBRARY_PATH=$HADOOP_HOME/lib/native
-" >> /opt/spark-2.4.0/sbin/spark-config.sh;
+" >> /opt/spark-2.4.1/sbin/spark-config.sh;
 ```
 
 
@@ -102,12 +102,12 @@ export LD_LIBRARY_PATH=$HADOOP_HOME/lib/native
 
 整段copy执行
 ```
-rm /opt/spark-2.4.0/conf/slaves;
-touch /opt/spark-2.4.0/conf/slaves;
+rm /opt/spark-2.4.1/conf/slaves;
+touch /opt/spark-2.4.1/conf/slaves;
 echo 'slave1
 slave2
 slave3
-'> /opt/spark-2.4.0/conf/slaves;
+'> /opt/spark-2.4.1/conf/slaves;
 ```
 
 
@@ -116,9 +116,9 @@ slave3
 
 整个文件夹分发给slaves
 ```
-scp -r /opt/spark-2.4.0 root@slave1:/opt/;
-scp -r /opt/spark-2.4.0 root@slave2:/opt/;
-scp -r /opt/spark-2.4.0 root@slave3:/opt/;
+scp -r /opt/spark-2.4.1 root@slave1:/opt/;
+scp -r /opt/spark-2.4.1 root@slave2:/opt/;
+scp -r /opt/spark-2.4.1 root@slave3:/opt/;
 ls
 ```
 
@@ -126,7 +126,7 @@ ls
 ```
 echo '
 # SPARK SETTINGS
-export SPARK_HOME=/opt/spark-2.4.0
+export SPARK_HOME=/opt/spark-2.4.1
 export PATH=$SPARK_HOME/bin:$SPARK_HOME/sbin:$PATH
 ' >> /etc/bash.bashrc ;
 source /etc/bash.bashrc;
@@ -141,11 +141,11 @@ $SPARK_HOME/sbin/start-all.sh
 ```
 成功后输出
 ```bash
-root@master:/opt/spark-2.4.0/sbin# sh ./start-all.sh
-starting org.apache.spark.deploy.master.Master, logging to /opt/spark-2.4.0/logs/spark-root-org.apache.spark.deploy.master.Master-1-master.out
-slave3: starting org.apache.spark.deploy.worker.Worker, logging to /opt/spark-2.4.0/logs/spark-root-org.apache.spark.deploy.worker.Worker-1-slave3.out
-slave2: starting org.apache.spark.deploy.worker.Worker, logging to /opt/spark-2.4.0/logs/spark-root-org.apache.spark.deploy.worker.Worker-1-slave2.out
-slave1: starting org.apache.spark.deploy.worker.Worker, logging to /opt/spark-2.4.0/logs/spark-root-org.apache.spark.deploy.worker.Worker-1-slave1.out
+root@master:/opt/spark-2.4.1/sbin# sh ./start-all.sh
+starting org.apache.spark.deploy.master.Master, logging to /opt/spark-2.4.1/logs/spark-root-org.apache.spark.deploy.master.Master-1-master.out
+slave3: starting org.apache.spark.deploy.worker.Worker, logging to /opt/spark-2.4.1/logs/spark-root-org.apache.spark.deploy.worker.Worker-1-slave3.out
+slave2: starting org.apache.spark.deploy.worker.Worker, logging to /opt/spark-2.4.1/logs/spark-root-org.apache.spark.deploy.worker.Worker-1-slave2.out
+slave1: starting org.apache.spark.deploy.worker.Worker, logging to /opt/spark-2.4.1/logs/spark-root-org.apache.spark.deploy.worker.Worker-1-slave1.out
 ```
 此时我们能够在浏览器中直接访问`http://master:8080`能够看到spark的WEBUI：
 ![SPARK-WEBUI](./imgs/Spark-WebUI.png)
@@ -167,7 +167,7 @@ $SPARK_HOME/bin/spark-submit --class org.apache.spark.examples.SparkPi \
 ```
 **注意**！这里的`--driver-memory 512mb`和`--executor-memory 512mb`需要根据YARN的配置情况设置。之前的文章中，将每个节点的可用内存设置为了1024mb。根据shell的报错信息，spark需要额外的384mb开销，所以对内存需求为512+384mb=896mb < 1024mb。把两者都设置为512mb，就不会报错。  
 
-打开hadoop的界面能够看到application，因为这里是提交到YARN运行，所以在spark自己的界面是看不到的。
+打开hadoop的界面能够看到application，因为这里提交到YARN运行，所以在spark自己的界面是看不到的。
 
 ## <p id='5'>Spark错误分析
 
@@ -186,7 +186,7 @@ WARN  NativeCodeLoader:62 - Unable to load native-hadoop library for your platfo
 ```
 在spark的sbin目录下，在spark-config文件中加入LD_LIBRARY_PATH环境变量LD_LIBRARY_PATH=$HADOOP_HOME/lib/native
 ```
-echo 'export LD_LIBRARY_PATH=$HADOOP_HOME/lib/native' >> /opt/spark-2.4.0/sbin/spark-config.sh;
+echo 'export LD_LIBRARY_PATH=$HADOOP_HOME/lib/native' >> /opt/spark-2.4.1/sbin/spark-config.sh;
 ```
 
 

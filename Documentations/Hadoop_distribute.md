@@ -190,7 +190,7 @@ exit
 
 在master上，直接copy如下命令，完成下载、解压、分发。
 ```
-wget -P /root/xiazai/ http://mirror.bit.edu.cn/apache/hadoop/common/hadoop-3.1.2/hadoop-3.1.2.tar.gz;
+wget -P /root/xiazai/ https://mirrors.tuna.tsinghua.edu.cn/apache/hadoop/common/hadoop-3.1.2/hadoop-3.1.2.tar.gz;
 cd /root/xiazai/;
 tar -zxvf hadoop-3.1.2.tar.gz;
 mv hadoop-3.1.2 /opt/hadoop-3.1.2;
@@ -379,13 +379,11 @@ scheduler相关配置，需要微调。
 在master节点，使用`start-all.sh`启动Hadoop，使用`mapred --daemon start historyserver`启动historyserver。当然也可以使用`start-dfs.sh`以及`start-yarn.sh`启动。启动成功之后，输入`jps`，可以看到如下。
 ```bash
 root@master:~# jps
-10274 JobHistoryServer
-9668 SecondaryNameNode
-10519 Jps
-889 Application
-9899 ResourceManager
-7645 Master
-9406 NameNode
+17664 Jps
+16948 ResourceManager
+17305 JobHistoryServer
+16396 NameNode
+16701 SecondaryNameNode
 ```
 此时通过浏览器访问`http://你的公网ip:8088`可以看到Hadoop节点界面，访问`http://你的公网ip:50070`可以看到HDFS使用情况。
 
@@ -403,14 +401,18 @@ ubuntu18自带Python2.7以及Python3.6，这里需要切换默认的Python版本
 sudo update-alternatives --install /usr/bin/python python /usr/bin/python2 100
 sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 150
 ```
-最后的100和150表示优先级。如果要切换到Python2，执行`sudo update-alternatives --config python`，按照提示输入选择数字并回车即可。  
+
+当然也可以直接在所有节点上安装最新版Python，详情可见[Jupyter NoteBook的安装](./JupyterNotebook.md#5_1)
+
+
+最后的100和150表示优先级。如果要切换到Python2，执行`sudo update-alternatives --config python`，按照提示输入选择数字并回车即可。 
 
 使用命令`python --version`确认当前版本号为python3，使用命令`which python`确认路径为`/usr/bin/python`。
 
 
 ### 范例 WordCount
 
-WordCount是官网提供的统计词频的范例程序，这里的py程序源码和数据文本可以在`Documentations\WordCountDemo`文件夹下找到。将本目录下的文件夹拷贝到云端`scp -r WordCountDemo root@aliyun_WordCountDemo:`。使用如下命令清理文件
+WordCount是官网提供的统计词频的范例程序，这里的py程序源码和数据文本可以在`Documentations\WordCountDemo`文件夹下找到。将本目录下的文件夹拷贝到云端`scp -r ./Documentations/WordCountDemo root@masterT:/root/`。使用如下命令清理文件
 ```
 chmod -R 777 /root/WordCountDemo;
 sed -i "s/\r//" /root/WordCountDemo/mapper_WordCount.py;

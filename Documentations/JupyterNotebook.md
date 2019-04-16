@@ -20,8 +20,8 @@ Anaconda官网在[这里](https://www.anaconda.com/download/#linux)。进入云�
 
 ```
 cd /root/xiazai/;
-wget https://repo.continuum.io/archive/Anaconda3-2018.12-Linux-x86_64.sh;
-bash Anaconda3-2018.12-Linux-x86_64.sh;
+wget https://repo.continuum.io/archive/Anaconda3-2019.03-Linux-x86_64.sh;
+bash Anaconda3-2019.03-Linux-x86_64.sh;
 ```
 然后按回车，输入yes，输入路径`/opt/anaconda3/`回车，看到`Do you wish the installer to initialize Anaconda3`，输入yes。最后
 ```
