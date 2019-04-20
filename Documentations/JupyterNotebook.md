@@ -182,7 +182,7 @@ python3 -V;
 ```
 sudo rm /usr/bin/lsb_release;
 pip3 install ipykernel;
-python3.7 -m ipykernel install --user;
+python3 -m ipykernel install --user;
 pip3 install jupyter;
 jupyter kernelspec list;
 ```
