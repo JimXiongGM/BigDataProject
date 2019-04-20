@@ -11,59 +11,32 @@
 
 从官网下载MongoDB编译好的tgz压缩文件，[点击这里](https://www.mongodb.com/download-center/community?jmp=docs)，选择对应的version、OS、package并下载。注意不能点击右侧Download source (tgz)，那个是下载源码。  
 
-本文使用的下载链接是[这个](https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1804-4.0.4.tgz)。使用`tar -zvxf mongodb-linux-x86_64-ubuntu1804-4.0.4.tgz -C /usr/local/mongodb`解压文件到指定文件夹  
-
-在`~/.bashrc`中添加环境变量。关于/etc/profiel、~/.bashrc等的区别，[点击这里](https://www.cnblogs.com/liduanjun/p/3536993.html)。
-
-打开`sudo gedit ~/.bashrc`
-
-添加
-```js
-export MONGODB_HOME=/usr/local/mongodb/mongodb-linux-x86_64-ubuntu1804-4.0.4
-export PATH=$MONGODB_HOME/bin:$PATH
-```
-生效  
-`source ~/.bashrc`
-
-确认环境变量  
-`echo $MONGODB_HOME`
-
-创建存放data的目录。根据官网介绍，/data/db 是 MongoDB 默认的启动的数据库路径。这里我使用自定义路径  
-`sudo mkdir -p /home/mongodb/data`
-
-创建日志存放目录。  
-`sudo mkdir -p /home/mongodb/logs`
-  
-在$MONGODB_HOME/bin下有mongo文件，我们可以进入并启动   
-`mongod --dbpath /home/mongodb/data --logpath /home/mongodb/logs/mongod.log --fork`
-
-可以看到产生错误  
-```s
-xgm@xgm-xps:/usr/local/mongodb/mongodb-linux-x86_64-ubuntu1804-4.0.4/bin$ mongod --dbpath /home/mongodb/data --logpath /home/mongodb/logs/mongod.log
-2018-12-10T20:34:49.799+0800 I CONTROL  [main] Automatically disabling TLS 1.0, to force-enable TLS 1.0 specify --sslDisabledProtocols 'none'
-2018-12-10T20:34:49.799+0800 F CONTROL  [main] Failed global initialization: FileNotOpen: Failed to open "/home/mongodb/logs/mongod.log"
-```
-很明显是没有权限，因此我们应该使用root账户进行操作。  
-先将上述环境变量添加到/etc/profile  
-```
-su
-gedit /etc/profile
-source /etc/profile
-echo $MONGODB_HOME
-mongod --dbpath /home/mongodb/data --logpath /home/mongodb/logs/mongod.log --fork  
+使用root用户进行操作：
+```bash
+cd xiazai;
+wget https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu1804-4.0.9.tgz ;
+tar -zvxf mongodb-linux-x86_64-ubuntu1804-4.0.9.tgz -C /opt/;
+echo '
+# MONGODB SETTINGS
+export MONGODB_HOME=/opt/mongodb-linux-x86_64-ubuntu1804-4.0.9
+export PATH=$MONGODB_HOME/bin:$PATH' >> /etc/bash.bashrc;
+source /etc/bash.bashrc;
+sudo mkdir -p /data/mongodb/data;
+sudo mkdir -p /data/mongodb/logs;
+mongod --dbpath /data/mongodb/data --logpath /data/mongodb/logs/mongod.log --fork
 ```
 
 
 可以看到，此时控制台输出：
 ```s
-root@xgm-xps:/home/xgm# mongod --dbpath /home/mongodb/data --logpath /home/mongodb/logs/mongod.log --fork
+root@xgm-xps:/home/xgm# mongod --dbpath /data/mongodb/data --logpath /data/mongodb/logs/mongod.log --fork
 2018-12-10T20:39:31.391+0800 I CONTROL  [main] Automatically disabling TLS 1.0, to force-enable TLS 1.0 specify --sslDisabledProtocols 'none'
 about to fork child process, waiting until server is ready for connections.
 forked process: 25230
 child process started successfully, parent exiting
 ```
 至此成功启动。根据官网，首先我们看看相应日志文件。  
-`cat /home/mongodb/logs/mongod.log`
+`cat /data/mongodb/logs/mongod.log`
 
 我们可以在输出中找一找这一句：  
 `2018-12-10T20:39:32.177+0800 I NETWORK  [initandlisten] waiting for connections on port 27017`  
