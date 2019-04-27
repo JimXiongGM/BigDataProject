@@ -176,6 +176,12 @@ ln -s /usr/local/bin/python3.7 /usr/bin/python3;
 ln -s /usr/local/bin/pip3.7 /usr/bin/pip3;
 pip3 -V;
 python3 -V;
+
+echo 'py3.7环境设置'
+echo '
+# PYTHON3.7 SETTINGS
+export PYTHONPATH=$PYTHONPATH:/usr/local/lib/python3.7/site-packages:/usr/lib/python3/dist-packages' >> /etc/bash.bashrc;
+source /etc/bash.bashrc;
 ```
 
 添加Python3.7.2到jupyter

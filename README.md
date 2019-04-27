@@ -1,12 +1,6 @@
 # 大数据存储与分析
 
-## 前言  
-
 大数据生态链初探。
-
-## 思路
-
-边学边记。
  
 ## 目录  
 
@@ -33,17 +27,21 @@
 8. [Spark + SQL实例 (Scala + python3)](./Documentations/SparkSQLDEMO_Scala.md)
 9. [Jupyter Notebook + Spark 配置](./Documentations/JupyterNotebook.md)
 
-### hadoop生态环境搭建
+### 生态环境搭建
+
+### MySQL搭建
+
+10. [MySQL8.0环境搭建](./Documentations/MySql_8.0.md)
 
 #### Hive与HBASE
-10. [HBASE分布式环境搭建](./Documentations/Hbase_distribute.md)
-11. [Hive环境搭建](./Documentations/Hive_distribute.md)
-12. [Hive HA模式搭建（未测试）](./Documentations/Hive_distribute_HA.md)
+11. [HBASE分布式环境搭建](./Documentations/Hbase_distribute.md)
+12. [Hive环境搭建](./Documentations/Hive_distribute.md)
+13. [Hive HA模式搭建（未测试）](./Documentations/Hive_distribute_HA.md)
 
 #### MongoDB与Pig
-11. [MongoDB的本地安装 + PyMongo的基本操作](./Documentations/MongoDB_standalone.md)
-12. [MongoDB的全分布式安装](./Documentations/MongoDB_distribute.md)
-13. [Pig的全分布式安装](./Documentations/Pig_distribute.md)
+14. [MongoDB的本地安装 + PyMongo的基本操作](./Documentations/MongoDB_standalone.md)
+15. [MongoDB的全分布式安装](./Documentations/MongoDB_distribute.md)
+16. [Pig的全分布式安装](./Documentations/Pig_distribute.md)
 - 未完待续
 
 ## 数据集介绍
