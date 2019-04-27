@@ -109,6 +109,24 @@ service mysql stop
 service mysql status
 ```
 
+## <p id=8>与spark交互组件安装
 
+```bash
+cd xiazai;
+wget http://central.maven.org/maven2/mysql/mysql-connector-java/8.0.15/mysql-connector-java-8.0.15.jar;
+mv mysql-connector-java-8.0.15.jar $SPARK_HOME/jars
+echo "
+# MYSQL JARS SETTINGS
+export EXTRA_SPARK_CLASSPATH=$SPARK_HOME/jars
+" >> $SPARK_HOME/conf/spark-env.sh;
+
+scp mysql-connector-java-8.0.15.jar root@slave1:$SPARK_HOME/jars;
+scp mysql-connector-java-8.0.15.jar root@slave2:$SPARK_HOME/jars;
+scp mysql-connector-java-8.0.15.jar root@slave3:$SPARK_HOME/jars;
+scp $SPARK_HOME/conf/spark-env.sh root@slave1:$SPARK_HOME/conf/;
+scp $SPARK_HOME/conf/spark-env.sh root@slave2:$SPARK_HOME/conf/;
+scp $SPARK_HOME/conf/spark-env.sh root@slave3:$SPARK_HOME/conf/;
+stop-all.sh;start-all.sh
+```
 
 
