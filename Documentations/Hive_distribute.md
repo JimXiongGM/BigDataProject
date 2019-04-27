@@ -1,14 +1,13 @@
 # Hive环境搭建
 
-本文前提需要配置好hadoop分布式环境，无需HA。
+运行本文需要配置好hadoop分布式环境，无需HA。
 
 本文主要参考[网络资料](https://www.cnblogs.com/studyzy/p/setup-hive.html)
 
 ## 目录
 
 - [安装MySQ](#1)
-- [配置远程访问](#2)
-- [配置环境变量](#3)
+- [hive安装](#3)
 - [配置文件](#4)
 - [下载MySQL JDBC驱动](#5)
 - [初始化](#6)
@@ -16,32 +15,22 @@
 - [测试](#8)
 
 
-## <p id=1>安装MySQL
+## <p id=1>在MySQL中新增hive用户
 
-首先以root身份登录到mysql服务器，配置用户名密码，并允许root远程访问。
+安装细节与基本操作可以参考[MySQL8.0环境搭建](./MySql_8.0.md)。
 
-为hive建立一个用户，密码为hive。运行完成后quit命令即可退出mysql的命令行模式。
+首先以root身份登录到mysql服务器，配置用户名密码，并允许root远程访问。为hive建立一个用户，密码为hive。运行完成后quit命令即可退出mysql的命令行模式。
 
-```
-sudo apt-get install -y mysql-server;
-sudo mysql -u root;
-GRANT ALL PRIVILEGES ON *.* TO root@'%' IDENTIFIED BY "123456";
-GRANT ALL PRIVILEGES ON *.* TO hive@'%' IDENTIFIED BY "hive";
-```
-
-## <p id=2>配置远程访问
-
-默认情况下，MySQL是只允许本机访问的，要允许远程机器访问需要修改配置文件，然后重启服务。
-```
-sed -i '/bind-address/'d /etc/mysql/mysql.conf.d/mysqld.cnf;
-echo 'bind-address          = 0.0.0.0' >> /etc/mysql/mysql.conf.d/mysqld.cnf;
-sudo service mysql restart;
+`mysql -u root -p`
+```sql
+create user 'hive'@'%' identified by 'hive';
+GRANT ALL PRIVILEGES ON *.* TO 'hive'@'%';
 ```
 
-## <p id=3>配置环境变量
+## <p id=3>hive安装
 
-没什么好说
-```
+运行
+```bash
 cd /root/xiazai;
 wget http://mirror.bit.edu.cn/apache/hive/hive-3.1.1/apache-hive-3.1.1-bin.tar.gz;
 tar -zxvf apache-hive-3.1.1-bin.tar.gz;
@@ -63,7 +52,7 @@ source /etc/bash.bashrc;
 
 从本项目下拷贝hive-site.xml到master。hive-site.xml需要修改的部分已经列在文件最前面。
 `scp ./Documentations/Hive_config_files/conf/hive-site.xml root@master:/opt/hive-3.1.1/conf/`
-```
+```bash
 echo '已从本地拷贝hive-site.xml';
 mv $HIVE_HOME/conf/hive-default.xml.template $HIVE_HOME/conf/hive-default.xml.template.BACKUP;
 mkdir -p /home/hduser/iotmp;
@@ -86,8 +75,8 @@ mv /opt/hive-3.1.1/lib/log4j-slf4j-impl-2.10.0.jar /opt/hive-3.1.1/lib/log4j-slf
 
 ## <p id=5>下载MySQL JDBC驱动
 
-去MySQL的官网，https://dev.mysql.com/downloads/connector/j/  下载JDBC驱动到master服务器上。
-```
+去MySQL的官网：https://dev.mysql.com/downloads/connector/j/  下载JDBC驱动到master服务器上。
+```bash
 cd /root/xiazai/;
 wget https://cdn.mysql.com//Downloads/Connector-J/mysql-connector-java-5.1.47.tar.gz;
 tar -zxvf mysql-connector-java-5.1.47.tar.gz;
@@ -96,7 +85,7 @@ cp ./mysql-connector-java-5.1.47/*.jar $HIVE_HOME/lib/;
 
 ## <p id=6>初始化
 
-```
+```bash
 hadoop fs -mkdir /tmp;
 hadoop fs -mkdir -p /user/hive/warehouse;
 hadoop fs -chmod g+w /tmp;
@@ -107,7 +96,7 @@ $HIVE_HOME/bin/schematool -initSchema -dbType mysql --verbose;
 ## <p id=7>使用hive
 
 输入`hive`
-```
+```bash
 show databases;
 show tables;
 ```
@@ -131,8 +120,8 @@ hive> quit;
 
 ## <p id=8>测试
 
-创建一个测试文件，使用`|`分隔列。
-```
+创建一个测试文件，使用`|`分隔列，并进入hive。
+```bash
 touch /root/xiazai/UsersTEST_01.txt;
 echo '2|Edward 
 3|Mindy 
