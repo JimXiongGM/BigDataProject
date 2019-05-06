@@ -118,9 +118,9 @@ exit
 ```
 cd /root/.ssh/;
 chmod 600 authorized_keys;
-scp /root/.ssh/authorized_keys slave1:/root/.ssh/ 
-scp /root/.ssh/authorized_keys slave2:/root/.ssh/ 
-scp /root/.ssh/authorized_keys slave3:/root/.ssh/ 
+scp /root/.ssh/authorized_keys root@slave1:/root/.ssh/ 
+scp /root/.ssh/authorized_keys root@slave2:/root/.ssh/ 
+scp /root/.ssh/authorized_keys root@slave3:/root/.ssh/ 
 ```
 
 到这里就可以直接使用ssh免密访问各个节点了。
@@ -535,6 +535,28 @@ set ts=4
 set expandtab
 set autoindent
 ```
+
+### 免密登录失败错误
+
+遇到节点之间免密登录失效的情况，尝试删除3个slave节点的authorized_keys并重新分配，成功解决。
+
+进入3个节点，删除authorized_keys的i属性，否则报错`scp: /root/.ssh//authorized_keys: Operation not permitted`
+```
+cd /root/.ssh;
+chattr -i authorized_keys;
+rm -rf authorized_keys;
+exit
+```
+
+返回master
+```
+cd /root/.ssh/;
+chmod 600 authorized_keys;
+scp /root/.ssh/authorized_keys root@slave1:/root/.ssh/ 
+scp /root/.ssh/authorized_keys root@slave2:/root/.ssh/ 
+scp /root/.ssh/authorized_keys root@slave3:/root/.ssh/ 
+```
+即可
 
 ## <p id="11">鸣谢
 
