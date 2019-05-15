@@ -80,7 +80,7 @@ show grants for 'xiong';
 ```sql
 use mysql;
 select host,user,authentication_string,plugin from user;
-update user set host='%' where user='root';
+update user set host='172.17.%.%' where user='root';
 flush privileges;
 ```
 
@@ -161,7 +161,7 @@ drop database tripadvisor_mch;
 drop database xgm;
 ```
 
-- 查询并删除所用用户
+- 查询并删除用户
 ```sql
 USE mysql;
 SELECT USER FROM user;

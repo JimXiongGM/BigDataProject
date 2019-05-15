@@ -9,7 +9,8 @@
 - [安装各种kernel](#3)
 - [后台挂起jupyter notebook](#4)
 - [新增Python3.6](#5)
- -[新增Python3.7.2](#5_1)
+- [新增Python3.7.2](#5_1)
+- [安装自动补全插件](#5_2)
 - [查看Python版本号和路径](#6)
 - [调试与结束jupyter notebook](#7)
 
@@ -192,6 +193,17 @@ python3 -m ipykernel install --user;
 pip3 install jupyter;
 jupyter kernelspec list;
 ```
+
+## <p id="5_2">安装自动补全插件
+
+运行
+```
+pip3 install jupyter_contrib_nbextensions
+jupyter contrib nbextension install --user --skip-running-check
+jupyter nbextensions_configurator enable --user
+```
+重启jupyter，在主页新增的`Nbextensions`下启用`Hinterland`即可。
+
 
 ## <p id=6>查看Python版本号和路径
 
