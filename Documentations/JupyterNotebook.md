@@ -13,6 +13,7 @@
 - [安装自动补全插件](#5_2)
 - [查看Python版本号和路径](#6)
 - [调试与结束jupyter notebook](#7)
+- [新增guest](#8)
 
 
 ## <p id=1>安装Anaconda3
@@ -121,7 +122,7 @@ Available kernels:
 mkdir /root/jupyternotebook/;
 cd /root/jupyternotebook/;
 touch /root/jupyternotebook/hello.md;
-echo 'welcome Online Jupyter Notebook !' >> /root/jupyternotebook/hello.md;
+echo 'welcome to Online Jupyter Notebook !' >> /root/jupyternotebook/hello.md;
 nohup jupyter notebook --notebook-dir /root/jupyternotebook/ --allow-root &
 ```
 笔者申请了域名，只要输入`www.playbigdate.top:6789`即可访问。
@@ -231,4 +232,51 @@ cat /root/jupyternotebook/nohup.out
 ```
 ps -ef | grep jupyter;
 ps aux | grep "jupyter" |grep -v grep| cut -c 9-15 | xargs kill -9
+```
+
+## <p id=8>新增guest
+
+通过新增ubuntu用户，可以做到一台服务器开启多个jupyter供不同用户使用。
+
+```bash
+sudo useradd -r -m -s /bin/bash jupyter_guest
+sudo passwd jupyter_guest
+
+输入密码
+
+chmod 777  /run/user/0/jupyter;
+chmod 777 -R /run/user/0/jupyter;
+chmod 777 -R /run/user/0/;
+sudo chmod +w /etc/sudoers;
+echo '
+# new add guset
+jupyter_guest    ALL=(ALL:ALL) ALL
+' >> /etc/sudoers;
+
+# 进入新用户
+su - jupyter_guest
+
+ipython
+.
+.
+.
+from notebook.auth import passwd
+passwd()
+.
+.
+.
+ exit
+
+# ubuntu shell : 
+jupyter notebook --generate-config -y;
+echo "
+c.NotebookApp.ip = '0.0.0.0'
+c.NotebookApp.password = u'sha1:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+c.NotebookApp.open_browser = False 
+c.NotebookApp.port = 5947" > /home/jupyter_guest/.jupyter/jupyter_notebook_config.py;
+# run
+cd /home/jupyter_guest/;
+touch hello.md;
+echo 'guest, welcome!' >> hello.md;
+nohup jupyter notebook --notebook-dir /home/jupyter_guest/ &
 ```
