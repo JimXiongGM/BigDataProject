@@ -13,6 +13,7 @@ MySQL8.0采用强加密方式，并且在新增用户、用户授权等方面有
 - [ubuntu基本操作](#7)
 - [与spark交互组件安装](#8)
 - [重置数据库](#9)
+- [卸载MYSQL](#10)
 
 ## <p id=1>安装
 
@@ -148,7 +149,7 @@ stop-all.sh;start-all.sh
 
 ## <p id=9>重置数据库
 
-进入mysql：`mysql -u root`
+进入mysql：`mysql -u root -p`
 
 - 删库
 ```sql
@@ -189,3 +190,7 @@ port = 3308
 service mysql start;
 service mysql status;
 ```
+
+## <p id=10>卸载MYSQL
+
+使用`sudo apt-get remove --purge mysql-\*`一键卸载，使用`sudo find  / -name mysql -print`查询残余目录，使用`rm -rf`卸载。
