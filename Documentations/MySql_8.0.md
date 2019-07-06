@@ -62,14 +62,15 @@ CREATE TABLE test01 (
 ```sql      
 create user 'xiong'@'%' identified by 'Xiong123';
 GRANT ALL PRIVILEGES ON xionggm_db TO 'xiong'@'%';
-
+-- 创建特定ip访问账户
+-- create user 'xiong'@'101.240.XXX.XXX' identified by 'Xiong123';
+-- GRANT ALL PRIVILEGES ON *.* TO 'xiong'@'101.240.XXX.XXX';
 create user 'guest'@'%' identified by 'guest';
 GRANT SELECT ON *.* TO 'guest'@'%';
 
 use mysql;
 SELECT HOST,USER,SELECT_PRIV, INSERT_PRIV, UPDATE_PRIV,DELETE_PRIV,CREATE_PRIV,DROP_PRIV FROM user;
 show grants for 'xiong';
-
 ```
 
 
@@ -80,7 +81,6 @@ show grants for 'xiong';
 `$ mysql -u root -p`
 ```sql
 use mysql;
-select host,user,authentication_string,plugin from user;
 update user set host='172.17.%.%' where user='root';
 flush privileges;
 ```
@@ -88,10 +88,15 @@ flush privileges;
 改回去
 ```sql
 use mysql;
-select host,user,authentication_string,plugin from user;
 update user set host='localhost' where user='root';
 flush privileges;
 ```
+
+查看权限
+```sql
+select host,user,authentication_string,plugin from user;
+```
+
 
 ## <p id=5>改变加密方式
 
@@ -194,3 +199,11 @@ service mysql status;
 ## <p id=10>卸载MYSQL
 
 使用`sudo apt-get remove --purge mysql-\*`一键卸载，使用`sudo find  / -name mysql -print`查询残余目录，使用`rm -rf`卸载。
+
+## <p id=11>文件导入与导出
+
+
+
+
+use xionggm_db;
+source /root/movie_infos.sql;
