@@ -10,6 +10,7 @@
 - [设置自启动](#6)
 - [永久挂载硬盘](#7)
 - [修改启动等待时间](#8)
+- [github访问](#9)
 
 
 ## <p id=1>更新apt源
@@ -226,4 +227,14 @@ sudo vim /etc/default/grub
 # GRUB_TIMEOUT = 10
 
 sudo update-grub;
+```
+
+## <p id=9>github访问
+
+```
+echo '
+# settings for github
+192.30.253.112 github.com
+151.101.44.249  github.global.ssl.fastly.net
+' >> /etc/hosts;
 ```
