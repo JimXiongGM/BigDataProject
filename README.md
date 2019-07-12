@@ -72,3 +72,8 @@
 - [使用全分布式Pig分析数据](./PigOnMap-Reduce/README.md)　　挖坑待填
 - [全分布下Hadoop和MongoDB的使用](./Documentations/Hadoop+MongoDB_Crawler.md)　　挖坑待填
 - 未完待续
+
+
+## 备忘
+
+[新装ubuntu设置备忘](./Documentations/NewUbuntu18.md)

@@ -77,7 +77,7 @@ In [3]: exit
 jupyter notebook --generate-config --allow-root -y;
 echo "
 c.NotebookApp.ip = '0.0.0.0'
-c.NotebookApp.password = u'sha1:dee82ebe4846:3f0815f69f8b11635ca5e4002a475fe06600e1e7'
+c.NotebookApp.password = u'sha1:a5406651bb91:8dc9c5368e9deaa5fadd60743ada230cd0fff086'
 c.NotebookApp.open_browser = False 
 c.NotebookApp.port = 6789" >> /root/.jupyter/jupyter_notebook_config.py;
 ```
@@ -123,7 +123,7 @@ mkdir /root/jupyternotebook/;
 cd /root/jupyternotebook/;
 touch /root/jupyternotebook/hello.md;
 echo 'welcome to Online Jupyter Notebook !' >> /root/jupyternotebook/hello.md;
-nohup jupyter notebook --notebook-dir /root/jupyternotebook/ --allow-root >> /logs/jupyter_notebook.log &
+nohup jupyter notebook --notebook-dir /root/jupyternotebook/ --allow-root &
 ```
 笔者申请了域名，只要输入`www.playbigdate.top:6789`即可访问。
 
@@ -170,22 +170,19 @@ jupyter自带Python3.7.1。这里备忘一个一键安装增加Python3.7.2的办
 curl https://bc.gongxinke.cn/downloads/install-python-latest | bash;
 ```
 
-
-
-
 切换系统默认为Python3.7
 ```
 rm -rf /usr/bin/python3;
 rm -rf /usr/bin/pip3;
-ln -s /usr/local/python/bin/python3.7 /usr/bin/python3;
-ln -s /usr/local/python/bin/pip3 /usr/bin/pip3;
+ln -s /usr/local/bin/python3.7 /usr/bin/python3;
+ln -s /usr/local/bin/pip3.7 /usr/bin/pip3;
 pip3 -V;
 python3 -V;
 
 echo 'py3.7环境设置'
 echo '
 # PYTHON3.7 SETTINGS
-export PYTHONPATH=$PYTHONPATH:/usr/local/python/lib/python3.7/site-packages:/usr/lib/python3/dist-packages' >> /etc/bash.bashrc;
+export PYTHONPATH=$PYTHONPATH:/usr/local/lib/python3.7/site-packages:/usr/lib/python3/dist-packages' >> /etc/bash.bashrc;
 source /etc/bash.bashrc;
 ```
 
@@ -193,8 +190,7 @@ source /etc/bash.bashrc;
 ```
 sudo rm /usr/bin/lsb_release;
 pip3 install ipykernel;
-# 替换所有的async为async_
-python3.7 -m ipykernel install --user;
+python3 -m ipykernel install --user;
 pip3 install jupyter;
 jupyter kernelspec list;
 ```

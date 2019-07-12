@@ -143,8 +143,7 @@ scp ./jdk-8u201-linux-x64.tar.gz root@master:/root/xiazai
 mkdir -p /root/xiazai/;
 mkdir -p /opt/;
 cd /root/xiazai/;
-tar -zxvf jdk-8u201-linux-x64.tar.gz;
-mv jdk1.8.0_201/ /opt/;
+tar -zxvf jdk-8u201-linux-x64.tar.gz -C /opt/;
 
 echo '
 # JAVA SETTINGS
