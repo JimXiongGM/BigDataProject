@@ -92,7 +92,7 @@ wget http://www.openssl.org/source/openssl-1.1.1.tar.gz;
 tar -zxvf openssl-1.1.1.tar.gz;
 cd openssl-1.1.1;
 ./config --prefix=/usr/local/openssl shared zlib;
-make -j 4 && make install;
+make -j 8 && make install;
 
 echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/openssl/lib" >> /etc/bash.bashrc
 source /etc/bash.bashrc
@@ -104,7 +104,7 @@ cd sqlite-autoconf-3290000;
 ./configure --disable-tcl --prefix="/usr/local/sqlite3";
 make -j 8 && make install;
 
-# 安装Python3
+# 编译安装Python3
 wget https://www.python.org/ftp/python/3.7.2/Python-3.7.2.tar.xz;
 tar -xvf Python-3.7.2.tar.xz;
 cd Python-3.7.2;
@@ -119,7 +119,13 @@ _ssl _ssl.c \
 
 ./configure --prefix=/usr/local/python --with-ssl LDFLAGS="-L/usr/local/sqlite3/lib" CPPFLAGS="-I/usr/local/sqlite3/include" ;
 make -j 8 && make install
-ls
+
+# 解决 apt_pkg问题
+sudo apt-get remove --purge python-apt;
+sudo apt-get install python-apt -f;
+# sudo find / -name "apt_pkg.cpython-35m-x86_64-linux-gnu.so"
+cd /usr/lib/python3/dist-packages/;
+sudo cp apt_pkg.cpython-36m-x86_64-linux-gnu.so apt_pkg.cpython-37m-x86_64-linux-gnu.so
 ```
 
 ## <p id=5>安装cuda
@@ -238,3 +244,10 @@ echo '
 151.101.44.249  github.global.ssl.fastly.net
 ' >> /etc/hosts;
 ```
+
+
+
+
+
+
+
