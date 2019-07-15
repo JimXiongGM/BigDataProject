@@ -38,7 +38,7 @@ trusted-host = mirrors.aliyun.com' > ~/.pip/pip.conf;
 
 ```
 
-## <p id=2>基本依赖安装
+## <p id=2>常用依赖安装
 
 ```bash
 sudo apt-get install -y make;
@@ -48,6 +48,7 @@ sudo apt-get install -y python3-pip;
 sudo pip3 install -i http://pypi.douban.com/simple/ --trusted-host --upgrade pip;
 sudo apt-get install -y net-tools;
 sudo apt-get install -y openssh-server;
+sudo apt-get install -y git;
 ```
 
 ## <p id=3>root账户
