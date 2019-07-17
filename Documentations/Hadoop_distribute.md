@@ -319,7 +319,7 @@ ubuntu系统的源码运行模式就像windows的绿色文件运行模式，解�
      </property>
 ```
 
-### 7.mapred-site.xml
+### 6.mapred-site.xml
 
 mapper-reduce相关配置，**非常重要**，不能照搬！  
 
@@ -341,7 +341,7 @@ mapper-reduce相关配置，**非常重要**，不能照搬！
     </property>
 ```
 
-### 8.capacity-scheduler.xml
+### 7.capacity-scheduler.xml
 
 scheduler相关配置，需要微调。  
 

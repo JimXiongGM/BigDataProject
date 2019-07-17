@@ -75,12 +75,14 @@ mv /opt/hive-3.1.1/lib/log4j-slf4j-impl-2.10.0.jar /opt/hive-3.1.1/lib/log4j-slf
 
 ## <p id=5>下载MySQL JDBC驱动
 
-去MySQL的官网：https://dev.mysql.com/downloads/connector/j/  下载JDBC驱动到master服务器上。
+去MySQL的官网：https://dev.mysql.com/downloads/connector/j/  下载JDBC驱动到master服务器上。（Select Operating System下拉菜单选择`Platform Independent`即可下载tar.gz文件）
+
+`scp ./mysql-connector-java-8.0.16.tar.gz root@master:/root/xiazai/`
 ```bash
 cd /root/xiazai/;
-wget https://cdn.mysql.com//Downloads/Connector-J/mysql-connector-java-5.1.47.tar.gz;
-tar -zxvf mysql-connector-java-5.1.47.tar.gz;
-cp ./mysql-connector-java-5.1.47/*.jar $HIVE_HOME/lib/;
+# wget https://cdn.mysql.com//Downloads/Connector-J/mysql-connector-java-8.0.16.tar.gz;
+tar -zxvf mysql-connector-java-8.0.16.tar.gz;
+cp ./mysql-connector-java-8.0.16/*.jar $HIVE_HOME/lib/;
 ```
 
 ## <p id=6>初始化
