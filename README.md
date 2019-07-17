@@ -76,4 +76,4 @@
 
 ## 备忘
 
-[新装ubuntu设置备忘](./Documentations/NewUbuntu18.md)
+- [新装ubuntu设置备忘](./Documentations/NewUbuntu18.md)
