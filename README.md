@@ -31,7 +31,7 @@
 
 ### MySQL搭建
 
-10. [MySQL8.0环境搭建](./Documentations/MySql_8.0.md)
+10. [MySQL 8.0环境搭建](./Documentations/MySql_8.0.md)
 
 #### Hive与HBASE
 11. [HBASE分布式环境搭建](./Documentations/Hbase_distribute.md)
@@ -42,7 +42,7 @@
 14. [MongoDB的本地安装 + PyMongo的基本操作](./Documentations/MongoDB_standalone.md)
 15. [MongoDB的全分布式安装](./Documentations/MongoDB_distribute.md)
 16. [Pig的全分布式安装](./Documentations/Pig_distribute.md)
-- 未完待续
+
 
 ## 数据集介绍
 
@@ -68,10 +68,9 @@
 
 - [使用Spark分析kaggle - Amazon sales数据](./Spark_AmazonBook/README.md)
 - [PySpark初探](./Spark_learningPySpark/README.md)
-- [Python+MongoDB————爬取与存储数据](./MongDBWithCrawler/README.md)　　未完待续
-- [使用全分布式Pig分析数据](./PigOnMap-Reduce/README.md)　　挖坑待填
-- [全分布下Hadoop和MongoDB的使用](./Documentations/Hadoop+MongoDB_Crawler.md)　　挖坑待填
-- 未完待续
+- [Python+MongoDB————爬取与存储数据](./MongDBWithCrawler/README.md)
+- [使用全分布式Pig分析数据](./PigOnMap-Reduce/README.md)
+- [全分布下Hadoop和MongoDB的使用](./Documentations/Hadoop+MongoDB_Crawler.md)
 
 
 ## 备忘
