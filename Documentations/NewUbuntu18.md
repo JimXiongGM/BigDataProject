@@ -250,9 +250,6 @@ echo '
 
 增加JAVA12，并配置多版本切换。准备好文件`jdk-12.0.2_linux-x64_bin.tar.gz`到`/root/xiazai/`下。
 
-
-编辑`/etc/bash.bashrc`文件，删除默认`JAVA_HOME`。
-
 ```bash
 cd xiazai;
 tar -zvxf jdk-12.0.2_linux-x64_bin.tar.gz -C /opt/;
@@ -261,7 +258,12 @@ sudo update-alternatives --install /usr/bin/javac javac /opt/jdk-12.0.2/bin/java
 # 手动选择
 sudo update-alternatives --config java
 sudo update-alternatives --config javac
+# 环境变量
+echo '
+# JAVA_12 SETTINGS
+export JAVA12_HOME=/opt/jdk-12.0.2/
+' >> /etc/bash.bashrc;
+source /etc/bash.bashrc;
 ```
-这里JAVA 12的路径为`/opt/jdk-12.0.2/bin/java`
-
+此处主要为elasticsearch 7.+准备。
 
