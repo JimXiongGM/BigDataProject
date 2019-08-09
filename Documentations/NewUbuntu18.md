@@ -246,9 +246,22 @@ echo '
 ' >> /etc/hosts;
 ```
 
+## <p id=10>配置多JAVA共存
+
+增加JAVA12，并配置多版本切换。准备好文件`jdk-12.0.2_linux-x64_bin.tar.gz`到`/root/xiazai/`下。
 
 
+编辑`/etc/bash.bashrc`文件，删除默认`JAVA_HOME`。
 
-
+```bash
+cd xiazai;
+tar -zvxf jdk-12.0.2_linux-x64_bin.tar.gz -C /opt/;
+sudo update-alternatives --install /usr/bin/java java /opt/jdk-12.0.2/bin/java 290
+sudo update-alternatives --install /usr/bin/javac javac /opt/jdk-12.0.2/bin/javac 290
+# 手动选择
+sudo update-alternatives --config java
+sudo update-alternatives --config javac
+```
+这里JAVA 12的路径为`/opt/jdk-12.0.2/bin/java`
 
 
