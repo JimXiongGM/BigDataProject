@@ -12,6 +12,7 @@
 - [修改启动等待时间](#8)
 - [github访问](#9)
 - [配置多JAVA共存](#10)
+- [源码安装Cmake](#11)
 
 
 ## <p id=1>更新apt源
@@ -132,6 +133,8 @@ sudo cp apt_pkg.cpython-36m-x86_64-linux-gnu.so apt_pkg.cpython-37m-x86_64-linux
 
 ## <p id=5>安装cuda
 
+### for pytorch
+
 1. 安装ubuntu的时候就要设置，在`quiet splash`这一行的末尾加上` acpi_osi=linux nomodeset`。
 2. 在软件管理器的附加驱动中可视化安装NVIDIA驱动。（命令行模式安装失败）
 
@@ -156,6 +159,57 @@ nvidia-smi
 nvidia-settings
 # 实时查看GPU情况
 watch -n 1 nvidia-smi
+```
+
+### for tensorflow 2.0
+
+[TF-GPU官网](https://www.tensorflow.org/install/gpu)
+
+上文已完成前两个。
+
+- [x] NVIDIA® GPU 驱动程序 - CUDA 10.0 需要 410.x 或更高版本。
+- [x] CUDA® 工具包 - TensorFlow 支持 CUDA 10.0（TensorFlow 1.13.0 及更高版本）
+- [ ] CUDA 工具包附带的 CUPTI。
+- [ ] cuDNN SDK（7.4.1 及更高版本）
+- [ ] （可选）[TensorRT 5.0](https://developer.nvidia.com/nvidia-tensorrt-5x-download#trt51ga)，可缩短在某些模型上进行推断的延迟并提高吞吐量。
+
+还需要
+
+1. [cudnn-10.1-linux-x64-v7.6.2.24.tgz](https://developer.nvidia.com/cudnn)
+2. [nv-tensorrt-repo-ubuntu1804-cuda10.1-trt5.1.5.0-ga-20190427_1-1_amd64.deb](https://developer.nvidia.com/tensorrt)
+
+```bash
+# CUPTI
+echo '
+# SETTINGS FOR TF2.0-GPU
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda-10.1/extras/CUPTI/lib64
+' >> /etc/bash.bashrc ;
+source /etc/bash.bashrc;
+
+# cudnn-10.1
+tar -zxvf cudnn-10.1-linux-x64-v7.6.2.24.tgz -C /opt/;
+sudo cp /opt/cuda/include/cudnn.h /usr/local/cuda/include/
+sudo cp /opt/cuda/lib64/libcudnn* /usr/local/cuda/lib64/
+sudo chmod a+r /usr/local/cuda/include/cudnn.h
+sudo chmod a+r /usr/local/cuda/lib64/libcudnn*
+
+# 解决CUDA10.1不兼容问题
+ln -s /usr/local/cuda-10.1/targets/x86_64-linux/lib/libcudart.so.10.1 /usr/local/cuda-10.1/lib64/libcudart.so.10.0
+ln -s /usr/local/cuda-10.1/targets/x86_64-linux/lib/libcublas.so.10.1 /usr/local/cuda-10.1/lib64/libcublas.so.10.0
+ln -s /usr/local/cuda-10.1/targets/x86_64-linux/lib/libcufft.so.10.1 /usr/local/cuda-10.1/lib64/libcufft.so.10.0
+ln -s /usr/local/cuda-10.1/targets/x86_64-linux/lib/libcurand.so.10.1 /usr/local/cuda-10.1/lib64/libcurand.so.10.0
+ln -s /usr/local/cuda-10.1/targets/x86_64-linux/lib/libcusolver.so.10.1 /usr/local/cuda-10.1/lib64/libcusolver.so.10.0
+ln -s /usr/local/cuda-10.1/targets/x86_64-linux/lib/libcusparse.so.10 /usr/local/cuda-10.1/lib64/libcusparse.so.10.0
+
+
+sudo dpkg -i libcudnn7_7.6.2.24-1+cuda10.1_amd64.deb
+sudo dpkg -i nv-tensorrt-repo-ubuntu1804-cuda10.1-trt5.1.5.0-ga-20190427_1-1_amd64.deb
+
+# 进入python3
+python3
+
+import tensorflow as tf
+print("GPU Available: ", tf.test.is_gpu_available())
 ```
 
 ## <p id=6>设置自启动
@@ -239,8 +293,8 @@ sudo update-grub;
 
 ## <p id=9>github访问
 
-```
-echo '
+```bash
+echo 'cd lt 
 # settings for github
 192.30.253.112 github.com
 151.101.44.249  github.global.ssl.fastly.net
@@ -268,3 +322,14 @@ source /etc/bash.bashrc;
 ```
 此处主要为elasticsearch 7.+准备。
 
+## <p id=11>源码安装Cmake
+
+[`cmake-3.15.2.tar.gz`](https://cmake.org/download/)
+
+```bash
+cd /root/xiazai;
+tar -zxvf cmake-3.15.2.tar.gz -C /opt/;
+cd /opt/cmake-3.15.2;
+./bootstrap && make -j 8  && sudo make install
+cmake --version
+```
