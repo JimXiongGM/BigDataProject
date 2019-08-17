@@ -48,7 +48,6 @@ sudo apt-get install -y make;
 sudo apt-get install -y gcc;
 sudo apt-get install -y curl;
 sudo apt-get install -y python3-pip;
-sudo pip3 install -i http://pypi.douban.com/simple/ --trusted-host --upgrade pip;
 sudo apt-get install -y net-tools;
 sudo apt-get install -y openssh-server;
 sudo apt-get install -y git;
@@ -195,7 +194,7 @@ sudo cp ./cuda/include/cudnn.h /usr/local/cuda/include/
 sudo cp ./cuda/lib64/libcudnn* /usr/local/cuda/lib64/
 sudo chmod a+r /usr/local/cuda/include/cudnn.h
 sudo chmod a+r /usr/local/cuda/lib64/libcudnn*
-```
+ ```
 
 ## <p id=6>设置自启动
 
