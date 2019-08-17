@@ -13,6 +13,7 @@
 - [github访问](#9)
 - [配置多JAVA共存](#10)
 - [源码安装Cmake](#11)
+- [shadowsocks in shell](#12)
 
 
 ## <p id=1>更新apt源
@@ -51,6 +52,12 @@ sudo pip3 install -i http://pypi.douban.com/simple/ --trusted-host --upgrade pip
 sudo apt-get install -y net-tools;
 sudo apt-get install -y openssh-server;
 sudo apt-get install -y git;
+```
+
+pip使用自定义源的单语句用法
+
+```bash
+pip3 install -i http://pypi.douban.com/simple/ --trusted-host pypi.douban.com --upgrade pip;
 ```
 
 ## <p id=3>root账户
@@ -131,25 +138,29 @@ cd /usr/lib/python3/dist-packages/;
 sudo cp apt_pkg.cpython-36m-x86_64-linux-gnu.so apt_pkg.cpython-37m-x86_64-linux-gnu.so
 ```
 
-## <p id=5>安装cuda
+## <p id=5>安装cuda 10.0
+
+目前TensorFlow 2.0暂不支持cuda 10.1。
 
 ### for pytorch
 
 1. 安装ubuntu的时候就要设置，在`quiet splash`这一行的末尾加上` acpi_osi=linux nomodeset`。
-2. 在软件管理器的附加驱动中可视化安装NVIDIA驱动。（命令行模式安装失败）
+2. 在`软件管理器`的`附加驱动`中可视化安装NVIDIA驱动。（命令行模式安装失败）
 
-[CUDA官网]
-(https://developer.nvidia.com/cuda-downloads?target_os=Linux&target_arch=x86_64&target_distro=Ubuntu&target_version=1804&target_type=deblocal)。运行如下代码即可。
+需要如下文件安装CUDA。
+
+1. [cuda_10.0.130_410.48_linux.run](https://developer.nvidia.com/cuda-10.0-download-archive)
+
 
 ```bash
 cd xiazai;
-wget https://developer.download.nvidia.cn/compute/cuda/10.1/secure/Prod/local_installers/cuda_10.1.168_418.67_linux.run?3vrspqMCpTwuoe3kCBSQ6dHRXI4lW_MTKJrLwnti8jK8qobgEieoN7dT-trbRszIC8G2WOQv2mbuQic8myzK9EoC6bz_v0hHI8ABajYaBAEs96mfrZ7oZnlKk5mYlrola2gEQXJKvxWdqlqU1EUdzTtyGyO7YVdxBjC8RnqDLXrY-K6XuGNYDVlzy18;
+sudo ./cuda_10.0.130_410.48_linux.run
+# 不安装Install NVIDIA Accelerated Graphics Driver for Linux-x86_64 410.48
 
 echo '
 # CUDA settings
-export CUDA_HOME=/usr/local/cuda-10.1
-export LD_LIBRARY_PATH=${CUDA_HOME}/lib64 
-export PATH=${CUDA_HOME}/bin:${PATH}
+export PATH=/usr/local/cuda-10.0/bin:$PATH
+export LD_LIBRARY_PATH=/usr/local/cuda-10.0/lib64:$LD_LIBRARY_PATH
 ' >> /etc/bash.bashrc;
 source /etc/bash.bashrc;
 
@@ -161,55 +172,29 @@ nvidia-settings
 watch -n 1 nvidia-smi
 ```
 
-### for tensorflow 2.0
+### for tensorflow 2.0 GPU
 
-[TF-GPU官网](https://www.tensorflow.org/install/gpu)
+tensorflow 2.0 GPU 需要安装CUDNN。
 
-上文已完成前两个。
+1. [cudnn-10.0-linux-x64-v7.6.2.24.tgz](https://developer.nvidia.com/rdp/cudnn-download)
 
-- [x] NVIDIA® GPU 驱动程序 - CUDA 10.0 需要 410.x 或更高版本。
-- [x] CUDA® 工具包 - TensorFlow 支持 CUDA 10.0（TensorFlow 1.13.0 及更高版本）
-- [ ] CUDA 工具包附带的 CUPTI。
-- [ ] cuDNN SDK（7.4.1 及更高版本）
-- [ ] （可选）[TensorRT 5.0](https://developer.nvidia.com/nvidia-tensorrt-5x-download#trt51ga)，可缩短在某些模型上进行推断的延迟并提高吞吐量。
-
-还需要
-
-1. [cudnn-10.1-linux-x64-v7.6.2.24.tgz](https://developer.nvidia.com/cudnn)
-2. [nv-tensorrt-repo-ubuntu1804-cuda10.1-trt5.1.5.0-ga-20190427_1-1_amd64.deb](https://developer.nvidia.com/tensorrt)
 
 ```bash
+
 # CUPTI
 echo '
 # SETTINGS FOR TF2.0-GPU
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda-10.1/extras/CUPTI/lib64
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda-10.0/extras/CUPTI/lib64
 ' >> /etc/bash.bashrc ;
 source /etc/bash.bashrc;
 
-# cudnn-10.1
-tar -zxvf cudnn-10.1-linux-x64-v7.6.2.24.tgz -C /opt/;
-sudo cp /opt/cuda/include/cudnn.h /usr/local/cuda/include/
-sudo cp /opt/cuda/lib64/libcudnn* /usr/local/cuda/lib64/
+cd xiazai;
+tar -zxvf cudnn-10.0-linux-x64-v7.6.2.24.tgz
+
+sudo cp ./cuda/include/cudnn.h /usr/local/cuda/include/
+sudo cp ./cuda/lib64/libcudnn* /usr/local/cuda/lib64/
 sudo chmod a+r /usr/local/cuda/include/cudnn.h
 sudo chmod a+r /usr/local/cuda/lib64/libcudnn*
-
-# 解决CUDA10.1不兼容问题
-ln -s /usr/local/cuda-10.1/targets/x86_64-linux/lib/libcudart.so.10.1 /usr/local/cuda-10.1/lib64/libcudart.so.10.0
-ln -s /usr/local/cuda-10.1/targets/x86_64-linux/lib/libcublas.so.10.1 /usr/local/cuda-10.1/lib64/libcublas.so.10.0
-ln -s /usr/local/cuda-10.1/targets/x86_64-linux/lib/libcufft.so.10.1 /usr/local/cuda-10.1/lib64/libcufft.so.10.0
-ln -s /usr/local/cuda-10.1/targets/x86_64-linux/lib/libcurand.so.10.1 /usr/local/cuda-10.1/lib64/libcurand.so.10.0
-ln -s /usr/local/cuda-10.1/targets/x86_64-linux/lib/libcusolver.so.10.1 /usr/local/cuda-10.1/lib64/libcusolver.so.10.0
-ln -s /usr/local/cuda-10.1/targets/x86_64-linux/lib/libcusparse.so.10 /usr/local/cuda-10.1/lib64/libcusparse.so.10.0
-
-
-sudo dpkg -i libcudnn7_7.6.2.24-1+cuda10.1_amd64.deb
-sudo dpkg -i nv-tensorrt-repo-ubuntu1804-cuda10.1-trt5.1.5.0-ga-20190427_1-1_amd64.deb
-
-# 进入python3
-python3
-
-import tensorflow as tf
-print("GPU Available: ", tf.test.is_gpu_available())
 ```
 
 ## <p id=6>设置自启动
@@ -333,3 +318,57 @@ cd /opt/cmake-3.15.2;
 ./bootstrap && make -j 8  && sudo make install
 cmake --version
 ```
+
+## <p id=12>shadowsocks in shell
+
+在ubuntu 18.04 shell使用ss，需要安装ss + privoxy。
+
+1. [shadowsocks-master.zip](https://github.com/shadowsocks/shadowsocks/archive/master.zip)
+
+```bash
+cd xiazai;
+unzip -d /opt/ shadowsocks-master.zip
+
+# build
+cd /opt/shadowsocks-master
+python3 setup.py build && python3 setup.py install
+rm -f /usr/bin/sslocal
+ln -s /usr/local/python/bin/sslocal /usr/bin/sslocal
+
+# config
+echo '
+{
+    "server": "hk5-sta41.f92i4.space",
+    "server_port": 11673,
+    "password": "a7kLhJgMdyruGsJ",
+    "method": "chacha20-ietf-poly1305",
+    "plugin": "",
+    "plugin_opts": "",
+    "remarks": "香港 5,数据用量倍率:1.00",
+    "timeout": 300,
+    "local_address": "127.0.0.1",
+    "local_port":1081
+} ' > /etc/shadowsocks/config.json
+
+# run
+nohup sslocal -c /etc/shadowsocks/config.json >> /logs/sslocal.log & 
+
+# privoxy
+apt install -y privoxy
+echo '
+forward-socks5t   /               127.0.0.1:1081 .
+' >>  /etc/privoxy/config 
+sudo /etc/init.d/privoxy restart
+
+# try. default = 8118
+wget -e "http_proxy=127.0.0.1:8118" www.google.com
+curl -x 127.0.0.1:8118 www.google.com
+
+# try in python3
+import os,requests
+os.environ['HTTP_PROXY']="http://127.0.0.1:8118"
+os.environ['HTTPS_PROXY']="https://127.0.0.1:8118"
+requests.get("http://google.com")
+```
+
+

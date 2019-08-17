@@ -52,6 +52,17 @@ fi
 unset __conda_setup
 ```
 
+增加别名调用：
+
+```bash
+echo "
+# SETTINGS FOR CONDA
+alias inconda='/opt/anaconda3/bin/conda'
+alias deconda='/opt/anaconda3/bin/conda deactivate'
+" >> /etc/bash.bashrc;
+source /etc/bash.bashrc;
+```
+
 
 ## <p id=2>配置远程访问
 
@@ -79,7 +90,7 @@ echo "
 c.NotebookApp.ip = '0.0.0.0'
 c.NotebookApp.password = u'sha1:dee82ebe4846:3f0815f69f8b11635ca5e4002a475fe06600e1e7'
 c.NotebookApp.open_browser = False 
-c.NotebookApp.port = 6789" >> /root/.jupyter/jupyter_notebook_config.py;
+c.NotebookApp.port = 6789" > /root/.jupyter/jupyter_notebook_config.py;
 ```
 即可。
 
