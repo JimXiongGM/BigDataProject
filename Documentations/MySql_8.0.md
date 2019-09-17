@@ -188,7 +188,7 @@ alter user'root'@'%' IDENTIFIED BY 'Mysql_08';
 - 修改端口并重启服务（in bash）
 ```bash
 service mysql stop;
-echo'
+echo '
 # overwrite default port
 port = 3308
 ' >> /etc/mysql/mysql.conf.d/mysqld.cnf;
@@ -207,3 +207,24 @@ service mysql status;
 use xionggm_db;
 source /root/movie_infos.sql;
 ```
+
+## 大批量数据优化
+
+show VARIABLES like '%max_allowed_packet%'
+
+```bash
+echo '
+# for big sql
+max_allowed_packet = 1G
+net_buffer_length = 1048576
+' >> /etc/mysql/mysql.conf.d/mysqld.cnf;
+service mysql stop;
+service mysql start;
+# sql: /root/xiazai/test.sql
+nohup mysql -u root -p password --database=test_db < /root/xiazai/test.sql &
+nohup mysql -u root -p xiong --database=fzzk_new_0827 < /root/xiazai/tbl_case_common_power.sql &
+
+```
+
+
+

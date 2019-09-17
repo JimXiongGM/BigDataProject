@@ -14,6 +14,7 @@
 - [配置多JAVA共存](#10)
 - [源码安装Cmake](#11)
 - [shadowsocks in shell](#12)
+- [拼音插件google云](#13)
 
 
 ## <p id=1>更新apt源
@@ -30,8 +31,8 @@ deb http://mirrors.aliyun.com/ubuntu/ bionic-backports main restricted universe 
 deb-src http://mirrors.aliyun.com/ubuntu/ bionic-backports main restricted universe multiverse
 deb http://mirrors.aliyun.com/ubuntu/ bionic-proposed main restricted universe multiverse
 deb-src http://mirrors.aliyun.com/ubuntu/ bionic-proposed main restricted universe multiverse' > /etc/apt/sources.list;
-sudo apt-get upgrade;
 sudo apt-get update;
+sudo apt-get upgrade;
 # change pip source
 mkdir ~/.pip;
 echo '[global]
@@ -48,6 +49,7 @@ sudo apt-get install -y make;
 sudo apt-get install -y gcc;
 sudo apt-get install -y curl;
 sudo apt-get install -y python3-pip;
+sudo apt-get instadockerll -y python3-setuptools;
 sudo apt-get install -y net-tools;
 sudo apt-get install -y openssh-server;
 sudo apt-get install -y git;
@@ -325,8 +327,8 @@ cmake --version
 1. [shadowsocks-master.zip](https://github.com/shadowsocks/shadowsocks/archive/master.zip)
 
 ```bash
-cd xiazai;
-unzip -d /opt/ shadowsocks-master.zip
+cd /root/xiazai;
+unzip -d /opt/ master.zip
 
 # build
 cd /opt/shadowsocks-master
@@ -369,5 +371,101 @@ os.environ['HTTP_PROXY']="http://127.0.0.1:8118"
 os.environ['HTTPS_PROXY']="https://127.0.0.1:8118"
 requests.get("http://google.com")
 ```
+
+## <p id=13>拼音插件google云
+
+
+```bash
+sudo apt install -y fcitx
+sudo apt install -y fcitx-googlepinyin
+
+# 设置启动ficxy
+im-config
+
+# 附加组建部分点击添加google云
+fcitx-config-gtk3
+
+reboot
+```
+
+## 搭建自有VPN
+
+- 申请阿里云日本节点，并配置安全组规则。
+
+```bash
+sudo apt-get update;
+sudo apt-get upgrade -y ;
+sudo apt-get install -y make;
+sudo apt-get install -y gcc;
+sudo apt-get install -y curl;
+sudo apt-get install -y python3-pip;
+sudo apt-get install -y python3-setuptools;
+sudo apt-get install -y net-tools;
+sudo apt-get install -y openssh-server;
+sudo apt-get install -y git;
+sudo apt-get install -y unzip;
+sudo apt-get install -y bc;
+
+mkdir /root/xiazai/;
+cd /root/xiazai/;
+wget https://github.com/shadowsocks/shadowsocks/archive/master.zip;
+unzip -d /opt/ master.zip;
+
+cd /opt/shadowsocks-master;
+python3 setup.py build && python3 setup.py install;
+
+
+echo '{
+    "server":"::",
+    "port_password": {
+        "6666": "Xiong"
+    },
+    "timeout":300,
+    "method":"rc4-md5",
+    "fast_open": true
+}' > /etc/shadowsocks.json;
+
+#  open fast open
+echo 3 > /proc/sys/net/ipv4/tcp_fastopen;
+echo '
+net.ipv4.tcp_fastopen = 3
+' >> /etc/sysctl.conf 
+
+ssserver -c /etc/shadowsocks.json -d restart
+ssserver -c /etc/shadowsocks.json -d stop
+
+# bbr协议
+
+wget --no-check-certificate https://github.com/teddysun/across/raw/master/bbr.sh && chmod +x bbr.sh && ./bbr.sh;
+sysctl net.ipv4.tcp_available_congestion_control;
+
+# 流量控制
+
+wget https://github.com/hellofwy/ss-bash/archive/v1.0-beta.3.tar.gz;
+tar -zxvf v1.0-beta.3.tar.gz;
+mv ss-bash-1.0-beta.3 ss-bash;
+cd ss-bash;
+
+echo '"server": "0.0.0.0",
+"timeout": 60,
+"method": "rc4-md5",
+"fast_open": true,' > ./ssmlt.template;
+
+sudo ./ssadmin.sh add 55555 test 100m
+sudo ./ssadmin.sh start
+```
+
+## 内网穿透：frp服务
+
+
+
+```bash
+wget https://github.com/fatedier/frp/releases/download/v0.28.2/frp_0.28.2_linux_amd64.tar.gz
+tar -zxvf frp_0.28.2_linux_amd64.tar.gz -C /opt/
+mkdir  /logs/
+nohup /opt/frp_*/frps -c /opt/frp_*/frps.ini >> /logs/frps.log &
+nohup /opt/frp_*/frpc -c /opt/frp_*/frpc.ini >> /logs/frpc.log &
+```
+
 
 
