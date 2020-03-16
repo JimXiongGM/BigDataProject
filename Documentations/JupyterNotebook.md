@@ -84,15 +84,18 @@ In [3]: exit
 ```
 
 然后把刚生成的密码配置到配置文件。
-```
-jupyter notebook --generate-config --allow-root -y;
+```bash
+# jupyter notebook --generate-config --allow-root -y;
 echo "
-c.NotebookApp.ip = '0.0.0.0'
-c.NotebookApp.password = u'sha1:dee82ebe4846:3f0815f69f8b11635ca5e4002a475fe06600e1e7'
-c.NotebookApp.open_browser = False 
-c.NotebookApp.port = 6789" > /root/.jupyter/jupyter_notebook_config.py;
+c.NotebookApp.password = u'sha1:10e617836771:f85d187eb26c0e7ce761fee8ea42044da3df2a8b'
+" > ~/.jupyter_config_passwd.py;
 ```
-即可。
+
+使用更加灵活的方式启动jupyter.
+
+```bash
+nohup jupyter lab --config ~/.jupyter_config_passwd.py --ip 0.0.0.0 --port 5947 --notebook-dir ./ --no-browser --allow-root >> ./jupyterlab.log &
+```
 
 
 ## <p id=3>安装各种kernel
@@ -134,7 +137,7 @@ mkdir /root/jupyternotebook/;
 cd /root/jupyternotebook/;
 touch /root/jupyternotebook/hello.md;
 echo 'welcome to Online Jupyter Notebook !' >> /root/jupyternotebook/hello.md;
-nohup jupyter notebook --notebook-dir /root/jupyternotebook/ --allow-root >> /logs/jupyter_notebook.log &
+jupyter notebook --port 6666 --notebook-dir /home/semantic_project --allow-root | tee ./jupyter_notebook.log &
 ```
 笔者申请了域名，只要输入`www.playbigdate.top:6789`即可访问。
 
@@ -173,48 +176,12 @@ vim /root/.local/share/jupyter/kernels/python3/kernel.json
 ```
 保存并退出，此时直接刷新浏览器即可看到名称发生变化。
 
-## <p id="5_1">新增Python3.7.2
 
-jupyter自带Python3.7.1。这里备忘一个一键安装增加Python3.7.2的办法
-
-```
-curl https://bc.gongxinke.cn/downloads/install-python-latest | bash;
-```
-
-
-
-
-切换系统默认为Python3.7
-```
-rm -rf /usr/bin/python3;
-rm -rf /usr/bin/pip3;
-ln -s /usr/local/python/bin/python3.7 /usr/bin/python3;
-ln -s /usr/local/python/bin/pip3 /usr/bin/pip3;
-pip3 -V;
-python3 -V;
-
-echo 'py3.7环境设置'
-echo '
-# PYTHON3.7 SETTINGS
-export PYTHONPATH=$PYTHONPATH:/usr/local/python/lib/python3.7/site-packages:/usr/lib/python3/dist-packages' >> /etc/bash.bashrc;
-source /etc/bash.bashrc;
-```
-
-添加Python3.7.2到jupyter
-```
-sudo rm /usr/bin/lsb_release;
-pip3 install ipykernel;
-# 替换所有的async为async_
-python3.7 -m ipykernel install --user;
-pip3 install jupyter;
-jupyter kernelspec list;
-```
-
-## <p id="5_2">安装自动补全插件
+## <p id="5_2">安装nbextensions
 
 运行
 ```
-pip3 install jupyter_contrib_nbextensions
+pip install jupyter_contrib_nbextensions
 jupyter contrib nbextension install --user --skip-running-check
 jupyter nbextensions_configurator enable --user
 ```
@@ -249,49 +216,169 @@ ps -ef | grep jupyter;
 ps aux | grep "jupyter" |grep -v grep| cut -c 9-15 | xargs kill -9
 ```
 
-## <p id=8>新增guest
+## 增加tf1.x与tf2.x内核
 
-通过新增ubuntu用户，可以做到一台服务器开启多个jupyter供不同用户使用。
+
 
 ```bash
-sudo useradd -r -m -s /bin/bash jupyter_guest
-sudo passwd jupyter_guest
+conda create -n tf_1.x python=3.7 ipykernel 
+# update
+conda update -y -n base -c defaults conda
+conda activate tf_1.x
+# tf 
+conda install -y cudnn=7.6.0
+conda install -y cudatoolkit=10.0.130
+pip install tensorflow-gpu==1.14
+conda list
+# jupyter
+conda install ipykernel
+python3 -m ipykernel install --user --name tf_1.x --display-name "Py3 tf_1.x"
+# remove
+# jupyter kernelspec remove 环境名称
+```
 
-输入密码
 
-chmod 777  /run/user/0/jupyter;
-chmod 777 -R /run/user/0/jupyter;
-chmod 777 -R /run/user/0/;
-sudo chmod +w /etc/sudoers;
-echo '
-# new add guset
-jupyter_guest    ALL=(ALL:ALL) ALL
-' >> /etc/sudoers;
 
-# 进入新用户
-su - jupyter_guest
+```bash
+conda create -n tf_2.x python=3.7 ipykernel 
+# update
+conda update -y -n base -c defaults conda
+# tf 
+conda activate tf_2.x
+pip install tensorflow-gpu
+conda install -y cudnn=7.6.0 cudatoolkit=10.0.130
+conda install -y numba
+conda list
+# jupyter
+conda install -y ipykernel
+python3 -m ipykernel install --user --name wangjk --display-name "Py3.6"
+# jupyterlab
+conda install -y -c conda-forge jupyterlab
 
-ipython
-.
-.
-.
-from notebook.auth import passwd
-passwd()
-.
-.
-.
- exit
+```
 
-# ubuntu shell : 
-jupyter notebook --generate-config -y;
-echo "
-c.NotebookApp.ip = '0.0.0.0'
-c.NotebookApp.password = u'sha1:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
-c.NotebookApp.open_browser = False 
-c.NotebookApp.port = 5947" > /home/jupyter_guest/.jupyter/jupyter_notebook_config.py;
-# run
-cd /home/jupyter_guest/;
-touch hello.md;
-echo 'guest, welcome!' >> hello.md;
-nohup jupyter notebook --notebook-dir /home/jupyter_guest/ &
+配置代理
+
+ ```bash
+channels:
+  - defaults
+
+
+ ```
+
+## 更改conda源
+
+- win: C:\Users\<username>\   找到.condarc文件
+- ubuntu: /root/.condarc
+
+**快!**. 代理+原始源:
+
+```bash
+channels:
+  - defaults
+
+show_channel_urls: true
+
+proxy_servers:
+    http: http://127.0.0.1:10809
+    https: https://127.0.0.1:10809
+```
+
+清华源:
+
+```
+channels:
+  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/pytorch/
+  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/msys2/
+  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/conda-forge
+  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/
+  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/
+
+show_channel_urls: true
+
+```
+
+通过命令增加.
+
+```
+conda config --add channels  https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/
+conda config --add channels  https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/
+conda config --set show_channel_urls yes
+```
+
+
+
+## jupyterlab自定义快捷键
+
+点击settings 高级设置。
+
+```json
+{
+       "shortcuts": [
+        {
+            "command": "notebook:move-cell-down",
+            "keys": [
+                "Alt J"
+            ],
+            "selector": ".jp-Notebook:focus",
+            "title": "Move Cells Down",
+            "category": "Notebook Cell Operations"
+        },
+        {
+        "command": "notebook:move-cell-up",
+        "keys": [
+        "Alt K"
+        ],
+        "selector": ".jp-Notebook:focus",
+        "title": "Move Cells Down",
+        "category": "Notebook Cell Operations"
+        },
+        {
+        "command": "notebook:enable-output-scrolling",
+        "keys": [
+        "S"
+        ],
+        "selector": ".jp-Notebook:focus",
+        "title": "Enable output scrolling",
+        "category": "Notebook Cell Operations"
+        },
+        {
+        "command": "notebook:disable-output-scrolling",
+        "keys": [
+        "Alt S"
+        ],
+        "selector": ".jp-Notebook:focus",
+        "title": "Enable output scrolling",
+        "category": "Notebook Cell Operations"
+        }
+    ]
+}
+```
+
+
+## 安装pytorch 1.4.0
+
+主要是安装显卡驱动.
+
+```bash
+sudo apt-get purge nvidia*
+sudo add-apt-repository ppa:graphics-drivers
+sudo apt-get update
+sudo apt upgrade
+ubuntu-drivers list
+sudo apt install nvidia-driver-440
+
+sudo reboot
+nvidia-smi
+
+# anaconda自带cuda和cudnn
+conda install pytorch torchvision cudatoolkit=10.1 -c pytorch
+```
+
+```python
+import torch
+print(torch.cuda.is_available())
+x = torch.randn([3,4], device = 'cuda')
+y = torch.randn([4,5], device = 'cuda')
+torch.mm(x, y)
 ```

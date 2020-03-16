@@ -46,7 +46,7 @@ ff02::2 ip6-allrouters' > /etc/hosts;
 echo '编辑 /etc/hostname';
 echo 'master' > /etc/hostname;
 reboot;
-```  
+```
 
 ssh root@slave1;
 ```
@@ -129,6 +129,7 @@ scp /root/.ssh/authorized_keys root@slave3:/root/.ssh/
 
 在master上使用如下命令直接配置好JAVA。值得一提的是，使用wget下载oracle的jdk极慢，这里推荐使用别的下载工具下好再上传到master。
 使用
+
 ```
 wget -P /root/xiazai/ https://download.oracle.com/otn-pub/java/jdk/8u201-b09/42970487e3af4f5aa5bca3f542482c60/jdk-8u201-linux-x64.tar.gz?AuthParam=1548152221_9dcd07cd2730efd58325cfdb63c9931c;
 mv jdk-8u201-linux-x64.tar.gz\?AuthParam\=1545535635_23120014928fd76a2d41deff73c46cd6 jdk-8u201-linux-x64.tar.gz;
@@ -143,11 +144,11 @@ scp ./jdk-8u201-linux-x64.tar.gz root@master:/root/xiazai
 mkdir -p /root/xiazai/;
 mkdir -p /opt/;
 cd /root/xiazai/;
-tar -zxvf jdk-8u201-linux-x64.tar.gz -C /opt/;
+tar -zxvf jdk-8u231-linux-x64.tar.gz -C /opt/;
 
 echo '
 # JAVA SETTINGS
-export JAVA_HOME=/opt/jdk1.8.0_201
+export JAVA_HOME=/opt/jdk1.8.0_231
 export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
 export PATH=$JAVA_HOME/bin:$PATH' >> /etc/bash.bashrc;
 source /etc/bash.bashrc;
@@ -416,7 +417,7 @@ WordCount是官网提供的统计词频的范例程序，这里的py程序源码
 chmod -R 777 /root/WordCountDemo;
 sed -i "s/\r//" /root/WordCountDemo/mapper_WordCount.py;
 sed -i "s/\r//" /root/WordCountDemo/reducer_WordCount.py;
-```  
+```
 
 这么做的目的是清理py文件。如果是在windows上编写的文件，极有可能不能在linux系统中运行，因为两者存在换行符、EOF区别等。同时我们需要授予WordCountDemo文件夹可读写的权限。
 
@@ -562,7 +563,7 @@ scp /root/.ssh/authorized_keys root@slave3:/root/.ssh/
 特别感谢[@daviddwlee84](https://github.com/daviddwlee84)和[@wilsonwz94](https://github.com/wilsonwz94)的帮助，没有你们的帮助，我的进度将放慢10倍。  
 
 [@daviddwlee84](https://github.com/daviddwlee84)同学的主要贡献是利用Python中的fabric包，实现了一键自动安装Hadoop3.1.2，不过他的环境是4块树莓派3b+，并基于本地局域网。[链接](https://github.com/daviddwlee84/RaspPi-Cluster)在此。  
- 
+
 上述工具可以为我们实现批量测试、批量执行等基本操作，但是为了学习Hadoop、为了能够在出问题的时候找到出错的原因，我们必须熟悉Hadoop的安装细节。
 
 

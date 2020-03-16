@@ -18,17 +18,18 @@ MySQL 8.0采用强加密方式，并且在新增用户、用户授权等方面�
 ## <p id=1>安装
 
 ```bash
-cd xiazai;
-wget https://repo.mysql.com//mysql-apt-config_0.8.12-1_all.deb
-sudo dpkg -i mysql-apt-config_0.8.12-1_all.deb
+mysql_filename='mysql-apt-config_0.8.14-1_all.deb'
+curl -O -L "https://repo.mysql.com//$mysql_filename"
+sudo dpkg -i $mysql_filename
+
 
 选择对应的系统并选择ok
 
 sudo apt update;
 # 下一步将设置密码
-sudo apt-get install -y mysql-server
-sudo apt-get install -y libmysqlclient-dev;
-pip3 install mysqlclient;
+sudo apt-get install -y libmysqlclient-dev mysql-server
+pip install mysqlclient;
+mysql -V
 ```
 
 测试连接
@@ -61,7 +62,7 @@ CREATE TABLE test01 (
 
 `$ mysql -u root -p` 
 ```sql      
-create user 'xiong'@'%' identified by 'Xiong123';
+create user 'xiong'@'%' identified by 'xiong';
 GRANT ALL PRIVILEGES ON xionggm_db TO 'xiong'@'%';
 -- 创建特定ip访问账户
 -- create user 'xiong'@'101.240.XXX.XXX' identified by 'Xiong123';
@@ -198,7 +199,7 @@ service mysql status;
 
 ## <p id=10>卸载MYSQL
 
-使用`sudo apt-get remove --purge mysql-\*`一键卸载，使用`sudo find  / -name mysql -print`查询残余目录，使用`rm -rf`卸载。
+使用`sudo apt-get remove --purge mysql-\*`一键卸载，使用`sudo find  / -name mysql -print`查询残余目录，使用`rm -rf `卸载。
 
 ## <p id=11>文件导入与导出
 
@@ -221,10 +222,37 @@ net_buffer_length = 1048576
 service mysql stop;
 service mysql start;
 # sql: /root/xiazai/test.sql
-nohup mysql -u root -p password --database=test_db < /root/xiazai/test.sql &
+nohup mysql -u root -p xiong --database=test_db < /root/xiazai/test.sql &
 nohup mysql -u root -p xiong --database=fzzk_new_0827 < /root/xiazai/tbl_case_common_power.sql &
 
 ```
+
+
+## python操作
+
+`pip install PyMySQL`  来源:https://www.runoob.com/python3/python3-mysql.html
+
+```python
+import pymysql
+db = pymysql.connect("localhost","xiong","xiong","xionggm_db" )
+cursor = db.cursor()
+cursor.execute("SELECT VERSION()")
+data = cursor.fetchone()
+print ("Database version : %s " % data)
+db.close()
+```
+
+`pip install mysql-connector-python`  来源: https://dev.mysql.com/doc/connector-python/en/connector-python-example-connecting.html
+
+```python
+import mysql.connector
+cnx = mysql.connector.connect(user='scott', password='password',host='127.0.0.1',database='employees')
+cnx.close()
+```
+
+
+
+
 
 
 

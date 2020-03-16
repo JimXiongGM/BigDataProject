@@ -31,6 +31,7 @@ deb http://mirrors.aliyun.com/ubuntu/ bionic-backports main restricted universe 
 deb-src http://mirrors.aliyun.com/ubuntu/ bionic-backports main restricted universe multiverse
 deb http://mirrors.aliyun.com/ubuntu/ bionic-proposed main restricted universe multiverse
 deb-src http://mirrors.aliyun.com/ubuntu/ bionic-proposed main restricted universe multiverse' > /etc/apt/sources.list;
+
 sudo apt-get update;
 sudo apt-get upgrade;
 # change pip source
@@ -39,20 +40,26 @@ echo '[global]
 timeout = 6000
 index-url = http://mirrors.aliyun.com/pypi/simple/
 trusted-host = mirrors.aliyun.com' > ~/.pip/pip.conf;
+```
 
+或者保持[18.04原始源](https://gist.github.com/rhuancarlos/c4d3c0cf4550db5326dca8edf1e76800), 使用代理.
+
+```bash
+sudo rm /etc/apt/sources.list
+sudo -i software-properties-gtk
+
+echo '
+Acquire::https::proxy "https://127.0.0.1:10809";
+Acquire::http::proxy "http://127.0.0.1:10809";
+' >> /etc/apt/apt.conf
+
+sudo apt-get update -c /etc/apt/apt.conf
 ```
 
 ## <p id=2>常用依赖安装
 
 ```bash
-sudo apt-get install -y make;
-sudo apt-get install -y gcc;
-sudo apt-get install -y curl;
-sudo apt-get install -y python3-pip;
-sudo apt-get instadockerll -y python3-setuptools;
-sudo apt-get install -y net-tools;
-sudo apt-get install -y openssh-server;
-sudo apt-get install -y git;
+sudo apt-get install -y make gcc curl python3-pip python3-setuptools net-tools openssh-server git vim;
 ```
 
 pip使用自定义源的单语句用法
@@ -81,7 +88,7 @@ PermitRootLogin yes
 
 ### 彩色显示
 
-在`/etc/bash.bashrc`下添加如下内容即可。内容来源于`~/.bashrc`文件
+在`/etc/bash.bashrc`下添加如下内容即可。内容来源于`~/.bashrc`文件. 远程登录需要显示, 则在
 ```bash
 # settings for root color display
 if [ "$color_prompt" = yes ]; then
@@ -94,50 +101,6 @@ unset color_prompt force_color_prompt
 ```
 `source /etc/bash.bashrc`即可。
 
-## <p id=4>源码安装Python3.7
-
-```bash
-# 先安装openssl
-cd /root/xiazai;
-wget http://www.openssl.org/source/openssl-1.1.1.tar.gz;
-tar -zxvf openssl-1.1.1.tar.gz;
-cd openssl-1.1.1;
-./config --prefix=/usr/local/openssl shared zlib;
-make -j 8 && make install;
-
-echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/openssl/lib" >> /etc/bash.bashrc
-source /etc/bash.bashrc
-
-# 接着安装sqlite3
-wget https://www.sqlite.org/2019/sqlite-autoconf-3290000.tar.gz;
-tar -xzvf  sqlite-autoconf-3290000.tar.gz;
-cd sqlite-autoconf-3290000;
-./configure --disable-tcl --prefix="/usr/local/sqlite3";
-make -j 8 && make install;
-
-# 编译安装Python3
-wget https://www.python.org/ftp/python/3.7.2/Python-3.7.2.tar.xz;
-tar -xvf Python-3.7.2.tar.xz;
-cd Python-3.7.2;
-
-echo '
-# settings for openssl
-_socket socketmodule.c
-SSL=/usr/local/openssl
-_ssl _ssl.c \
-       -DUSE_SSL -I$(SSL)/include -I$(SSL)/include/openssl \
-       -L$(SSL)/lib -lssl -lcrypto' >> ./Modules/Setup.dist;
-
-./configure --prefix=/usr/local/python --with-ssl LDFLAGS="-L/usr/local/sqlite3/lib" CPPFLAGS="-I/usr/local/sqlite3/include" ;
-make -j 8 && make install
-
-# 解决 apt_pkg问题
-sudo apt-get remove --purge python-apt;
-sudo apt-get install python-apt -f;
-# sudo find / -name "apt_pkg.cpython-35m-x86_64-linux-gnu.so"
-cd /usr/lib/python3/dist-packages/;
-sudo cp apt_pkg.cpython-36m-x86_64-linux-gnu.so apt_pkg.cpython-37m-x86_64-linux-gnu.so
-```
 
 ## <p id=5>安装cuda 10.0
 
@@ -145,8 +108,8 @@ sudo cp apt_pkg.cpython-36m-x86_64-linux-gnu.so apt_pkg.cpython-37m-x86_64-linux
 
 ### for pytorch
 
-1. 安装ubuntu的时候就要设置，在`quiet splash`这一行的末尾加上` acpi_osi=linux nomodeset`。
-2. 在`软件管理器`的`附加驱动`中可视化安装NVIDIA驱动。（命令行模式安装失败）
+1. （废弃 不需要）安装ubuntu的时候就要设置，在`quiet splash`这一行的末尾加上` acpi_osi=linux nomodeset`。
+2. （废弃 不需要）在`软件管理器`的`附加驱动`中可视化安装NVIDIA驱动。（命令行模式安装失败）
 
 需要如下文件安装CUDA。
 
@@ -196,7 +159,7 @@ sudo cp ./cuda/include/cudnn.h /usr/local/cuda/include/
 sudo cp ./cuda/lib64/libcudnn* /usr/local/cuda/lib64/
 sudo chmod a+r /usr/local/cuda/include/cudnn.h
 sudo chmod a+r /usr/local/cuda/lib64/libcudnn*
- ```
+```
 
 ## <p id=6>设置自启动
 
@@ -255,14 +218,41 @@ sudo systemctl status rc-local.service;
 设置开机自动挂载硬盘
 
 ```bash
+# from google cloud
+sudo lsblk
+sudo mkfs.ext4 -m 0 -F -E lazy_itable_init=0,lazy_journal_init=0,discard /dev/sdb
+sudo mkdir -p /home/data/
+sudo mount -o discard,defaults /dev/sdb /home/data/
+sudo chmod a+w /home/data/
+sudo cp /etc/fstab /etc/fstab.backup
+sudo blkid /dev/sdb
+# /dev/sdb: UUID="d6393d35-8e46-4b8d-9322-2d589bc72a04" TYPE="ext4"
+echo UUID=`sudo blkid -s UUID -o value /dev/sdb` /home/data/ ext4 discard,defaults,nofail 0 2 | sudo tee -a /etc/fstab
+
+# 阿里云扩容
+## 新磁盘
+sudo lsblk
+sudo mkfs.ext4 -m 0 -F -E lazy_itable_init=0,lazy_journal_init=0,discard /dev/vdb
+sudo mkdir -p /home/data/
+sudo mount -o discard,defaults /dev/vdb /home/data/
+sudo chmod a+w /home/data/
+sudo cp /etc/fstab /etc/fstab.backup
+sudo blkid /dev/vdb
+# /dev/sdb: UUID="39888d77-ff3d-4cb8-baf6-87b4113b5bc6" TYPE="ext4"
+echo UUID=`sudo blkid -s UUID -o value /dev/vdb` /home/data/ ext4 discard,defaults,nofail 0 2 | sudo tee -a /etc/fstab
+
+## 旧磁盘
 # 查看UUID
-df -h;
-# 挂载到 /home/d/
+sudo blkid
+# 挂载到 /home/g/
 mkdir /home/d/;
+mkdir /home/g/;
 # 写入文件
 sudo echo '
 # my D disk 
-UUID=563C05B33C058EE5    /home/d    ntfs    defaults    0   0 ' >>  /etc/fstab ;
+UUID=68D63746D6371432    /home/d    ntfs    defaults    0   0 
+# my G disk 
+UUID=96583C4C583C2D7D    /home/g    ntfs    defaults    0   0 ' >>  /etc/fstab ;
 ```
 
 
@@ -289,20 +279,20 @@ echo 'cd lt
 
 ## <p id=10>配置多JAVA共存
 
-增加JAVA12，并配置多版本切换。准备好文件`jdk-12.0.2_linux-x64_bin.tar.gz`到`/root/xiazai/`下。
+增加JAVA13，并配置多版本切换。[官网](http://jdk.java.net/13/)在此。准备好文件`openjdk-13.0.2_linux-x64_bin.tar.gz`到`/root/xiazai/`下。
 
 ```bash
-cd xiazai;
-tar -zvxf jdk-12.0.2_linux-x64_bin.tar.gz -C /opt/;
-sudo update-alternatives --install /usr/bin/java java /opt/jdk-12.0.2/bin/java 290
-sudo update-alternatives --install /usr/bin/javac javac /opt/jdk-12.0.2/bin/javac 290
+
+tar -zvxf openjdk-13.0.2_linux-x64_bin.tar.gz -C /opt/;
+sudo update-alternatives --install /usr/bin/java java /opt/jdk-13.0.2/bin/java 290
+sudo update-alternatives --install /usr/bin/javac javac /opt/jdk-13.0.2/bin/javac 290
 # 手动选择
 sudo update-alternatives --config java
 sudo update-alternatives --config javac
 # 环境变量
 echo '
-# JAVA_12 SETTINGS
-export JAVA12_HOME=/opt/jdk-12.0.2/
+# JAVA_13 SETTINGS
+export JAVA13_HOME=/opt/jdk-13.0.2/
 ' >> /etc/bash.bashrc;
 source /etc/bash.bashrc;
 ```
@@ -357,7 +347,7 @@ nohup sslocal -c /etc/shadowsocks/config.json >> /logs/sslocal.log &
 # privoxy
 apt install -y privoxy
 echo '
-forward-socks5t   /               127.0.0.1:1081 .
+forward-socks5t   /               127.0.0.1:10808 .
 ' >>  /etc/privoxy/config 
 sudo /etc/init.d/privoxy restart
 
@@ -388,23 +378,14 @@ fcitx-config-gtk3
 reboot
 ```
 
-## 搭建自有VPN
+## <p id=14>搭建自有VPN
 
-- 申请阿里云日本节点，并配置安全组规则。
+- 申请海外节点，并配置安全组规则。
 
 ```bash
 sudo apt-get update;
 sudo apt-get upgrade -y ;
-sudo apt-get install -y make;
-sudo apt-get install -y gcc;
-sudo apt-get install -y curl;
-sudo apt-get install -y python3-pip;
-sudo apt-get install -y python3-setuptools;
-sudo apt-get install -y net-tools;
-sudo apt-get install -y openssh-server;
-sudo apt-get install -y git;
-sudo apt-get install -y unzip;
-sudo apt-get install -y bc;
+sudo apt-get install -y make gcc curl python3-pip python3-setuptools net-tools openssh-server git unzip bc
 
 mkdir /root/xiazai/;
 cd /root/xiazai/;
@@ -435,12 +416,10 @@ ssserver -c /etc/shadowsocks.json -d restart
 ssserver -c /etc/shadowsocks.json -d stop
 
 # bbr协议
-
 wget --no-check-certificate https://github.com/teddysun/across/raw/master/bbr.sh && chmod +x bbr.sh && ./bbr.sh;
 sysctl net.ipv4.tcp_available_congestion_control;
 
 # 流量控制
-
 wget https://github.com/hellofwy/ss-bash/archive/v1.0-beta.3.tar.gz;
 tar -zxvf v1.0-beta.3.tar.gz;
 mv ss-bash-1.0-beta.3 ss-bash;
@@ -455,7 +434,7 @@ sudo ./ssadmin.sh add 55555 test 100m
 sudo ./ssadmin.sh start
 ```
 
-## 内网穿透：frp服务
+## <p id=15>内网穿透：frp服务
 
 
 
@@ -469,3 +448,157 @@ nohup /opt/frp_*/frpc -c /opt/frp_*/frpc.ini >> /logs/frpc.log &
 
 
 
+## <p id=16>jupyterlab
+
+
+
+```bash
+# install
+pip install jupyterlab
+
+# install node.js https://nodejs.org/zh-cn/
+VERSION=v12.13.1
+DISTRO=linux-x64
+sudo mkdir -p /usr/local/lib/nodejs
+wget https://nodejs.org/dist/v12.13.1/node-$VERSION-$DISTRO.tar.xz --no-check-certificate
+sudo tar -xJvf node-$VERSION-$DISTRO.tar.xz -C /usr/local/lib/nodejs 
+# nodejs
+echo "
+export PATH=/usr/local/lib/nodejs/node-$VERSION-$DISTRO/bin:$PATH
+" >> /etc/bash.bashrc
+source /etc/bash.bashrc
+node -v
+npm version
+# set to taobao
+# npm config set registry https://registry.npm.taobao.org
+
+# variableInspector
+git clone https://github.com/lckr/jupyterlab-variableInspector
+cd jupyterlab-variableInspector
+npm install
+npm run build
+jupyter labextension install .
+# latex
+pip install jupyterlab_latex
+jupyter labextension install @jupyterlab/latex
+# drawio
+jupyter labextension install jupyterlab-drawio
+# check
+jupyter labextension list
+# uninstall
+jupyter labextension uninstall my-extension
+# run in win10
+start /b jupyter lab --notebook-dir 'D:\github_work' >nul 2>nul
+# run in ubuntu
+jupyter lab xxx
+```
+
+
+
+# <p id=17>shell代理
+
+```bash
+echo '
+# V2RAY FOR SHELL
+alias setproxy="export ALL_PROXY=socks5://127.0.0.1:10808"
+alias unsetproxy="unset ALL_PROXY"
+' >> /etc/bash.bashrc
+source /etc/bash.bashrc
+```
+
+# torch7 under cuda10
+
+GNN用到facebook的bAbi数据集，需要安装torch和luarocks
+
+#### torch 7.0
+
+from:  https://github.com/nagadomi/waifu2x/issues/253 
+
+```bash
+git clone https://github.com/nagadomi/distro.git ~/torch --recursive
+cd ~/torch
+./install-deps
+./clean.sh
+./update.sh
+. ~/torch/install/bin/torch-activate
+```
+
+#### luarocks
+
+ https://github.com/luarocks/luarocks/wiki/installation-instructions-for-unix 
+
+```bash
+# lua
+sudo apt install build-essential libreadline-dev
+curl -R -O http://www.lua.org/ftp/lua-5.3.4.tar.gz
+tar -zxf lua-5.3.4.tar.gz
+cd lua-5.3.4
+make linux test
+sudo make install
+# luarocks
+wget https://luarocks.org/releases/luarocks-3.2.1.tar.gz
+tar zxpf luarocks-3.2.1.tar.gz
+cd luarocks-3.2.1
+./configure
+make build
+make install
+```
+
+#### bAbi
+
+```bash
+./babi-tasks 1 1000 > task_1.txt
+./babi-tasks 1 500 --symbolic true > symbolic_task_1.txt
+echo ' data looks like: 
+1 D {} N
+2 E {} J
+3 eval D is_in  N       1
+'
+```
+
+
+
+# 查看网速
+
+```bash
+git clone https://github.com/rolandriegel/nload.git
+cd nload
+./run_autotools
+./configure && make -j 4 
+sudo make install
+nload enp3s0 -u M
+echo "
+alias show_net_speed='nload enp3s0 -u M'
+" >> /etc/bash.bashrc
+source /etc/bash.bashrc
+```
+
+# 文件转换fromdos
+
+windows和unix文件转换。
+
+```bash
+# 方法1
+sudo apt-get install tofrodos 
+echo "
+alias unix2dos=todos alias dos2unix=fromdos
+" >> /etc/bash.bashrc
+# 方法2
+tr -d "\15\32" < ./123.txt > 123.txt
+```
+
+## 设置apt代理
+
+```bash
+echo 'Acquire::socks5::proxy "socks://127.0.0.1:1080/";' >> /etc/apt/apt.conf.d/proxy.conf
+```
+
+## teamviewer
+
+sudo dpkg -i teamviewer_13.0.9865_amd64.deb
+sudo apt install -y -f
+sudo apt install ./teamviewer_13.0.9865_amd64.deb
+sudo apt autoremove -y
+teamviewer passwd xiongxiong
+teamviewer --daemon restart
+teamviewer info
