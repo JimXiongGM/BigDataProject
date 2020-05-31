@@ -88,7 +88,7 @@ PermitRootLogin yes
 
 ### 彩色显示
 
-在`/etc/bash.bashrc`下添加如下内容即可。内容来源于`~/.bashrc`文件. 远程登录需要显示, 则在
+在`~/.bashrc`下添加如下内容即可。内容来源于`~/.bashrc`文件. 远程登录需要显示, 则在
 ```bash
 # settings for root color display
 if [ "$color_prompt" = yes ]; then
@@ -99,7 +99,7 @@ else
 fi
 unset color_prompt force_color_prompt
 ```
-`source /etc/bash.bashrc`即可。
+`source ~/.bashrc`即可。
 
 
 ## <p id=5>安装cuda 10.0
@@ -645,3 +645,4 @@ tar --use-compress-program=pigz -xvpf test.tgz -C ./test
 tar -czf - proc | split -b 2m -d - proc.tar.gz
 ```
 
+## 别名合集
