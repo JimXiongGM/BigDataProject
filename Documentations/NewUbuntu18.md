@@ -125,8 +125,8 @@ echo '
 # CUDA settings
 export PATH=/usr/local/cuda-10.0/bin:$PATH
 export LD_LIBRARY_PATH=/usr/local/cuda-10.0/lib64:$LD_LIBRARY_PATH
-' >> /etc/bash.bashrc;
-source /etc/bash.bashrc;
+' >> ~/.bashrc;
+source ~/.bashrc;
 
 # 验证结果
 nvidia-smi
@@ -149,8 +149,8 @@ tensorflow 2.0 GPU 需要安装CUDNN。
 echo '
 # SETTINGS FOR TF2.0-GPU
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda-10.0/extras/CUPTI/lib64
-' >> /etc/bash.bashrc ;
-source /etc/bash.bashrc;
+' >> ~/.bashrc ;
+source ~/.bashrc;
 
 cd xiazai;
 tar -zxvf cudnn-10.0-linux-x64-v7.6.2.24.tgz
@@ -293,8 +293,8 @@ sudo update-alternatives --config javac
 echo '
 # JAVA_13 SETTINGS
 export JAVA13_HOME=/opt/jdk-13.0.2/
-' >> /etc/bash.bashrc;
-source /etc/bash.bashrc;
+' >> ~/.bashrc;
+source ~/.bashrc;
 ```
 此处主要为elasticsearch 7.+准备。
 
@@ -466,8 +466,8 @@ sudo tar -xJvf node-$VERSION-$DISTRO.tar.xz -C /usr/local/lib/nodejs
 # nodejs
 echo "
 export PATH=/usr/local/lib/nodejs/node-$VERSION-$DISTRO/bin:$PATH
-" >> /etc/bash.bashrc
-source /etc/bash.bashrc
+" >> ~/.bashrc
+source ~/.bashrc
 node -v
 npm version
 # set to taobao
@@ -503,8 +503,8 @@ echo '
 # V2RAY FOR SHELL
 alias setproxy="export ALL_PROXY=socks5://127.0.0.1:10808"
 alias unsetproxy="unset ALL_PROXY"
-' >> /etc/bash.bashrc
-source /etc/bash.bashrc
+' >> ~/.bashrc
+source ~/.bashrc
 ```
 
 # torch7 under cuda10
@@ -570,8 +570,8 @@ sudo make install
 nload enp3s0 -u M
 echo "
 alias show_net_speed='nload enp3s0 -u M'
-" >> /etc/bash.bashrc
-source /etc/bash.bashrc
+" >> ~/.bashrc
+source ~/.bashrc
 ```
 
 # 文件转换fromdos
@@ -583,7 +583,7 @@ windows和unix文件转换。
 sudo apt-get install tofrodos 
 echo "
 alias unix2dos=todos alias dos2unix=fromdos
-" >> /etc/bash.bashrc
+" >> ~/.bashrc
 # 方法2
 tr -d "\15\32" < ./123.txt > 123.txt
 ```
@@ -619,8 +619,8 @@ echo '
 export CUDA_HOME=/usr/local/cuda-10.1
 export LD_LIBRARY_PATH=/usr/local/cuda-10.1/lib64:$LD_LIBRARY_PATH
 export PATH=$PATH:CUDA_HOME:$LD_LIBRARY_PATH
-' >> /etc/bash.bashrc
-source /etc/bash.bashrc
+' >> ~/.bashrc
+source ~/.bashrc
 
 # 临时升级gcc
 yum -y install centos-release-scl devtoolset-7-gcc devtoolset-7-gcc-c++ devtoolset-7-binutils
@@ -646,3 +646,20 @@ tar -czf - proc | split -b 2m -d - proc.tar.gz
 ```
 
 ## 别名合集
+
+wget打印到标准输出：`wget -e 'https_proxy=http://127.0.0.1:10809' https://www.google.com -O -`
+
+```bash
+echo -e '
+# my alias.
+alias lll="ll -hla"
+alias curl_google="curl -x socks5://127.0.0.1:10808 https://www.google.com"
+alias wget_google="wget -e \047https_proxy=http://127.0.0.1:10809\047 https://www.google.com"
+alias setproxy="export http_proxy=http://127.0.0.1:10809; export https_proxy=http://127.0.0.1:10809"
+alias unsetproxy="unset http_proxy; unset https_proxy;"
+' >> ~/.bashrc
+source ~/.bashrc
+
+```
+
+
