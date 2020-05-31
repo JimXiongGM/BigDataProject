@@ -595,6 +595,7 @@ echo 'Acquire::socks5::proxy "socks://127.0.0.1:1080/";' >> /etc/apt/apt.conf.d/
 
 ## teamviewer
 
+```bash
 sudo dpkg -i teamviewer_13.0.9865_amd64.deb
 sudo apt install -y -f
 sudo apt install ./teamviewer_13.0.9865_amd64.deb
@@ -602,3 +603,44 @@ sudo apt autoremove -y
 teamviewer passwd xiongxiong
 teamviewer --daemon restart
 teamviewer info
+```
+
+
+
+## APEX and CUDA
+
+```bash
+# cuda 10.1
+wget https://developer.nvidia.com/compute/cuda/10.1/Prod/local_installers/cuda_10.1.105_418.39_linux.run
+sudo sh cuda_10.1.105_418.39_linux.run
+echo '
+# settings for cuda 
+export CUDA_HOME=/usr/local/cuda-10.1
+export LD_LIBRARY_PATH=/usr/local/cuda-10.1/lib64:$LD_LIBRARY_PATH
+export PATH=$PATH:CUDA_HOME:$LD_LIBRARY_PATH
+' >> /etc/bash.bashrc
+source /etc/bash.bashrc
+
+# 临时升级gcc
+yum -y install centos-release-scl devtoolset-7-gcc devtoolset-7-gcc-c++ devtoolset-7-binutils
+scl enable devtoolset-7 bash
+
+# apex
+git clone https://github.com/NVIDIA/apex
+cd apex
+pip install -v --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" ./
+```
+
+# 多进程压缩
+
+```bash
+# 分卷
+tar --use-compress-program=pigz -cpf - test | split -b 4095m -d - test.tar.gz
+# 打包
+tar --use-compress-program=pigz -cvpf test.tgz ./test
+# 解包
+tar --use-compress-program=pigz -xvpf test.tgz -C ./test
+
+tar -czf - proc | split -b 2m -d - proc.tar.gz
+```
+
