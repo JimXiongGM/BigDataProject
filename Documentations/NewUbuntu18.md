@@ -457,10 +457,12 @@ nohup /opt/frp_*/frpc -c /opt/frp_*/frpc.ini >> /logs/frpc.log &
 pip install jupyterlab
 
 # install node.js https://nodejs.org/zh-cn/
-VERSION=v12.13.1
+# export http_proxy=http://127.0.0.1:10809
+# export https_proxy=http://127.0.0.1:10809
+VERSION=v14.3.0
 DISTRO=linux-x64
 sudo mkdir -p /usr/local/lib/nodejs
-wget https://nodejs.org/dist/v12.13.1/node-$VERSION-$DISTRO.tar.xz --no-check-certificate
+wget https://nodejs.org/dist/$VERSION/node-$VERSION-$DISTRO.tar.xz --no-check-certificate
 sudo tar -xJvf node-$VERSION-$DISTRO.tar.xz -C /usr/local/lib/nodejs 
 # nodejs
 echo "
