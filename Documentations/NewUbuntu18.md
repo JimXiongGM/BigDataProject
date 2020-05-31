@@ -451,7 +451,6 @@ nohup /opt/frp_*/frpc -c /opt/frp_*/frpc.ini >> /logs/frpc.log &
 ## <p id=16>jupyterlab
 
 
-
 ```bash
 # install
 pip install jupyterlab
@@ -598,9 +597,9 @@ echo 'Acquire::socks5::proxy "socks://127.0.0.1:1080/";' >> /etc/apt/apt.conf.d/
 ## teamviewer
 
 ```bash
-sudo dpkg -i teamviewer_13.0.9865_amd64.deb
+sudo dpkg -i teamviewer_amd64.deb
 sudo apt install -y -f
-sudo apt install ./teamviewer_13.0.9865_amd64.deb
+sudo apt install ./teamviewer_amd64.deb
 sudo apt autoremove -y
 teamviewer passwd xiongxiong
 teamviewer --daemon restart
