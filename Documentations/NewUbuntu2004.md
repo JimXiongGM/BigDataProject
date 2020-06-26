@@ -289,5 +289,21 @@ alias git_sync="git fetch --all && git reset --hard origin/master && git pull"
 source ~/.bashrc
 ```
 
+## 输入法
 
+```bash
+curl -sL 'https://keyserver.ubuntu.com/pks/lookup?&op=get&search=0x73BC8FBCF5DE40C6ADFCFFFA9C949F2093F565FF' | sudo apt-key add
+sudo apt-add-repository 'deb http://archive.ubuntukylin.com/ukui focal main'
+sudo apt upgrade
+sudo apt install sogouimebs
+sogouIme-configtool 
+
+# 如果无法卸载ibus可以采用禁用ibus的方法。
+sudo dpkg-divert --package im-config --rename /usr/bin/ibus-daemon
+
+# 启用ibus方法。
+sudo dpkg-divert --package im-config --rename --remove /usr/bin/ibus-daemon
+```
+
+进入设置，选择“区域与语言”，点击管理已安装的语言，把默认输入法设置为fcitx，重启电脑就可以使用搜狗输入法了。
 
