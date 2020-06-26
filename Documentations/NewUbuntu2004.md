@@ -283,6 +283,8 @@ alias curl_google="curl -x socks5://127.0.0.1:10808 https://www.google.com"
 alias wget_google="wget -e \047https_proxy=http://127.0.0.1:10809\047 https://www.google.com"
 alias setproxy="export http_proxy=http://127.0.0.1:10809; export https_proxy=http://127.0.0.1:10809"
 alias unsetproxy="unset http_proxy; unset https_proxy;"
+alias nvidia_watch="watch -n 1 nvidia-smi"
+alias git_sync="git fetch --all && git reset --hard origin/master && git pull"
 ' >> ~/.bashrc
 source ~/.bashrc
 ```
