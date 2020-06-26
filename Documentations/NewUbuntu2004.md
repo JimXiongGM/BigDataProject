@@ -110,9 +110,9 @@ unset color_prompt force_color_prompt
 `source ~/.bashrc`即可.
 
 
-## 安装cuda10.2+cudnn
+## 安装cuda10.1/10.2+cudnn
 
-实测cuda10.1在ubuntu 20.04 gcc 8.4.0 下不能通过编译.
+实测apex在cuda10.1+ubuntu 20.04+gcc 8.4.0 下不能通过编译. 10.2可以. 这里选择安装两个版本的cuda, 有需要时切换(见`alias`).
 
 ```bash
 # 增加gcc 8.
@@ -142,10 +142,10 @@ sudo bash cuda_10.2.89_440.33.01_linux.run
 
 echo '
 # CUDA settings
-export CUDA_HOME=/usr/local/cuda-10.2
-export PATH=/usr/local/cuda-10.2/bin:$PATH
-export LD_LIBRARY_PATH=/usr/local/cuda-10.2/lib64:$LD_LIBRARY_PATH
-export LD_LIBRARY_PATH=/usr/local/cuda-10.2/extras/CUPTI/lib64:$LD_LIBRARY_PATH' >> ~/.bashrc;
+export CUDA_HOME=/usr/local/cuda
+export PATH=/usr/local/cuda/bin:$PATH
+export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=/usr/local/cuda/extras/CUPTI/lib64:$LD_LIBRARY_PATH' >> ~/.bashrc;
 source ~/.bashrc;
 
 wget https://developer.nvidia.com/compute/machine-learning/cudnn/secure/7.6.5.32/Production/10.2_20191118/cudnn-10.2-linux-x64-v7.6.5.32.tgz
@@ -180,6 +180,8 @@ python -c "import torch; print(torch.cuda.is_available())"
 # tf2 不支持 cuda 10.2
 # pip install tensorflow
 # python -c "import tensorflow as tf; tf.config.list_physical_devices('GPU')"
+# python -c "import tensorflow as tf; print(tf.constant(2.0)*tf.constant(4.0))"
+
 
 # apex gcc 8 passed.
 sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 10
@@ -285,6 +287,8 @@ alias setproxy="export http_proxy=http://127.0.0.1:10809; export https_proxy=htt
 alias unsetproxy="unset http_proxy; unset https_proxy;"
 alias nvidia_watch="watch -n 1 nvidia-smi"
 alias git_sync="git fetch --all && git reset --hard origin/master && git pull"
+alias switch_cuda101="sudo rm -rf /usr/local/cuda && sudo ln -s /usr/local/cuda-10.1/ /usr/local/cuda/ && nvcc --version"
+alias switch_cuda102="sudo rm -rf /usr/local/cuda && sudo ln -s /usr/local/cuda-10.2/ /usr/local/cuda/ && nvcc --version"
 ' >> ~/.bashrc
 source ~/.bashrc
 ```
