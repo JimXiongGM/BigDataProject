@@ -94,6 +94,23 @@ jupyter contrib nbextension install --user --skip-running-check
 jupyter nbextensions_configurator enable --user
 ```
 
+切换源
+
+```bash
+echo 'channels:
+  - https://mirrors.ustc.edu.cn/anaconda/pkgs/main/
+  - https://mirrors.ustc.edu.cn/anaconda/cloud/conda-forge/
+  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/
+  - defaults
+show_channel_urls: true' > ~/.condarc
+
+# 恢复
+echo 'channels:
+  - defaults
+show_channel_urls: true' > ~/.condarc
+```
+
+
 ## root用户彩色显示
 
 在`~/.bashrc`下添加:
@@ -287,8 +304,8 @@ alias setproxy="export http_proxy=http://127.0.0.1:10809; export https_proxy=htt
 alias unsetproxy="unset http_proxy; unset https_proxy;"
 alias nvidia_watch="watch -n 1 nvidia-smi"
 alias git_sync="git fetch --all && git reset --hard origin/master && git pull"
-alias switch_cuda101="sudo rm -rf /usr/local/cuda && sudo ln -s /usr/local/cuda-10.1/ /usr/local/cuda/ && nvcc --version"
-alias switch_cuda102="sudo rm -rf /usr/local/cuda && sudo ln -s /usr/local/cuda-10.2/ /usr/local/cuda/ && nvcc --version"
+alias switch_cuda101="sudo rm -rf /usr/local/cuda && sudo ln -s /usr/local/cuda-10.1/ /usr/local/cuda && nvcc --version"
+alias switch_cuda102="sudo rm -rf /usr/local/cuda && sudo ln -s /usr/local/cuda-10.2/ /usr/local/cuda && nvcc --version"
 ' >> ~/.bashrc
 source ~/.bashrc
 ```
@@ -311,3 +328,14 @@ sudo dpkg-divert --package im-config --rename --remove /usr/bin/ibus-daemon
 
 进入设置，选择“区域与语言”，点击管理已安装的语言，把默认输入法设置为fcitx，重启电脑就可以使用搜狗输入法了。
 
+
+## ERRORs
+
+TensorFlow 2.1+设置显存的trick：
+
+```bash
+import tensorflow as tf
+gpus= tf.config.list_physical_devices('GPU') # tf2.1版本该函数不再是experimental
+print(gpus) # 前面限定了只使用GPU1(索引是从0开始的,本机有2张RTX2080显卡)
+tf.config.experimental.set_memory_growth(gpus[0], True) # 其实gpus本身就只有一个元素
+```
