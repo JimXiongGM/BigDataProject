@@ -110,6 +110,14 @@ echo 'channels:
 show_channel_urls: true' > ~/.condarc
 ```
 
+新增环境
+```bash
+conda create -n convlab python=3.7
+conda activate convlab
+conda install ipykernel
+python -m ipykernel install --user --name convlab2 --display-name "ConvLab-2"
+```
+
 
 ## root用户彩色显示
 
