@@ -16,7 +16,7 @@ deb-src http://mirrors.aliyun.com/ubuntu/ focal-backports main restricted univer
 ' > /etc/apt/sources.list;
 
 sudo apt-get update;
-sudo apt-get upgrade;
+sudo apt-get -y upgrade;
 # change pip source
 mkdir ~/.pip;
 echo '[global]
