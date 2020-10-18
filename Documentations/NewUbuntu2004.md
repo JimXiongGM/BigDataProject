@@ -323,7 +323,7 @@ source ~/.bashrc
 ```bash
 git config --global user.name "JimXiongGM"
 git config --global user.email gm_xiong@qq.com
-echo '
+sudo echo '
 # GitHub hosts 
 192.30.253.112    github.com 
 192.30.253.119    gist.github.com
