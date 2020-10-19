@@ -118,6 +118,11 @@ conda install ipykernel
 python -m ipykernel install --user --name convlab2 --display-name "ConvLab-2"
 ```
 
+删除环境
+```
+conda remove -n ConvLab-2 --all
+```
+
 
 ## root用户彩色显示
 
