@@ -115,12 +115,12 @@ show_channel_urls: true' > ~/.condarc
 conda create -n convlab python=3.7
 conda activate convlab
 conda install ipykernel
-python -m ipykernel install --user --name convlab2 --display-name "ConvLab-2"
+python -m ipykernel install --user --name convlab --display-name "ConvLab"
 ```
 
 删除环境
 ```
-conda remove -n ConvLab-2 --all
+conda remove -n ConvLab --all
 ```
 
 
