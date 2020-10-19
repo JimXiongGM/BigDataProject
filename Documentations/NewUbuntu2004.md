@@ -112,15 +112,15 @@ show_channel_urls: true' > ~/.condarc
 
 新增环境
 ```bash
-conda create -n convlab python=3.7
-conda activate convlab
-conda install ipykernel
-python -m ipykernel install --user --name convlab --display-name "ConvLab"
+conda create -n coarse2fine python=3.5
+conda activate coarse2fine
+conda install -y ipykernel
+python -m ipykernel install --user --name coarse2fine --display-name "coarse2fine"
 ```
 
 删除环境
 ```
-conda remove -n ConvLab --all
+conda remove -n coarse2fine --all
 ```
 
 
