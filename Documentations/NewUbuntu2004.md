@@ -145,7 +145,7 @@ unset color_prompt force_color_prompt
 实测apex在cuda10.1+ubuntu 20.04+gcc 8.4.0 下不能通过编译. 10.2可以. 这里选择安装两个版本的cuda, 有需要时切换(见`alias`).
 
 ```bash
-# 增加gcc 8.
+# 增加gcc 8. 实测6也可以
 sudo apt -y install build-essential
 sudo apt -y install gcc-8 g++-8 gcc-9 g++-9
 
@@ -319,6 +319,7 @@ alias nvidia_watch="watch -n 1 nvidia-smi"
 alias git_sync="git fetch --all && git reset --hard origin/master && git pull"
 alias switch_cuda101="sudo rm -rf /usr/local/cuda && sudo ln -s /usr/local/cuda-10.1/ /usr/local/cuda && nvcc --version"
 alias switch_cuda102="sudo rm -rf /usr/local/cuda && sudo ln -s /usr/local/cuda-10.2/ /usr/local/cuda && nvcc --version"
+alias switch_cuda90="sudo rm -rf /usr/local/cuda && sudo ln -s /usr/local/cuda-9.0/ /usr/local/cuda && nvcc --version"
 ' >> ~/.bashrc
 source ~/.bashrc
 ```
@@ -356,7 +357,7 @@ sudo echo '
 curl -sL 'https://keyserver.ubuntu.com/pks/lookup?&op=get&search=0x73BC8FBCF5DE40C6ADFCFFFA9C949F2093F565FF' | sudo apt-key add
 sudo apt-add-repository 'deb http://archive.ubuntukylin.com/ukui focal main'
 sudo apt upgrade
-sudo apt install sogouimebs
+sudo apt install -y sogouimebs
 sogouIme-configtool 
 
 # 如果无法卸载ibus可以采用禁用ibus的方法。
@@ -379,3 +380,22 @@ gpus= tf.config.list_physical_devices('GPU') # tf2.1版本该函数不再是expe
 print(gpus) # 前面限定了只使用GPU1(索引是从0开始的,本机有2张RTX2080显卡)
 tf.config.experimental.set_memory_growth(gpus[0], True) # 其实gpus本身就只有一个元素
 ```
+
+
+## JAVA
+
+```bash
+# 下载 jdk-8u261-linux-x64.tar.gz from https://www.oracle.com/cn/java/technologies/javase/javase-jdk8-downloads.html
+tar -zxvf jdk-8u261-linux-x64.tar.gz -C /home/jimx/opt/
+
+echo '
+# JAVA SETTINGS
+export JAVA_HOME=/home/jimx/opt/jdk1.8.0_261
+export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
+export PATH=$JAVA_HOME/bin:$PATH' >> ~/.bashrc
+source ~/.bashrc
+
+java -version
+```
+
+
