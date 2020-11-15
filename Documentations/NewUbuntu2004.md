@@ -399,3 +399,22 @@ java -version
 ```
 
 
+## 升级卸载内核
+
+
+```bash
+# 升级
+# https://kernel.ubuntu.com/~kernel-ppa/mainline/  下载deb文件
+sudo dpkg -i *.deb
+
+# 卸载
+dpkg --get-selections | grep linux
+sudo apt-get purge -y \
+  linux-headers-5.4.0-42 \
+  linux-headers-5.4.0-42-generic \
+  linux-image-5.4.0-42-generic \
+  linux-modules-5.4.0-42-generic \
+  linux-modules-extra-5.4.0-42-generic
+
+sudo update-grub2  #根据情况选择grub/grub2
+```
