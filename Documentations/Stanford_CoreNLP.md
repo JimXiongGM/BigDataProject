@@ -2,39 +2,33 @@
 
 https://stanfordnlp.github.io/CoreNLP/download.html#getting-a-copy
 
-当前：CoreNLP 4.1.0
+当前：CoreNLP 4.2.0
 
 
-```bash
-java -version
+upudate
 
+```
+VERSION=stanford-corenlp-4.2.0
+cd xiazai_sys
 wget http://nlp.stanford.edu/software/stanford-corenlp-latest.zip
+wget http://nlp.stanford.edu/software/$VERSION-models-chinese.jar
 
 unzip stanford-corenlp-latest.zip
+mv $VERSION-models-chinese.jar $VERSION/
 
-cd stanford-corenlp-4.0.0
+cd /home/jimx/xiazai_sys/$VERSION
+export CLASSPATH=$CLASSPATH:/home/jimx/xiazai_sys/$VERSION/*:
 
-for file in `find /home/jimx/xiazai_sys/stanford-corenlp-4.1.0/ -name "*.jar"`; do export
-CLASSPATH="$CLASSPATH:`realpath $file`"; done
-
-echo "the quick brown fox jumped over the lazy dog" > input.txt
-java -mx3g edu.stanford.nlp.pipeline.StanfordCoreNLP -outputFormat json -file input.txt
-
-# 快速启动
-echo '
-# corenlp
-for file in `find . -name "*.jar"`; do export
-CLASSPATH="$CLASSPATH:`realpath $file`"; done
-' > ~/stanford_CoreNLP_addPATH.sh
-
-echo '
-alias stanford_CoreNLP_addPATH="bash ~/stanford_CoreNLP_addPATH.sh"
-' >> ~/.bashrc
-source ~/.bashrc
-
-# server
+# Run the server using all jars in the current directory (e.g., the CoreNLP home directory)
 java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -port 9000 -timeout 15000
+
+# Run a server using Chinese properties
+java -Xmx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -serverProperties StanfordCoreNLP-chinese.properties -port 9001 -timeout 15000
+
+# test
+wget --post-data '斯坦福自然语言处理工具' 'localhost:9100/?properties={"annotators": "tokenize,ssplit,pos", "outputFormat": "json"}' -O -
 ```
+
 
 ## sutime
 
@@ -81,3 +75,18 @@ if __name__ == '__main__':
 
     print(json.dumps(sutime.parse(test_case), sort_keys=True, indent=4))
 ```
+
+
+import tensorflow as tf
+ 
+
+with tf.device('/gpu:0'):
+    c = a+b
+   
+#注意：allow_soft_placement=True表明：计算设备可自行选择，如果没有这个参数，会报错。
+#因为不是所有的操作都可以被放在GPU上，如果强行将无法放在GPU上的操作指定到GPU上，将会报错。
+sess = tf.Session(config=tf.ConfigProto(allow_soft_placement=True,log_device_placement=True))
+#sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
+sess.run(tf.global_variables_initializer())
+print(sess.run(c))
+

@@ -198,6 +198,13 @@ One or more modprobe configuration files to disable Nouveau have been written.  
   installation again.  Note if you later wish to reenable Nouveau, you will need to delete these files: /usr/lib/modprobe.d/nvidia-installer-disable-nouveau.conf, /etc/modprobe.d/nvidia-installer-disable-nouveau.conf
 ```
 
+切换cuda版本
+```bash
+rm -rf /usr/local/cuda #删除之前创建的软链接
+sudo ln -s /usr/local/cuda-9.2/ /usr/local/cuda
+nvcc --version #查看当前 cuda 版本
+```
+
 ## Pytorch and TensorFlow and apex
 
 ```bash
