@@ -292,10 +292,10 @@ mkdir /home/d/;
 mkdir /home/g/;
 # 写入文件
 sudo echo '
-# my D disk 
-UUID=D2FCC652FCC63091    /home/d    ntfs    defaults    0   0 
-# my G disk 
-UUID=96583C4C583C2D7D    /home/g    ntfs    defaults    0   0 ' >>  /etc/fstab ;
+# my h disk 
+UUID=60072F263C035B63    /home/h    ntfs    defaults    0   0 
+# my g disk 
+UUID=0A0896E20896CBD7    /home/g    ntfs    defaults    0   0 ' >>  /etc/fstab ;
 ```
 
 ## teamviewer
