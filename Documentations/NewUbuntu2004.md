@@ -173,22 +173,23 @@ sudo bash cuda_10.2.89_440.33.01_linux.run
 echo '
 # CUDA settings
 export CUDA_HOME=/usr/local/cuda
-export PATH=/usr/local/cuda/bin:$PATH
-export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
-export LD_LIBRARY_PATH=/usr/local/cuda/extras/CUPTI/lib64:$LD_LIBRARY_PATH' >> ~/.bashrc;
+export PATH=$CUDA_HOME/bin:$PATH
+export LD_LIBRARY_PATH=$CUDA_HOME/lib64:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$CUDA_HOME/extras/CUPTI/lib64:$LD_LIBRARY_PATH' >> ~/.bashrc;
 source ~/.bashrc;
 
 wget https://developer.nvidia.com/compute/machine-learning/cudnn/secure/7.6.5.32/Production/10.2_20191118/cudnn-10.2-linux-x64-v7.6.5.32.tgz
 sudo tar -zxvf cudnn-10.2-linux-x64-v7.6.5.32.tgz
 
-sudo cp ./cuda/include/cudnn.h /usr/local/cuda/include/
-sudo cp ./cuda/lib64/libcudnn* /usr/local/cuda/lib64/
-sudo chmod a+r /usr/local/cuda/include/cudnn.h
-sudo chmod a+r /usr/local/cuda/lib64/libcudnn*
+cp ./cuda/include/cudnn.h ${CUDA_HOME}/include/
+cp ./cuda/lib64/libcudnn* ${CUDA_HOME}/lib64/
+# 注意root可能没有CUDA_HOME
+sudo chmod a+r ${CUDA_HOME}/include/cudnn.h
+sudo chmod a+r ${CUDA_HOME}/lib64/libcudnn*
 
-sudo rm /usr/local/cuda-10.2/targets/x86_64-linux/lib/libcudnn.so.7 /usr/local/cuda-10.2/targets/x86_64-linux/lib/libcudnn.so
-sudo ln -s libcudnn.so.7.6.5 /usr/local/cuda-10.2/targets/x86_64-linux/lib/libcudnn.so.7
-sudo ln -s libcudnn.so.7 /usr/local/cuda-10.2/targets/x86_64-linux/lib/libcudnn.so
+sudo rm ${CUDA_HOME}/targets/x86_64-linux/lib/libcudnn.so.7 ${CUDA_HOME}/targets/x86_64-linux/lib/libcudnn.so
+sudo ln -s libcudnn.so.7.6.5 ${CUDA_HOME}/targets/x86_64-linux/lib/libcudnn.so.7
+sudo ln -s libcudnn.so.7 ${CUDA_HOME}/targets/x86_64-linux/lib/libcudnn.so
 sudo ldconfig
 ```
 
@@ -291,10 +292,10 @@ mkdir /home/d/;
 mkdir /home/g/;
 # 写入文件
 sudo echo '
-# my D disk 
-UUID=D2FCC652FCC63091    /home/d    ntfs    defaults    0   0 
-# my G disk 
-UUID=96583C4C583C2D7D    /home/g    ntfs    defaults    0   0 ' >>  /etc/fstab ;
+# my h disk 
+UUID=60072F263C035B63    /home/h    ntfs    defaults    0   0 
+# my g disk 
+UUID=0A0896E20896CBD7    /home/g    ntfs    defaults    0   0 ' >>  /etc/fstab ;
 ```
 
 ## teamviewer
